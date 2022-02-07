@@ -12,7 +12,7 @@ services:
     build: ./backend
     depends_on:
       - db
-    command: python manage.py runserver
+    command: python manage.py runserver 0.0.0.0:8000
     container_name: django
     env_file:
       - ./backend/.env
