@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:14
+    container_name: db
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    env_file:
+      - db.env
+  backend:
+    build: ./backend
+    container_name: django
+    env_file:
+      - ./backend/.env
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
