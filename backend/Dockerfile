@@ -8,11 +8,8 @@ COPY ./requirements.txt /app
 
 RUN pip install -r requirements.txt
 
-COPY . .
-
-RUN python manage.py migrate
+COPY . /app
 
 EXPOSE 8000
 
-CMD ["python" ,"manage.py", "runserver"]
 

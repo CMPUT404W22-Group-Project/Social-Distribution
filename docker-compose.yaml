@@ -10,10 +10,12 @@ services:
       - db.env
   backend:
     build: ./backend
+    depends_on:
+      - db
+    command: python manage.py runserver
     container_name: django
     env_file:
       - ./backend/.env
+    
     ports:
       - 8000:8000
-    depends_on:
-      - db

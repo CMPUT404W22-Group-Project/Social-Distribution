@@ -83,15 +83,11 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB') or 'social_dist',
         'USER': os.getenv('POSTGRES_USER') or 'user',
         'PASSWORD': os.getenv('POSTGRES_PASSWORD') or 'password',
+        # use localhost if you want to connect locally
         'HOST': os.getenv('POSTGRES_HOST') or 'localhost',
         'PORT': os.getenv('POSTGRES_PORT') or '5432',
     }
 }
-# POSTGRES_USER = user
-# POSTGRES_PASSWORD = password
-# POSTGRES_DB = social_dist
-# POSTGRES_HOST = localhost
-# POSTGRES_PORT = 5432
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
