@@ -14,6 +14,7 @@ class Author(models.Model):
         choices=TagType.choices,
         default=TagType.AUTHOR
     )
+    url = models.URLField()
     host = models.URLField()
     displayName = models.CharField(max_length=50)
     github = models.CharField(max_length=100)
