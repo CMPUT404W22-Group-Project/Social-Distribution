@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'author',
+    'post',
+    'comment'
 ]
 
 MIDDLEWARE = [
@@ -81,7 +83,7 @@ DATABASES = {
     {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB') or 'social_dist',
-        'USER': os.getenv('POSTGRES_USER') or 'user',
+        'USER': os.getenv('POSTGRES_USER') or 'postgres',
         'PASSWORD': os.getenv('POSTGRES_PASSWORD') or 'password',
         # use localhost if you want to connect locally
         'HOST': os.getenv('POSTGRES_HOST') or 'localhost',
