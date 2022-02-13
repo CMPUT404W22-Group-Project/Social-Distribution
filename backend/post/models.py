@@ -12,7 +12,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100, blank=True)
     source = models.URLField(blank=True)
     origin = models.URLField(blank=True)
-    description = models.CharField(blank=True)
+    description = models.CharField(max_length=200, blank=True)
 
     class ContentType(models.TextChoices):
         common_mark = 'text/markdown'
@@ -25,7 +25,7 @@ class Post(models.Model):
         max_length=20,
         choices=ContentType.choices
     )
-    content = models.CharField(blank=True)
+    content = models.TextField(blank=True)
     author = models.ForeignKey(
         Author, on_delete=models.DO_NOTHING, related_name="posts")
     # can use user.posts.all() to get all posts
@@ -51,4 +51,4 @@ class CommentsSrc(models.Model):
     size = models.IntegerField(default=5, editable=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comments = models.ManyToManyField(
-        Comment, on_delete=models.CASCADE, related_name='comments', blank=True)
+        Comment, related_name='comments', blank=True)
