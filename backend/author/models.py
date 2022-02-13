@@ -6,16 +6,16 @@ from django.db import models
 class Author(models.Model):
 
     class TagType(models.TextChoices):
-        ADMIN = 'ADMIN'
-        AUTHOR = 'AUTHOR'
+        admin = 'admin'
+        author = 'author'
 
     type = models.CharField(
         max_length=10,
         choices=TagType.choices,
-        default=TagType.AUTHOR
+        default=TagType.author
     )
-    url = models.URLField()
-    host = models.URLField()
-    displayName = models.CharField(max_length=50)
-    github = models.CharField(max_length=100)
-    profileImage = models.URLField(max_length=200)
+    url = models.URLField(blank=True)
+    host = models.URLField(blank=True)
+    displayName = models.CharField(max_length=50, blank=True)
+    github = models.URLField(blank=True)
+    profileImage = models.URLField(blank=True)
