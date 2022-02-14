@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 from author.models import Author
 from comment.models import Comment
 from django.contrib.postgres.fields import ArrayField
@@ -7,7 +8,8 @@ from django.utils import timezone
 
 
 class Post(models.Model):
-
+    post_id = models.CharField(
+        primary_key=True, default=uuid.uuid4, max_length=100)
     type = models.CharField(max_length=4, default='post', editable=False)
     title = models.CharField(max_length=100, blank=True)
     source = models.URLField(blank=True)
