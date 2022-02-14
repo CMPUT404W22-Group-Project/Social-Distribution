@@ -29,7 +29,7 @@ class Post(models.Model):
     )
     content = models.TextField(blank=True)
     author = models.ForeignKey(
-        Author, on_delete=models.DO_NOTHING, related_name="posts")
+        Author, on_delete=models.DO_NOTHING, related_name="post_owner")
     # can use user.posts.all() to get all posts
     categories = ArrayField(models.CharField(
         max_length=20, blank=True), default=list, blank=True, null=True)
@@ -48,6 +48,8 @@ class Post(models.Model):
 
 
 class CommentsSrc(models.Model):
+    post_id = models.CharField(
+        primary_key=True, default=uuid.uuid4, max_length=100)
     type = models.CharField(max_length=8, default='comments', editable=False)
     page = models.IntegerField(default=1, editable=False)
     size = models.IntegerField(default=5, editable=False)

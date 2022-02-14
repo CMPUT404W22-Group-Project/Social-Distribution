@@ -3,6 +3,8 @@ from .views import PostListAPIView, PostDetailAPIView
 
 
 urlpatterns = [
-    path('', PostListAPIView.as_view(), name='postList'),
-    path('<post_id>/', PostDetailAPIView.as_view(), name='postbyid'),
+    path('authors/<author_id>/posts/',
+         PostListAPIView.as_view(), name='postList'),
+    path('authors/<author_id>/posts/<post_id>/',
+         PostDetailAPIView.as_view(), name='postbyid'),
 ]

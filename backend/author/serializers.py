@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Author
+from urllib.parse import urlparse
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -8,6 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         author, created = Author.objects.update_or_create(
             author_id=author_id, defaults=validated_data)
         return author
+# urlparse(id).path.split('/')[2]
 
     class Meta:
         model = Author
