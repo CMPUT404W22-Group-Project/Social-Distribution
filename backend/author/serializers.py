@@ -14,5 +14,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
 
-        # fields = ['id','type', 'host', 'displayName', 'github', 'profileImage']
-        fields = "__all__"
+        # fields =
+        fields = ['id', 'type', 'host',
+                  'displayName', 'github', 'profileImage']

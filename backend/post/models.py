@@ -1,7 +1,6 @@
 from django.db import models
 import uuid
 from author.models import Author
-from comment.models import Comment
 from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 # Create your models here.
@@ -12,6 +11,7 @@ class Post(models.Model):
         primary_key=True, default=uuid.uuid4, max_length=100)
     type = models.CharField(max_length=4, default='post', editable=False)
     title = models.CharField(max_length=100, blank=True)
+    id = models.URLField(blank=True)
     source = models.URLField(blank=True)
     origin = models.URLField(blank=True)
     description = models.CharField(max_length=200, blank=True)
@@ -51,8 +51,29 @@ class CommentsSrc(models.Model):
     post_id = models.CharField(
         primary_key=True, default=uuid.uuid4, max_length=100)
     type = models.CharField(max_length=8, default='comments', editable=False)
-    page = models.IntegerField(default=1, editable=False)
-    size = models.IntegerField(default=5, editable=False)
+    page = models.IntegerField(default=1)
+    size = models.IntegerField(default=5)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     comments = models.ManyToManyField(
-        Comment, related_name='comments', blank=True)
+        'Comment', related_name='comments', blank=True)
+
+
+class Comment(models.Model):
+    post_id = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="comment_in_post")
+    comment_id = models.CharField(
+        primary_key=True, default=uuid.uuid4, max_length=100)
+    id = models.URLField(blank=True)
+    type = models.CharField(max_length=7, default='comment', editable=False)
+    author = models.ForeignKey(
+        Author, on_delete=models.DO_NOTHING, related_name="comments_owner")
+    comment = models.CharField(max_length=200, blank=True)
+
+    class ContentType(models.TextChoices):
+        common_mark = 'text/markdown'
+        utf8 = 'text/plain'
+    contentType = models.CharField(
+        max_length=13,
+        choices=ContentType.choices
+    )
+    published = models.DateTimeField(default=timezone.now)

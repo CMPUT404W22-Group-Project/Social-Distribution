@@ -13,10 +13,18 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = "__all__"
+        fields = ['type', 'title', 'id', 'source', 'origin', 'description', 'contentType', 'content', 'author',
+                  'categories', 'count', 'comment', 'commentsSrc', 'published', 'visibility', 'unlisted']
 
 
 class CommentsSrcSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommentsSrc
-        fields = "__all__"
+        fields = ['type', 'page', 'size', 'post', 'comments']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['type', 'author', 'comment',
+                  'contentType', 'published', 'id']
