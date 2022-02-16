@@ -1,0 +1,25 @@
+{
+  "name": "social-distribution",
+  "version": "1.0.0",
+  "description": "CMPUT 404 Group Project - Social Distribution",
+  "main": "index.js",
+  "scripts": {
+    "install":"npm install --prefix backend && npm install --prefix frontend",
+    "frontend":"npm start --prefix frontend",
+    "backend":"npm run watch --prefix backend",
+    "watch": "npm run frontend & npm run backend",
+    "depoly":"npm run build --prefix frontend&& npm start --prefix backend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CMPUT404W22-Group-Project/Social-Distribution.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CMPUT404W22-Group-Project/Social-Distribution/issues"
+  },
+  "homepage": "https://github.com/CMPUT404W22-Group-Project/Social-Distribution#readme"
+}
