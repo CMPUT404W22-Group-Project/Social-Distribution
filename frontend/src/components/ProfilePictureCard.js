@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardHeader from '@mui/material/CardHeader';
@@ -10,6 +11,15 @@ import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const ProfilePictureCard = ({ props }) => {
+  ProfilePictureCard.propTypes = {
+    props:PropTypes.any,
+    displayName: PropTypes.any,
+    profileImage: PropTypes.any,
+    id: PropTypes.any,
+    github: PropTypes.any,
+    type: PropTypes.any,
+    url: PropTypes.any,
+  };
   const [anchorEl, setAnchorEl] = useState(null);
   const [requestSent, setRequestSent] = useState(false);
   const handleClick = (event) => {
