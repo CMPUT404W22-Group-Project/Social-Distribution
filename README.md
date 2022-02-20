@@ -15,10 +15,6 @@ Zezhou Xiong
 * GitHub: Andyxzz2 
 * CCID: zezhou
 
-Jackie Hu 
-* GitHub: Jackie-Who 
-* CCID: yhu2
-
 Aaron Zhang 
 * GitHub: aaronz1999 
 * CCID: bolun1
