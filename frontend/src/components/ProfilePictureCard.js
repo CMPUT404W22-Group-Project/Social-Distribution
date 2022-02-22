@@ -12,7 +12,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 
 const ProfilePictureCard = ({ props }) => {
   ProfilePictureCard.propTypes = {
-    props:PropTypes.any,
+    props: PropTypes.object,
     displayName: PropTypes.any,
     profileImage: PropTypes.any,
     id: PropTypes.any,
