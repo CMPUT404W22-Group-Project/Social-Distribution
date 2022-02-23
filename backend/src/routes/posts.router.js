@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import * as postController from '../controllers/posts.controller';
+import * as postController from '../controllers/posts.controller.js';
 
-const postsRouter = Router();
+const router = Router();
 
-postsRouter.get('/', postController.httpGetAllPost);
+router.get('/service/authors/:authorId/posts', postController.httpGetAllPost);
 
-export default postsRouter;
+export { router };
