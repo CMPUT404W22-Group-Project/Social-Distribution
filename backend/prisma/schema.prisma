@@ -10,6 +10,7 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+// Store authors
 model Author {
     id           String    @id @default(cuid())
     displayName  String
@@ -20,6 +21,7 @@ model Author {
     Likes        Likes[]
 }
 
+// Store posts. Each post has a primary key, and references a foreign key author id
 model Post {
     id          String    @id @default(cuid())
     author      Author    @relation(fields: [authorId], references: [id])
@@ -41,6 +43,7 @@ model Post {
     Likes       Likes[]
 }
 
+// Store comments. Each comment has a primary key, and references a foreign keys author id and post id
 model Comment {
     id          String   @id @default(cuid())
     author      Author   @relation(fields: [authorId], references: [id])
@@ -52,7 +55,7 @@ model Comment {
     published   DateTime
 }
 
-// Store number of likes for a post
+// Store likes. Primary key is a combined author id and post id foreign key
 model Likes {
     postId   String
     authorId String
