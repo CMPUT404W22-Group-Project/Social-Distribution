@@ -69,10 +69,10 @@ function getAllPostByAuthor(){
  
         "unlisted":false
    
-    }
-    return post
+    };
+    return post;
 }
 
-module.exports={
+export default{
     getAllPostByAuthor
-}
+};
