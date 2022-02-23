@@ -1,10 +1,6 @@
-import { getAllPostByAuthor } from '../models/posts.model';
+import getAllPostByAuthor from '../models/posts.model.js';
 
-async function httpGetAllPost(req, res) {
+export async function httpGetAllPost(req, res) {
     const posts = await getAllPostByAuthor();
     return res.status(200).json(posts);
 }
-
-export default {
-    httpGetAllPost
-};
