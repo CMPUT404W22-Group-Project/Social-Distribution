@@ -1,6 +1,9 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import PostForm from './components/PostForm';
 import ProfilePictureCard from './components/ProfilePictureCard';
 import PostItem from './components/PostItem';
+import Header from './components/Header';
 const mockAuthor = {
   type: 'author',
   id: 'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
@@ -86,8 +89,15 @@ const mockPost = {
 function App() {
   return (
     <>
-      <ProfilePictureCard props={mockAuthor} />
-      <PostItem props={mockPost} />
+      <Header />
+      <Routes>
+        <Route path="/posts/:post_id" element={<PostItem props={mockPost} />} />
+        <Route
+          path="/profile"
+          element={<ProfilePictureCard props={mockAuthor} />}
+        />
+        <Route path="/post/new" element={<PostForm />} />
+      </Routes>
     </>
   );
 }

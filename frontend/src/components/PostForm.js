@@ -19,7 +19,7 @@ const PostForm = () => {
     contentType: 'text/plain',
     content: '',
     image: '',
-    categories: ['web', 'class'],
+    categories: [],
     visibility: '',
     unlisted: false,
   });

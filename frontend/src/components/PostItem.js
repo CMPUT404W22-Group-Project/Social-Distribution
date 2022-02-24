@@ -199,6 +199,7 @@ const PostItem = ({ props }) => {
         <IconButton aria-label="add to favorites">
           <FavoriteIcon />
         </IconButton>
+        <Typography variant="body1">{}</Typography>
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
