@@ -44,7 +44,36 @@ export async function httpGetOnePost(req, res) {
     return res.status(200).json(response);
 }
 
-export async function putPost(req, res){
+export async function httpPutPost(req, res){
+    const post =req.body;
+    if (
+        !post.author ||
+        !post.authorId ||
+        !post.title ||
+        !post.content ||
+        !post.visibility
+    ){
+        return res.status(400).json({
+            error: 'Missing required property',
+          });
+    }
+    
+    const newPost = await postService.postPost(post);
+    return res.status(201).json(newPost);
+}
+
+export async function httpDeletePost(req, res){
+    id = req.id;
+    if (!id){
+        return res.status(400).json({
+            error: 'Missing required property',
+          });
+    }
+    const deletedPost = await postService.deletePost(id);
+    return res.status(204).json(deletePost);
+}
+
+export async function httpUpdatePost(req, res){
     post =req.body;
     if (
         !post.author ||
@@ -57,12 +86,6 @@ export async function putPost(req, res){
             error: 'Missing required property',
           });
     }
-    //post.published = current date
-    //post.count = post.content.length
-    const newPost = await postService.postPost(post);
+    const newPost = await postService.updatePost(post);
     return res.status(201).json(newPost);
 }
-
-//export async function update(req, res){
-
-//}
