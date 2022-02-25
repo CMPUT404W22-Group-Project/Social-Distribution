@@ -101,5 +101,10 @@ function App() {
     </>
   );
 }
+// const mapStateToProps = (state) => ({
+//   isSignedIn: state.auth.isSignedIn,
+//   author: state.auth.author,
+// });
 
+// export default connect(mapStateToProps)(App);
 export default App;
