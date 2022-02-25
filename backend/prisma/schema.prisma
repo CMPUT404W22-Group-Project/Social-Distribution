@@ -16,7 +16,7 @@ model Author {
     displayName  String
     github       String?
     profileImage String?
-    Post         Post[]
+    Post         Post[]    
     Comment      Comment[]
     Likes        Likes[]
 }
