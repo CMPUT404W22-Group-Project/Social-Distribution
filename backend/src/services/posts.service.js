@@ -45,7 +45,7 @@ export async function postPost(post){
           likeCount: post.likeCount,
           
         },
-      })
+      });
     
 }
 
@@ -70,7 +70,7 @@ export async function updatePost(post){
           unlisted: post.unlisted,
           likeCount: post.likeCount,
         },
-      })
+      });
 }
 
 export async function deletePost(id){
@@ -78,6 +78,6 @@ export async function deletePost(id){
     where: {
       id: id,
     },
-  })
+  });
 }
 
