@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
@@ -10,11 +11,28 @@ import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 const PostForm = () => {
+  PostForm.propTypes = {
+    props: PropTypes.object,
+    id: PropTypes.string,
+    source: PropTypes.string,
+    origin: PropTypes.string,
+    author: PropTypes.object,
+    title: PropTypes.string,
+    published: PropTypes.string,
+    description: PropTypes.string,
+    categories: PropTypes.arrayOf(PropTypes.string),
+    visibility: PropTypes.string,
+    unlisted: PropTypes.bool,
+    contentType: PropTypes.string,
+    content: PropTypes.string,
+    image: PropTypes.string,
+    commentsSrc: PropTypes.object,
+  };
   const [category, setCategory] = useState('');
   const [post, setPost] = useState({
     title: '',
     source: '',
-    orgin: '',
+    origin: '',
     description: '',
     contentType: 'text/plain',
     content: '',

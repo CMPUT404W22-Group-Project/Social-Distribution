@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import ReactMarkdown from 'react-markdown';
 import moment from 'moment';
 import { styled } from '@mui/material/styles';
 import { red } from '@mui/material/colors';
@@ -27,6 +28,7 @@ import Comments from './Comments';
 const PostItem = ({ props }) => {
   PostItem.propTypes = {
     props: PropTypes.object,
+    id: PropTypes.string,
     source: PropTypes.string,
     origin: PropTypes.string,
     author: PropTypes.object,
@@ -34,6 +36,8 @@ const PostItem = ({ props }) => {
     published: PropTypes.string,
     description: PropTypes.string,
     categories: PropTypes.arrayOf(PropTypes.string),
+    visibility: PropTypes.string,
+    unlisted: PropTypes.bool,
     contentType: PropTypes.string,
     content: PropTypes.string,
     commentsSrc: PropTypes.object,
@@ -63,7 +67,7 @@ const PostItem = ({ props }) => {
               key={index}
               underline="hover"
               color="inherit"
-              href={`/post?category=${category}`}
+              href={`/?category=${category}`}
             >
               {category}
             </Link>
@@ -74,21 +78,43 @@ const PostItem = ({ props }) => {
   };
   //content
   const renderContent = () => {
-    if (props.contentType.includes('text')) {
-      return (
-        <Typography variant="body1" color="text.secondary">
-          {props.content}
-        </Typography>
-      );
-    } else if (props.contentType.includes('image')) {
-      return (
-        <CardMedia
-          component="img"
-          height="194"
-          image="https://i.imgur.com/k7XVwpB.jpeg"
-          alt="Paella dish"
-        />
-      );
+    switch (props.contentType) {
+      case 'text/plain':
+        return (
+          <Typography variant="body1" color="text.secondary">
+            {props.content}
+          </Typography>
+        );
+      case 'text/markdown':
+        return (
+          <Typography variant="body1" color="text.secondary">
+            <ReactMarkdown>{props.content}</ReactMarkdown>
+          </Typography>
+        );
+      case 'application/base64':
+        var decodeContent = atob(props.content);
+        return (
+          <Typography variant="body1" color="text.secondary">
+            {decodeContent}
+          </Typography>
+        );
+      case 'image/png;base64':
+        return (
+          <CardMedia
+            component="img"
+            image={`data:image/png;base64,${props.content}`}
+            alt={`${props.id}.png`}
+            sx={{ maxWidth: 1 / 2, maxHeight: 1 / 2 }}
+          />
+        );
+      case 'image/jpeg;base64':
+        return (
+          <CardMedia
+            component="img"
+            image={`data:image/jpeg;base64,${props.content}`}
+            alt={`${props.id}.jepg`}
+          />
+        );
     }
   };
   //delete button
