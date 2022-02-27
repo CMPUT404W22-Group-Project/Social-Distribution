@@ -102,7 +102,7 @@ const PostItem = ({ props }) => {
         return (
           <CardMedia
             component="img"
-            image={`data:image/png;base64,${props.content}`}
+            image={props.content}
             alt={`${props.id}.png`}
             sx={{ maxWidth: 1 / 2, maxHeight: 1 / 2 }}
           />
@@ -111,8 +111,9 @@ const PostItem = ({ props }) => {
         return (
           <CardMedia
             component="img"
-            image={`data:image/jpeg;base64,${props.content}`}
+            image={props.content}
             alt={`${props.id}.jepg`}
+            sx={{ maxWidth: 1 / 2, maxHeight: 1 / 2 }}
           />
         );
     }

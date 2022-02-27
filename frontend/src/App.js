@@ -22,7 +22,7 @@ const mockPost = {
   origin: 'http://whereitcamefrom.com/posts/zzzzz',
   description: 'This post discusses stuff -- brief',
   contentType: 'text/markdown',
-  content: '1. First item\n2. Second item\n3. Third item\n4. Fourth item',
+  content: '[link](https://www.example.com/my great page)',
 
   author: {
     type: 'author',
