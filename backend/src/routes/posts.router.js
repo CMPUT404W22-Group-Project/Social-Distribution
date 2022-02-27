@@ -3,11 +3,11 @@ import * as postController from "../controllers/posts.controller.js";
 
 const router = Router();
 
-router.get('/service/authors/:authorid/posts/', postController.httpGetAllPosts);
-router.get('/service/authors/:authorid/posts/:id', postController.httpGetOnePost);
+router.get('/service/authors/:authorId/posts/', postController.getAllPosts);
+router.get('/service/authors/:authorId/posts/:id', postController.getOnePost);
 
-router.put('/service/authors/:authorid/posts/:id', postController.httpPutPost);
-router.delete('/service/authors/:authorid/posts/:id', postController.httpDeletePost);
-router.post('/service/authors/:authorid/posts/:id', postController.httpUpdatePost);
-router.post('/service/authors/:authorid/posts/', postController.httpUpdatePost);
+router.put('/service/authors/:authorId/posts/:id', postController.putPost);
+router.delete('/service/authors/:authorId/posts/:id', postController.deletePost);
+router.post('/service/authors/:authorId/posts/:id', postController.updatePost);
+router.post('/service/authors/:authorId/posts/', postController.newPost);
 export { router };

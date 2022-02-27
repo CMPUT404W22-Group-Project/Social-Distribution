@@ -1,7 +1,12 @@
 import { authorService } from "../services/index.service.js";
 
+/**
+ * Get all the authors of a given host
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @returns JSON with all authors on a host
+ */
 export async function getAllAuthors(req, res) {
-    console.log(req.query);
     const authors = await authorService.getAuthors({ page: parseInt(req.query.page), size: parseInt(req.query.size) });
     const host = `${req.protocol}://${req.get('host')}`;
 
@@ -19,8 +24,13 @@ export async function getAllAuthors(req, res) {
     return res.status(200).json(response);
 }
 
+/**
+ * Get information of one author (Using author id)
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @returns JSON of one author
+ */
 export async function getOneAuthor(req, res) {
-    console.log(req.params.id);
     const author = await authorService.getAuthors({ id: req.params.id });
     const host = `${req.protocol}://${req.get('host')}`;
 
@@ -30,7 +40,7 @@ export async function getOneAuthor(req, res) {
 
     const response = {
         "type": "author",
-        author
+        ...author
     };
     return res.status(200).json(response);
 }
