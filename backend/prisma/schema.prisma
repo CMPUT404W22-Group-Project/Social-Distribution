@@ -32,7 +32,6 @@ model Post {
     description String
     contentType String // [text/plain, text/markdown, application/base64, image/png;base64, image/jpeg;base64]
     content     String?
-    image       String?
     categories  String[]
     count       Int
     published   DateTime
