@@ -4,6 +4,8 @@ import PostForm from './components/PostForm';
 import ProfilePictureCard from './components/ProfilePictureCard';
 import PostItem from './components/PostItem';
 import Header from './components/Header';
+
+import Login from './containers/Login/Login';
 const mockAuthor = {
   type: 'author',
   id: 'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
@@ -91,6 +93,7 @@ function App() {
     <>
       <Header />
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route path="/posts/:post_id" element={<PostItem props={mockPost} />} />
         <Route
           path="/profile"
@@ -101,5 +104,10 @@ function App() {
     </>
   );
 }
+// const mapStateToProps = (state) => ({
+//   isSignedIn: state.auth.isSignedIn,
+//   author: state.auth.author,
+// });
 
+// export default connect(mapStateToProps)(App);
 export default App;
