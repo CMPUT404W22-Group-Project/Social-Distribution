@@ -5,6 +5,7 @@ import ProfilePictureCard from './components/ProfilePictureCard';
 import PostItem from './components/PostItem';
 import Header from './components/Header';
 import Profile from './containers/Profile/Profile';
+import ProfileEdit from './containers/Profile/ProfileEdit';
 import Login from './containers/Login/Login';
 const mockAuthor = {
   type: 'author',
@@ -95,6 +96,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/authors/:authorId" element={<Profile />} />
+        <Route path="/authors/:authorId/edit" element={<ProfileEdit />} />
         <Route path="/posts/:post_id" element={<PostItem props={mockPost} />} />
         <Route
           path="/profile"
