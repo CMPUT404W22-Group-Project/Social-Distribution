@@ -8,7 +8,7 @@ import cuid from "cuid";
  * @returns All the posts of an author
  */
 export async function getAllPosts(req, res) {
-    const posts = await postService.getPosts({ authorId: parseInt(req.params.authorId), page: parseInt(req.query.page), size: parseInt(req.query.size) });
+    const posts = await postService.getPosts({ authorId: req.params.authorId, page: parseInt(req.query.page), size: parseInt(req.query.size) });
     const host = `${req.protocol}://${req.get('host')}`;
     const author = await authorService.getAuthors({ id: req.params.authorId });
     if (!author) {
