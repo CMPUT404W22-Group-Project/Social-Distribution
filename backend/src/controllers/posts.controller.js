@@ -7,24 +7,24 @@ import cuid from 'cuid';
  * @returns All the posts of an author
  */
 export async function getAllPublicPosts(req, res) {
-  const posts = await postService.getPublicPosts();
-  const host = `${req.protocol}://${req.get('host')}`;
-  const author = await authorService.getAuthors({ id: req.params.authorId });
+    const posts = await postService.getPublicPosts();
+    const host = `${req.protocol}://${req.get('host')}`;
+    const author = await authorService.getAuthors({ id: req.params.authorId });
 
-  posts.forEach((post) => {
-    post.type = 'post';
-    post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-    post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
-    post.host = `${host}/`;
-    post.author = { type: 'author', ...author };
-  });
+    posts.forEach((post) => {
+        post.type = 'post';
+        post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
+        post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+        post.host = `${host}/`;
+        post.author = { type: 'author', ...author };
+    });
 
-  const response = {
-    type: 'posts',
-    items: posts,
-  };
+    const response = {
+        type: 'posts',
+        items: posts,
+    };
 
-  return res.status(200).json(response);
+    return res.status(200).json(response);
 }
 /**
  * Get all posts of a given author
@@ -33,31 +33,27 @@ export async function getAllPublicPosts(req, res) {
  * @returns All the posts of an author
  */
 export async function getAllPosts(req, res) {
-  const posts = await postService.getPosts({
-    authorId: parseInt(req.params.authorId),
-    page: parseInt(req.query.page),
-    size: parseInt(req.query.size),
-  });
-  const host = `${req.protocol}://${req.get('host')}`;
-  const author = await authorService.getAuthors({ id: req.params.authorId });
-  if (!author) {
-    return res.status(404).json({ error: 'Author Not Found' });
-  }
+    const posts = await postService.getPosts({ authorId: req.params.authorId, page: parseInt(req.query.page), size: parseInt(req.query.size) });
+    const host = `${req.protocol}://${req.get('host')}`;
+    const author = await authorService.getAuthors({ id: req.params.authorId });
+    if (!author) {
+        return res.status(404).json({ error: "Author Not Found" });
+    }
 
-  posts.forEach((post) => {
-    post.type = 'post';
-    post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-    post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
-    post.host = `${host}/`;
-    post.author = { type: 'author', ...author };
-  });
+    posts.forEach(post => {
+        post.type = "post";
+        post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
+        post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+        post.host = `${host}/`;
+        post.author = { type: "author", ...author };
+    });
 
-  const response = {
-    type: 'posts',
-    items: posts,
-  };
+    const response = {
+        "type": "posts",
+        "items": posts
+    };
 
-  return res.status(200).json(response);
+    return res.status(200).json(response);
 }
 
 /**
@@ -67,28 +63,28 @@ export async function getAllPosts(req, res) {
  * @returns The post information requested
  */
 export async function getOnePost(req, res) {
-  const post = await postService.getPosts({ id: req.params.id });
-  const host = `${req.protocol}://${req.get('host')}`;
-  if (!post) {
-    return res.status(404).json({ error: 'Post Not Found' });
-  }
+    const post = await postService.getPosts({ id: req.params.id });
+    const host = `${req.protocol}://${req.get('host')}`;
+    if (!post) {
+        return res.status(404).json({ error: 'Post Not Found' });
+    }
 
-  const author = await authorService.getAuthors({ id: post.authorId });
-  if (!author) {
-    return res.status(404).json({ error: 'Author Not Found' });
-  }
+    const author = await authorService.getAuthors({ id: post.authorId });
+    if (!author) {
+        return res.status(404).json({ error: 'Author Not Found' });
+    }
 
-  post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-  post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
-  post.host = `${host}/`;
+    post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
+    post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+    post.host = `${host}/`;
 
-  const response = {
-    type: 'post',
-    ...post,
-    author,
-  };
+    const response = {
+        type: 'post',
+        ...post,
+        author,
+    };
 
-  return res.status(200).json(response);
+    return res.status(200).json(response);
 }
 
 /**
@@ -98,14 +94,15 @@ export async function getOnePost(req, res) {
  * @returns New post
  */
 export async function putPost(req, res) {
-  const post = req.body;
-  post.id = req.params.id;
+    const post = req.body;
+    post.id = req.params.id;
+    post.published = new Date();
 
-  if (!validPost(post))
-    return res.status(400).json({ error: 'Missing required property' });
+    if (!validPost(post))
+        return res.status(400).json({ error: 'Missing required property' });
 
-  const newPost = await postService.putPost(post);
-  return res.status(201).json(newPost);
+    const newPost = await postService.putPost(post);
+    return res.status(201).json(newPost);
 }
 
 /**
@@ -115,12 +112,12 @@ export async function putPost(req, res) {
  * @returns Deleted post
  */
 export async function deletePost(req, res) {
-  const id = req.params.id;
-  if (!id) {
-    return res.status(400).json({ error: 'Missing required property' });
-  }
-  const deletedPost = await postService.deletePost(id);
-  return res.status(204).json({ message: 'deleted' });
+    const id = req.params.id;
+    if (!id) {
+        return res.status(400).json({ error: 'Missing required property' });
+    }
+    await postService.deletePost(id);
+    return res.status(204);
 }
 
 /**
@@ -130,15 +127,15 @@ export async function deletePost(req, res) {
  * @returns Updated post
  */
 export async function updatePost(req, res) {
-  const post = req.body;
-  post.id = req.params.id;
+    const post = req.body;
+    post.id = req.params.id;
 
-  if (!validPost(post)) {
-    return res.status(400).json({ error: 'Missing required property' });
-  }
+    if (!validPost(post)) {
+        return res.status(400).json({ error: 'Missing required property' });
+    }
 
-  const updatedPost = await postService.updatePost(post);
-  return res.status(200).json(updatedPost);
+    const updatedPost = await postService.updatePost(post);
+    return res.status(200).json(updatedPost);
 }
 
 /**
@@ -148,14 +145,14 @@ export async function updatePost(req, res) {
  * @returns New post
  */
 export async function newPost(req, res) {
-  const post = req.body;
-  post.id = cuid();
-  if (!validPost(post)) {
-    return res.status(400).json({ error: 'Missing required property' });
-  }
+    const post = req.body;
+    post.id = cuid();
+    post.published = new Date();
 
-  const newPost = await postService.newPost(post);
-  return res.status(201).json(newPost);
+    if (!validPost(post)) return res.status(400).json({ error: 'Missing required property' });
+
+    const newPost = await postService.newPost(post);
+    return res.status(201).json(newPost);
 }
 
 /**
@@ -164,19 +161,19 @@ export async function newPost(req, res) {
  * @returns Boolean
  */
 function validPost(post) {
-  if (
-    !post.id ||
-    !post.authorId ||
-    !post.title ||
-    !post.source ||
-    !post.origin ||
-    !post.description ||
-    !post.contentType ||
-    !post.published ||
-    !post.visibility ||
-    post.unlisted === undefined
-  ) {
-    return false;
-  }
-  return true;
+    if (
+        !post.id ||
+        !post.authorId ||
+        !post.title ||
+        !post.source ||
+        !post.origin ||
+        !post.description ||
+        !post.contentType ||
+        !post.published ||
+        !post.visibility ||
+        post.unlisted === undefined
+    ) {
+        return false;
+    }
+    return true;
 }
