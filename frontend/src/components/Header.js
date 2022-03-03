@@ -24,7 +24,7 @@ const Header = (props) => {
     author: PropTypes.object,
     signOut: PropTypes.func,
   };
-  const author_id = 'a1234';
+  const author_id = props.author ? props.author.id : null;
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 

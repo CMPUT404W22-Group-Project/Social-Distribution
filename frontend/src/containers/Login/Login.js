@@ -20,7 +20,7 @@ const Login = (props) => {
   const handleSignIn = () => {
     const mockAuthor = {
       type: 'author',
-      id: 'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
+      id: '1d698d25ff008f7538453c120f581471',
       url: 'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
       host: 'http://127.0.0.1:5454/',
       displayName: 'Greg Johnson',
