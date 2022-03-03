@@ -71,6 +71,7 @@ export async function getOnePost(req, res) {
 export async function putPost(req, res) {
     const post = req.body;
     post.id = req.params.id;
+    post.published = new Date();
 
     if (!cuid.isCuid(req.params.id)) return res.status(400).json({ error: "Invalid post id" });
     if (!validPost(post)) return res.status(400).json({ error: 'Missing required property' });
@@ -121,6 +122,8 @@ export async function updatePost(req, res) {
 export async function newPost(req, res) {
     const post = req.body;
     post.id = cuid();
+    post.published = new Date();
+    
     if (!validPost(post)) return res.status(400).json({ error: 'Missing required property' });
 
     const newPost = await postService.newPost(post);
