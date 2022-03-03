@@ -31,6 +31,11 @@ export async function getPosts(options) {
   return await prisma.post.findMany();
 }
 
+/**
+ * Get all public posts
+ * @returns Posts
+ */
+
 export async function getPublicPosts() {
   return await prisma.post.findMany({
     where: {
