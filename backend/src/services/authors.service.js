@@ -51,5 +51,5 @@ export async function newAuthor(author){
             Comment:author.Comment,
             Likes:author.Comment
         }
-    })
+    });
 }
