@@ -22,3 +22,27 @@ export async function getAuthors(options) {
 
     return await prisma.author.findMany();
 }
+
+export async function newAuthor(author){
+    return await prisma.author.upsert({
+        where:{
+            id:author.id,
+        },
+        update:{
+            displayName:author.displayName,
+            github:author.github,
+            profileImage:author.profileImage,
+            Post:author.Post,
+            Comment:author.Comment,
+            Likes:author.Comment
+        },
+        create:{
+            displayName:author.displayName,
+            github:author.github,
+            profileImage:author.profileImage,
+            Post:author.Post,
+            Comment:author.Comment,
+            Likes:author.Comment
+        }
+    })
+}

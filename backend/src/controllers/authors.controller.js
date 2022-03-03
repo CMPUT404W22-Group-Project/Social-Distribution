@@ -44,3 +44,24 @@ export async function getOneAuthor(req, res) {
     };
     return res.status(200).json(response);
 }
+
+export async function postAuthor(req, res){
+    const author = req.body;
+    author.id = req.params.id;
+    if (!validAuthor(author)){
+        return res.status(400).json({ error: 'Missing required property' });
+    }
+    const newAuthor = await authorService.newAuthor(author);
+    return res.status(201).json(newAuthor);
+}
+
+function validPost(author) {
+    if (!author.type ||
+        !author.id ||
+        !author.github ||
+        !author.displayName ||
+        !author.profileImage) {
+        return false;
+    }
+    return true;
+}

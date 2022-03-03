@@ -2,7 +2,11 @@ import PrismaClient from "@prisma/client";
 
 const prisma = new PrismaClient.PrismaClient();
 
-
+/**
+ * 
+ * @param {*} options 
+ * @returns 
+ */
 export async function getPosts(options){
     const {postid, commentid, page, size} = options;
 
