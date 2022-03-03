@@ -8,15 +8,20 @@ import Stack from '@mui/material/Stack';
 
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const ProfileEdit = () => {
-  let authorId = useParams();
+  let { authorId } = useParams();
   let navigate = useNavigate();
-  const [author, setAuthor] = useState({});
+  const [author, setAuthor] = useState({
+    id: '',
+    displayName: '',
+    github: '',
+    profileImage: '',
+  });
   const getAuthorById = async (authorId) => {
     try {
       const response = await axios.get(
-        `${BACKEND_URL}/service/author/${authorId}`
+        `${BACKEND_URL}/service/authors/${authorId}`
       );
-      setAuthor(response);
+      setAuthor(response.data);
     } catch (err) {
       // Handle Error Here
       console.error(err);
@@ -25,10 +30,12 @@ const ProfileEdit = () => {
   const postAuthor = async (authorId, author) => {
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/service/author/${authorId}`,
+        `${BACKEND_URL}/service/authors/${authorId}`,
         author
       );
-      return response;
+      response.status === 201
+        ? navigate(`/authors/${authorId}`)
+        : alert('Post unsucessful');
     } catch (err) {
       // Handle Error Here
       console.error(err);
@@ -41,10 +48,7 @@ const ProfileEdit = () => {
     setAuthor({ ...author, [prop]: event.target.value });
   };
   const onOkButtonClick = () => {
-    const status = postAuthor(authorId, author).status;
-    status === 201
-      ? navigate(`/authors/${authorId}`)
-      : alert('Post unsucessful');
+    postAuthor(authorId, author);
   };
   return (
     <>
