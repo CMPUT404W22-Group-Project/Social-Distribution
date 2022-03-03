@@ -23,6 +23,12 @@ export async function getAuthors(options) {
     return await prisma.author.findMany();
 }
 
+/**
+ * post a author to database, if it already
+ * exist, then update it.
+ * @param {author} author 
+ * @returns 
+ */
 export async function newAuthor(author){
     return await prisma.author.upsert({
         where:{
@@ -37,6 +43,7 @@ export async function newAuthor(author){
             Likes:author.Comment
         },
         create:{
+            id:author.id,
             displayName:author.displayName,
             github:author.github,
             profileImage:author.profileImage,
