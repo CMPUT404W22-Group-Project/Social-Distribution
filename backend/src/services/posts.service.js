@@ -1,10 +1,10 @@
-import PrismaClient from "@prisma/client";
+import PrismaClient from '@prisma/client';
 
 const prisma = new PrismaClient.PrismaClient();
 
 /**
  * Get posts with given options
- * @param {*} options 
+ * @param {*} options
  * @returns Posts
  */
 export async function getPosts(options) {
@@ -13,8 +13,8 @@ export async function getPosts(options) {
     if (id) {
         return await prisma.post.findUnique({
             where: {
-                id: id
-            }
+                id: id,
+            },
         });
     }
 
@@ -39,9 +39,22 @@ export async function getPosts(options) {
 }
 
 /**
+ * Get all public posts
+ * @returns Posts
+ */
+
+export async function getPublicPosts() {
+  return await prisma.post.findMany({
+    where: {
+      visibility: 'PUBLIC',
+    },
+  });
+}
+
+/**
  * Create a new post with a generated ID
- * @param {Post object} post 
- * @returns 
+ * @param {Post object} post
+ * @returns
  */
 export async function newPost(post) {
     return await prisma.post.create({
@@ -60,14 +73,14 @@ export async function newPost(post) {
             visibility: post.visibility,
             unlisted: post.unlisted,
             likeCount: 0,
-        }
+        },
     });
 }
 
 /**
  * Create an new post with a specified ID
- * @param {Post object} post 
- * @returns 
+ * @param {Post object} post
+ * @returns
  */
 export async function putPost(post) {
     return await prisma.post.create({
@@ -88,13 +101,12 @@ export async function putPost(post) {
             likeCount: 0,
         },
     });
-
 }
 
 /**
  * Update a post
- * @param {Post object} post 
- * @returns 
+ * @param {Post object} post
+ * @returns
  */
 export async function updatePost(post) {
     return await prisma.post.update({
@@ -119,8 +131,8 @@ export async function updatePost(post) {
 
 /**
  * Delete a post by id
- * @param {String} id 
- * @returns 
+ * @param {String} id
+ * @returns
  */
 export async function deletePost(id) {
     return await prisma.post.delete({
@@ -129,4 +141,3 @@ export async function deletePost(id) {
         },
     });
 }
-
