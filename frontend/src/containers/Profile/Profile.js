@@ -10,27 +10,18 @@ import Stack from '@mui/material/Stack';
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const Profile = () => {
   let navigate = useNavigate();
-  let authorId = useParams();
+  let { authorId } = useParams();
   const [GHActivity, setGHActivity] = useState([]);
-  const [author, setAuthor] = useState({});
-  const getAuthorById = async (authorId) => {
+  const [author, setAuthor] = useState({
+    id: '',
+    displayName: '',
+    github: '',
+    profileImage: '',
+  });
+  const getGHEvents = async (user) => {
     try {
       const response = await axios.get(
-        `${BACKEND_URL}/service/author/${authorId}`
-      );
-      setAuthor(response);
-    } catch (err) {
-      // Handle Error Here
-      console.error(err);
-    }
-  };
-  const getGHEvents = async () => {
-    const ghUserName = author.github.substring(
-      author.github.lastIndexOf('/') + 1
-    );
-    try {
-      const response = await axios.get(
-        `https://api.github.com/users/${ghUserName}/events`
+        `https://api.github.com/users/${user}/events`
       );
       setGHActivity(response.data);
     } catch (err) {
@@ -38,9 +29,23 @@ const Profile = () => {
       console.error(err);
     }
   };
+  const getAuthorById = async (authorId) => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/service/authors/${authorId}`
+      );
+      setAuthor(response.data);
+      //follow up request
+      const ghUserName = response.data.github.split('/').pop();
+      response.status === 200 ? getGHEvents(ghUserName) : null;
+    } catch (err) {
+      // Handle Error Here
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     getAuthorById(authorId);
-    getGHEvents();
   }, []);
   return (
     <>
@@ -82,7 +87,7 @@ const Profile = () => {
         {`Name:${author.displayName}`}
       </Typography>
       <Typography sx={{ ml: 10 }} variant="h4" gutterBottom component="div">
-        {`GitHub:${author.displayName}`}
+        {`GitHub:${author.github}`}
       </Typography>
       <Typography sx={{ ml: 10 }} variant="h4" gutterBottom component="div">
         GitHub Activities:
