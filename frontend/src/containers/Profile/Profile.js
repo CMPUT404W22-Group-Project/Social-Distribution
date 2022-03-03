@@ -31,9 +31,7 @@ const Profile = () => {
   };
   const getAuthorById = async (authorId) => {
     try {
-      const response = await axios.get(
-        `${BACKEND_URL}/service/authors/${authorId}`
-      );
+      const response = await axios.get(`${BACKEND_URL}/authors/${authorId}`);
       setAuthor(response.data);
       //follow up request
       const ghUserName = response.data.github.split('/').pop();

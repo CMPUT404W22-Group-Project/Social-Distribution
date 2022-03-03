@@ -18,9 +18,7 @@ const ProfileEdit = () => {
   });
   const getAuthorById = async (authorId) => {
     try {
-      const response = await axios.get(
-        `${BACKEND_URL}/service/authors/${authorId}`
-      );
+      const response = await axios.get(`${BACKEND_URL}/authors/${authorId}`);
       setAuthor(response.data);
     } catch (err) {
       // Handle Error Here
@@ -30,7 +28,7 @@ const ProfileEdit = () => {
   const postAuthor = async (authorId, author) => {
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/service/authors/${authorId}`,
+        `${BACKEND_URL}/authors/${authorId}`,
         author
       );
       response.status === 201
