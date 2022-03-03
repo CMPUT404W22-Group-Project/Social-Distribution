@@ -8,7 +8,7 @@ const prisma = new PrismaClient.PrismaClient();
  * @returns Posts
  */
 export async function getPosts(options) {
-    const { authorid, id, page, size } = options;
+    const { authorId, id, page, size } = options;
 
     if (id) {
         return await prisma.post.findUnique({
@@ -21,10 +21,10 @@ export async function getPosts(options) {
     if (page && size) {
         return await prisma.post.findMany({
             where: {
-                authorId: authorid,
-                skip: size * (page - 1),
-                take: size
-            }
+                authorId: authorId,
+            },
+            skip: size * (page - 1),
+            take: size
         });
     }
 
