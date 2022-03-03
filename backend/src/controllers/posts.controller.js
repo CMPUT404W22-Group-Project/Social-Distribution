@@ -72,7 +72,6 @@ export async function putPost(req, res) {
     const post = req.body;
     post.id = req.params.id;
 
-    if (!cuid.isCuid(req.params.id)) return res.status(400).json({ error: "Invalid post id" });
     if (!validPost(post)) return res.status(400).json({ error: 'Missing required property' });
 
     const newPost = await postService.putPost(post);
@@ -91,7 +90,7 @@ export async function deletePost(req, res) {
         return res.status(400).json({ error: 'Missing required property' });
     }
     const deletedPost = await postService.deletePost(id);
-    return res.status(204).json(deletedPost);
+    return res.status(204).json({"message":'deleted'});
 }
 
 /**
@@ -121,7 +120,10 @@ export async function updatePost(req, res) {
 export async function newPost(req, res) {
     const post = req.body;
     post.id = cuid();
-    if (!validPost(post)) return res.status(400).json({ error: 'Missing required property' });
+    if (!validPost(post)){
+
+     return res.status(400).json({ error: 'Missing required property' });
+    }
 
     const newPost = await postService.newPost(post);
     return res.status(201).json(newPost);
