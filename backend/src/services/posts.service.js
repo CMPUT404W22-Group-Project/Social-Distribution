@@ -24,11 +24,18 @@ export async function getPosts(options) {
                 authorId: authorId,
             },
             skip: size * (page - 1),
-            take: size
+            take: size,
+            orderBy: {
+                published: 'desc'
+            }
         });
     }
 
-    return await prisma.post.findMany();
+    return await prisma.post.findMany({
+        orderBy: {
+            published: 'desc'
+        }
+    });
 }
 
 /**
