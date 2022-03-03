@@ -1,25 +1,73 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import GithubActivity from '../../components/GithubActivity';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const Profile = () => {
+  let navigate = useNavigate();
+  let authorId = useParams();
   const [GHActivity, setGHActivity] = useState([]);
+  const [author, setAuthor] = useState({});
+  const getAuthorById = async (authorId) => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_URL}/service/author/${authorId}`
+      );
+      setAuthor(response);
+    } catch (err) {
+      // Handle Error Here
+      console.error(err);
+    }
+  };
   const getGHEvents = async () => {
-    const response = await axios.get(
-      'https://api.github.com/users/Codyle212/events'
+    const ghUserName = author.github.substring(
+      author.github.lastIndexOf('/') + 1
     );
-    setGHActivity(response.data);
+    try {
+      const response = await axios.get(
+        `https://api.github.com/users/${ghUserName}/events`
+      );
+      setGHActivity(response.data);
+    } catch (err) {
+      // Handle Error Here
+      console.error(err);
+    }
   };
   useEffect(() => {
+    getAuthorById(authorId);
     getGHEvents();
   }, []);
   return (
     <>
+      <Stack
+        spacing={2}
+        direction="column"
+        sx={{
+          right: 100,
+          top: 200,
+          width: 100,
+          height: 100,
+          position: 'absolute',
+        }}
+      >
+        <Button
+          variant="contained"
+          onClick={() => {
+            navigate(`/authors/${authorId}/edit`);
+          }}
+        >
+          Edit
+        </Button>
+        <Button variant="contained">Follow</Button>
+      </Stack>
       <Avatar
         alt="Profile-image"
-        src="/static/images/avatar/1.jpg"
+        src={author.profileImage}
         sx={{
           ml: 10,
           mt: 10,
@@ -28,13 +76,13 @@ const Profile = () => {
         }}
       />
       <Typography sx={{ ml: 10 }} variant="h2" gutterBottom component="div">
-        Author
+        {author.type}
       </Typography>
       <Typography sx={{ ml: 10 }} variant="h4" gutterBottom component="div">
-        Name:
+        {`Name:${author.displayName}`}
       </Typography>
       <Typography sx={{ ml: 10 }} variant="h4" gutterBottom component="div">
-        GitHub:
+        {`GitHub:${author.displayName}`}
       </Typography>
       <Typography sx={{ ml: 10 }} variant="h4" gutterBottom component="div">
         GitHub Activities:
