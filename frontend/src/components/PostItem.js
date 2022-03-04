@@ -23,9 +23,17 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import ProfilePictureCard from './ProfilePictureCard';
 import Comments from './Comments';
+import axios from 'axios';
+
+const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 const PostItem = ({ props }) => {
     let navigate = useNavigate();
@@ -51,6 +59,7 @@ const PostItem = ({ props }) => {
     //verify isOwnPost?
     const isOwnPost = props.auth.author.id === props.authorId;
     //for post menu
+    const [dialog, setDialog] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -58,6 +67,22 @@ const PostItem = ({ props }) => {
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleDeleteButtonClick = () => {
+        setDialog(true);
+    };
+    const deletePost = async () => {
+        const postId = props.url.split('/').pop();
+        const response = await axios.delete(
+            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`
+        );
+        response.status === 204
+            ? navigate(`/authors/${props.authorId}/posts/${postId}`)
+            : alert('Delete failed');
+        handleDialogClose();
+    };
+    const handleDialogClose = () => {
+        setDialog(false);
     };
     const publishedDate = moment(props.published).format(
         'MMMM Do YYYY, h:mm:ss a'
@@ -67,7 +92,7 @@ const PostItem = ({ props }) => {
         return (
             <Breadcrumbs aria-label="breadcrumb" separator="|">
                 <Typography color="text.primary">Categories</Typography>
-                {props.categories.map((category, index) => {
+                {props.categories?.map((category, index) => {
                     return (
                         <Link
                             key={index}
@@ -223,6 +248,9 @@ const PostItem = ({ props }) => {
                                         <DeleteButton
                                             sx={{ minWidth: 100 }}
                                             variant="contained"
+                                            onClick={() => {
+                                                handleDeleteButtonClick();
+                                            }}
                                         >
                                             Delete
                                         </DeleteButton>
@@ -270,6 +298,42 @@ const PostItem = ({ props }) => {
                         View Comments
                     </Button>
                 </CardActions>
+                <Dialog
+                    open={dialog}
+                    onClose={() => {
+                        handleDialogClose();
+                    }}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {' Delete '}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to delete this post?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={() => {
+                                handleDialogClose();
+                            }}
+                        >
+                            No
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                handleDialogClose();
+                                deletePost();
+                                window.location.reload();
+                            }}
+                            autoFocus
+                        >
+                            Yes
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
                         <Comments props={props.commentsSrc} />
