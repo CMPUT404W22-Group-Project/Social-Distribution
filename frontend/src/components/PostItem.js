@@ -49,6 +49,7 @@ const PostItem = ({ props }) => {
         published: PropTypes.string,
         description: PropTypes.string,
         categories: PropTypes.arrayOf(PropTypes.string),
+        likeCount: PropTypes.number,
         visibility: PropTypes.string,
         unlisted: PropTypes.bool,
         contentType: PropTypes.string,
@@ -280,6 +281,15 @@ const PostItem = ({ props }) => {
                     <IconButton aria-label="add to favorites">
                         <FavoriteIcon />
                     </IconButton>
+                    <Button
+                        onClick={() => {
+                            navigate(
+                                `/authors/${props.authorId}/posts/${postId}/likes`
+                            );
+                        }}
+                    >
+                        {props.likeCount}
+                    </Button>
                     <Typography variant="body1">{}</Typography>
                     <IconButton aria-label="share">
                         <ShareIcon />
