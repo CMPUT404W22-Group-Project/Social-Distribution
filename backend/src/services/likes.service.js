@@ -42,15 +42,12 @@ export async function postLike(like) {
 	});
 }
 
-export async function getLiked(options) {
-	const { authorid, commentid, page, size } = options;
+export async function getLiked(authorId) {
 
-	if (commentid && page && size) {
-		return await prisma.like.findMany({
+	if (authorId) {
+		return await prisma.likes.findMany({
 			where: {
-				authorId: authorid,
-				skip: size * (page - 1),
-				take: size,
+				authorId: authorId,
 			},
 		});
 	}
