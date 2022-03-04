@@ -1,4 +1,9 @@
-import { postService, authorService } from '../services/index.service.js';
+import {
+	postService,
+	authorService,
+	commentService,
+} from '../services/index.service.js';
+
 import cuid from 'cuid';
 import path from 'path';
 
@@ -9,23 +14,49 @@ import path from 'path';
  * @returns All the posts of an author
  */
 export async function getAllPublicPosts(req, res) {
-		const posts = await postService.getPublicPosts();
-		const host = `${req.protocol}://${req.get('host')}`;
 
-		for (const post of posts) {
-			const author =await authorService.getAuthors({ id: post.authorId });
-			post.type = 'post';
-			post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-			post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
-			post.host = `${host}/`;
-			post.author =  { type: 'author', ...author}; 
-		}
-		const response = {
-			type: 'posts',
-			items: posts,
+	const posts = await postService.getPublicPosts();
+	const host = `${req.protocol}://${req.get('host')}`;
+
+	for (const post of posts) {
+		const author = await authorService.getAuthors({ id: post.authorId });
+		post.type = 'post';
+		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
+		post.host = `${host}/`;
+		console.log(post.author);
+		post.author = {
+			type: 'author',
+			url: `${host}/authors/${post.authorId}`,
+			id: `${host}/authors/${post.authorId}`,
+			host: host,
+			...author,
 		};
+		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
+		//comments
+		const page = 1;
+		const size = 5;
+		const total = await commentService.getTotal(post.id);
+		const comments = await commentService.getComments({
+			postId: post.id,
+			page: page,
+			size: size,
+		});
 
-		return res.status(200).json(response);
+		post.commentsSrc = {
+			page: page,
+			size: size,
+			total: total['_count'],
+			comments: comments,
+		};
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+	}
+	const response = {
+		type: 'posts',
+		items: posts,
+	};
+
+	return res.status(200).json(response);
+
 }
 /**
  * Get all posts of a given author
@@ -45,13 +76,36 @@ export async function getAllPosts(req, res) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
 
-	posts.forEach((post) => {
+	for (const post of posts) {
 		post.type = 'post';
 		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.host = `${host}/`;
-		post.author = { type: 'author', ...author };
-	});
+		post.author = {
+			type: 'author',
+			url: `${host}/authors/${post.authorId}`,
+			host: host,
+			...author,
+		};
+		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
+		//comments
+		const page = 1;
+		const size = 5;
+		const total = await commentService.getTotal(post.id);
+		const comments = await commentService.getComments({
+			postId: post.id,
+			page: page,
+			size: size,
+		});
+
+		post.commentsSrc = {
+			page: page,
+			size: size,
+			total: total['_count'],
+			comments: comments,
+		};
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+	}
+
 
 	const response = {
 		type: 'posts',
@@ -75,14 +129,36 @@ export async function getOnePost(req, res) {
 	}
 
 	const author = await authorService.getAuthors({ id: post.authorId });
+
+	post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
-	
+	//comments
+	const page = 1;
+	const size = 5;
+	const total = await commentService.getTotal(post.id);
+	const comments = await commentService.getComments({
+		postId: post.id,
+		page: page,
+		size: size,
+	});
+
+	post.commentsSrc = {
+		page: page,
+		size: size,
+		total: total['_count'],
+		comments: comments,
+	};
 	post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-	post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 	post.host = `${host}/`;
-	post.author ={ type: 'author', ...author };
+	post.author = {
+		type: 'author',
+		url: `${host}/authors/${post.authorId}`,
+		host: host,
+		...author,
+	};
+
 	const response = {
 		type: 'post',
 		...post,
