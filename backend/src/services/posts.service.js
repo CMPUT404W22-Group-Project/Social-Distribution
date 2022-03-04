@@ -8,7 +8,6 @@ const prisma = new PrismaClient.PrismaClient();
  * @returns Posts
  */
 export async function getPosts(options) {
-
 	const { authorId, id, page, size } = options;
 	if (id) {
 		return await prisma.post.findUnique({
@@ -44,16 +43,16 @@ export async function getPosts(options) {
  */
 
 export async function getPublicPosts() {
-  return await prisma.post.findMany({
-    where: {
-      visibility: 'PUBLIC',
-      unlisted: false,
-    },
-    orderBy: {
-      published: 'desc',
-    },
-  });
-
+	return await prisma.post.findMany({
+		where: {
+			visibility: 'PUBLIC',
+			unlisted: false,
+		},
+		orderBy: {
+			published: 'desc',
+		},
+	});
+}
 
 /**
  * Create a new post with a generated ID
@@ -61,7 +60,6 @@ export async function getPublicPosts() {
  * @returns
  */
 export async function newPost(post) {
-
 	return await prisma.post.create({
 		data: {
 			id: post.id,
@@ -88,7 +86,6 @@ export async function newPost(post) {
  * @returns
  */
 export async function putPost(post) {
-
 	return await prisma.post.create({
 		data: {
 			id: post.id,
