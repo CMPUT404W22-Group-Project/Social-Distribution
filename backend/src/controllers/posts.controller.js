@@ -12,14 +12,14 @@ export async function getAllPublicPosts(req, res) {
 		const posts = await postService.getPublicPosts();
 		const host = `${req.protocol}://${req.get('host')}`;
 
-		await posts.forEach(async (post) => {
-			const author = await authorService.getAuthors({ id: post.authorId });
+		for (const post of posts) {
+			const author =await authorService.getAuthors({ id: post.authorId });
 			post.type = 'post';
 			post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
 			post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 			post.host = `${host}/`;
-			post.author = { type: 'author', ...author };
-		});
+			post.author =  { type: 'author', ...author}; 
+		}
 		const response = {
 			type: 'posts',
 			items: posts,
