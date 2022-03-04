@@ -1,11 +1,9 @@
 import { likeService } from '../services/index.service.js';
 
 export async function httpGetAllLikesOfPost(req, res) {
-	console.log(req.params.postid);
+	console.log(req.params.postId);
 	const likes = await likeService.getLikes({
-		postid: parseInt(req.params.postid),
-		page: parseInt(req.query.page),
-		size: parseInt(req.query.size),
+		postId: parseInt(req.params.postid),
 	});
 	const response = {
 		type: 'likes',
@@ -16,11 +14,9 @@ export async function httpGetAllLikesOfPost(req, res) {
 
 // TODO: Create get likes
 export async function httpGetAllLikesOfComment(req, res) {
-	console.log(req.params.commentid);
+	console.log(req.params.commentId);
 	const likes = await likeService.getLikes({
-		commentid: parseInt(req.params.commentid),
-		page: parseInt(req.query.page),
-		size: parseInt(req.query.size),
+		commentId: parseInt(req.params.commentid),
 	});
 	const response = {
 		type: 'likes',

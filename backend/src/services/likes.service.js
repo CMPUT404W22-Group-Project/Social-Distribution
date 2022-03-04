@@ -5,30 +5,26 @@ import prisma from '../../prisma/client.js';
  * @param {*} options
  * @returns
  */
-export async function getPosts(options) {
-	const { postid, commentid, page, size } = options;
+export async function getLikes(options) {
+	const { postId, commentId } = options;
 
-	if (postid && page && size) {
-		return await prisma.like.findMany({
+	if (postId) {
+		return await prisma.likes.findMany({
 			where: {
 				postId: postid,
-				skip: size * (page - 1),
-				take: size,
 			},
 		});
 	}
 
-	if (commentid && page && size) {
-		return await prisma.like.findMany({
+	if (commentId) {
+		return await prisma.likes.findMany({
 			where: {
 				commentId: commentid,
-				skip: size * (page - 1),
-				take: size,
 			},
 		});
 	}
 
-	return await prisma.like.findMany();
+	return await prisma.likes.findMany();
 }
 
 export async function postLike(like) {

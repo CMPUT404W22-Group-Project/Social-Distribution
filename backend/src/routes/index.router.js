@@ -1,5 +1,5 @@
-import { router as posts } from './posts.router.js';
 import { router as author } from './authors.router.js';
+import { router as posts } from './posts.router.js';
 import { router as comment } from './comments.router.js';
 import { router as likes } from './likes.router.js';
 
