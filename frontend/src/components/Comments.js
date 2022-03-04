@@ -95,7 +95,7 @@ const Comments = ({ props }) => {
         </DialogActions>
       </Dialog>
       <List sx={{ broder: 1, margin: 2, broderColor: 'black' }}>
-        {comments.map((comment) => {
+        {comments?.map((comment) => {
           return <CommentItem key={comment.id} props={comment}></CommentItem>;
         })}
       </List>

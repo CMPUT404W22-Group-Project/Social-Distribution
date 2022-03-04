@@ -61,7 +61,7 @@ const PostItem = ({ props }) => {
     return (
       <Breadcrumbs aria-label="breadcrumb" separator="|">
         <Typography color="text.primary">Categories</Typography>
-        {props.categories.map((category, index) => {
+        {props.categories?.map((category, index) => {
           return (
             <Link
               key={index}
@@ -112,7 +112,7 @@ const PostItem = ({ props }) => {
           <CardMedia
             component="img"
             image={props.content}
-            alt={`${props.id}.jepg`}
+            alt={`${props.id}`}
             sx={{ maxWidth: 1 / 2, maxHeight: 1 / 2 }}
           />
         );

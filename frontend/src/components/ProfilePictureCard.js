@@ -11,14 +11,15 @@ import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const ProfilePictureCard = ({ props }) => {
+  console.log(props);
   ProfilePictureCard.propTypes = {
     props: PropTypes.object,
-    displayName: PropTypes.any,
-    profileImage: PropTypes.any,
-    id: PropTypes.any,
-    github: PropTypes.any,
-    type: PropTypes.any,
-    url: PropTypes.any,
+    displayName: PropTypes.string,
+    profileImage: PropTypes.string,
+    id: PropTypes.string,
+    github: PropTypes.string,
+    type: PropTypes.string,
+    url: PropTypes.string,
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const [requestSent, setRequestSent] = useState(false);
@@ -35,7 +36,7 @@ const ProfilePictureCard = ({ props }) => {
   };
 
   const open = Boolean(anchorEl);
-  return (
+  return props ? (
     <div>
       <Avatar
         aria-owns={open ? 'mouse-over-popover' : undefined}
@@ -85,6 +86,8 @@ const ProfilePictureCard = ({ props }) => {
         </Card>
       </Popover>
     </div>
+  ) : (
+    <div>loading</div>
   );
 };
 
