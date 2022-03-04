@@ -50,7 +50,7 @@ export async function getOneAuthor(req, res) {
 
 export async function postAuthor(req, res) {
 	const author = req.body;
-	//author.id = req.params.id;
+	author.id = req.params.id;
 	if (!validAuthor(author)) {
 		return res.status(400).json({ error: 'Missing required property' });
 	}
