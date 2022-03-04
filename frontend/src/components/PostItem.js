@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -31,7 +32,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import ProfilePictureCard from './ProfilePictureCard';
 import Comments from './Comments';
-import axios from 'axios';
 
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
@@ -165,6 +165,37 @@ const PostItem = ({ props }) => {
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+
+    //like post
+    const likePost = (authorId, postId) => {
+        axios
+            .post(`${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`, {
+                authorId: authorId,
+                postId: postId,
+            })
+            .then((response) => {
+                response.status === 201
+                    ? window.location.reload()
+                    : alert('You like to this is unsucessful');
+            });
+    };
+    const [disableLiked, setDisableLiked] = useState(false);
+    const getAuthorLiked = (postId) => {
+        axios
+            .get(
+                `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}/likes`
+            )
+            .then((response) => {
+                response.data.items.map((data) => {
+                    data.authorId = props.auth.author.id
+                        ? setDisableLiked(true)
+                        : null;
+                });
+            });
+    };
+    useEffect(() => {
+        getAuthorLiked(postId);
+    }, []);
     return (
         <>
             <Card>
@@ -278,7 +309,14 @@ const PostItem = ({ props }) => {
         </Typography> */}
                 </CardContent>
                 <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
+                    <IconButton
+                        aria-label="like-this-post"
+                        onClick={() => {
+                            setDisableLiked(true);
+                            likePost(props.auth.author.id, postId);
+                        }}
+                        disabled={disableLiked ? true : null}
+                    >
                         <FavoriteIcon />
                     </IconButton>
                     <NavLink
