@@ -24,7 +24,6 @@ export async function getAllPublicPosts(req, res) {
 		post.type = 'post';
 		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.host = `${host}/`;
-		console.log(post.author);
 		post.author = {
 			type: 'author',
 			url: `${host}/authors/${post.authorId}`,
@@ -143,7 +142,7 @@ export async function getOnePost(req, res) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
 	//like
-	const likeCount = await likeService.getTotal(post.id);
+	const likeCount = await likeService.getTotal(req.params.id);
 	post.likeCount = likeCount['_count'];
 	//comments
 	const page = 1;
