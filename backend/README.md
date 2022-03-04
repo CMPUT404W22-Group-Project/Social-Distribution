@@ -10,7 +10,9 @@ ALTER USER social_dist_user WITH SUPERUSER;
 ```
 
 ## Pull Migrations
-Then run `npm run migrate:dev` to update the database with the latest schema.  Also use this command after pulling schema changes from Github.
+
+Then run `npm run migrate:dev` to update the database with the latest schema. Also use this command after pulling schema changes from Github.
 
 ## Push Migrations
+
 If you are updating the schema file, run `npx prisma migrate dev --name COMMENT ON YOUR CHANGES HERE` to create a new migration, then push the migration file to Github.
