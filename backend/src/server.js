@@ -1,7 +1,8 @@
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import router from "./routes/index.router.js";
+import router from './routes/index.router.js';
 dotenv.config();
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(fileUpload());
 router(app);
 
 //use this as the last routes, else it might interfere with other routes used for depolyment

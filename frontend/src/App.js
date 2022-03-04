@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import PostForm from './components/PostForm';
+import PostNew from './containers/Post/PostNew';
 import ProfilePictureCard from './components/ProfilePictureCard';
 import PostItem from './components/PostItem';
 import Header from './components/Header';
@@ -102,7 +102,7 @@ function App() {
           path="/profile"
           element={<ProfilePictureCard props={mockAuthor} />}
         />
-        <Route path="/post/new" element={<PostForm />} />
+        <Route path="/authors/:authorId/post/new" element={<PostNew />} />
       </Routes>
     </>
   );
