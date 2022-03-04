@@ -58,6 +58,7 @@ const PostItem = ({ props }) => {
     };
     //verify isOwnPost?
     const isOwnPost = props.auth.author.id === props.authorId;
+    const postId = props.url.split('/').pop();
     //for post menu
     const [dialog, setDialog] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -72,7 +73,6 @@ const PostItem = ({ props }) => {
         setDialog(true);
     };
     const deletePost = async () => {
-        const postId = props.url.split('/').pop();
         const response = await axios.delete(
             `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`
         );
@@ -203,9 +203,6 @@ const PostItem = ({ props }) => {
                                             sx={{ minWidth: 100 }}
                                             variant="contained"
                                             onClick={() => {
-                                                const postId = props.url
-                                                    .split('/')
-                                                    .pop();
                                                 navigate(
                                                     `/authors/${props.authorId}/posts/${postId}/edit`
                                                 );
@@ -336,7 +333,13 @@ const PostItem = ({ props }) => {
                 </Dialog>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                        <Comments props={props.commentsSrc} />
+                        <Comments
+                            props={{
+                                postId,
+                                authorId: props.authorId,
+                                ...props.commentsSrc,
+                            }}
+                        />
                     </CardContent>
                 </Collapse>
             </Card>
