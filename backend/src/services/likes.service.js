@@ -30,8 +30,8 @@ export async function getLikes(options) {
 
 /**
  * give a like json, create a like to db
- * @param {*} like 
- * @returns 
+ * @param {*} like
+ * @returns
  */
 export async function postLike(like) {
 	return await prisma.likes.create({
@@ -58,14 +58,14 @@ export async function getLiked(options) {
 
 /**
  * get a postId, get the total likes
- * @param {*} postId 
- * @returns 
+ * @param {*} postId
+ * @returns
  */
 export async function getTotal(postId) {
-    return await prisma.like.aggregate({
-        where: {
-            postId: postId,
-        },
-        _count: true,
-    });
+	return await prisma.likes.aggregate({
+		where: {
+			postId: postId,
+		},
+		_count: true,
+	});
 }

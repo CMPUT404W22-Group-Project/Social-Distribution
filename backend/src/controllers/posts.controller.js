@@ -35,7 +35,7 @@ export async function getAllPublicPosts(req, res) {
 
 		//like
 		const likeCount = await likeService.getTotal(post.id);
-		post.likeCount = likeCount;
+		post.likeCount = likeCount['_count'];
 		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
 		//comments
 		const page = 1;
@@ -93,7 +93,7 @@ export async function getAllPosts(req, res) {
 		};
 		//like
 		const likeCount = await likeService.getTotal(post.id);
-		post.likeCount = likeCount;
+		post.likeCount = likeCount['_count'];
 
 		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
 		//comments
@@ -144,7 +144,7 @@ export async function getOnePost(req, res) {
 	}
 	//like
 	const likeCount = await likeService.getTotal(post.id);
-	post.likeCount = likeCount;
+	post.likeCount = likeCount['_count'];
 	//comments
 	const page = 1;
 	const size = 5;
