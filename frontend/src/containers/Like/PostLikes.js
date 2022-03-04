@@ -10,7 +10,7 @@ const PostLikes = () => {
     const [likes, setLikes] = useState([]);
     useEffect(() => {
         getLikes(postId);
-    });
+    }, []);
     const getLikes = (postId) => {
         axios
             .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`)
