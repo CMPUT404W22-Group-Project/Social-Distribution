@@ -13,6 +13,8 @@ datasource db {
 // Store authors
 model Author {
     id           String    @id @default(cuid())
+    email        String
+    password     String
     displayName  String
     github       String?
     profileImage String?
