@@ -51,7 +51,7 @@ export async function getAllPosts(req, res) {
 		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.host = `${host}/`;
-		post.author = { type: 'author', ...author };
+		post.author = { type: 'author', ...author[0] };
 	});
 
 	const response = {
@@ -87,7 +87,7 @@ export async function getOnePost(req, res) {
 	const response = {
 		type: 'post',
 		...post,
-		author,
+		author[0],
 	};
 
 	return res.status(200).json(response);
