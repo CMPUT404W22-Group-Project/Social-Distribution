@@ -58,7 +58,7 @@ const PostItem = ({ props }) => {
     };
     //verify isOwnPost?
     const isOwnPost = props.auth.author.id === props.authorId;
-    const postId = props.url.split('/').pop();
+    const postId = props.url?.split('/').pop();
     //for post menu
     const [dialog, setDialog] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
