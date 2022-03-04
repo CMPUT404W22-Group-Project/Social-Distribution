@@ -82,6 +82,7 @@ const PostNew = () => {
         post
       );
       // upload file with the post id from response object
+      console.log(response);
       response.status === 201
         ? navigate(`/authors/${authorId}/posts`)
         : alert('Post unsucessful');
