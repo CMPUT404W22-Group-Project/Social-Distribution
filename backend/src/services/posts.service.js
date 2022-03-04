@@ -1,6 +1,4 @@
-import PrismaClient from '@prisma/client';
-
-const prisma = new PrismaClient.PrismaClient();
+import prisma from '../../prisma/client.js';
 
 /**
  * Get posts with given options
