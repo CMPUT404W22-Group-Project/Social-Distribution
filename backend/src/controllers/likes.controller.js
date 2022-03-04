@@ -1,5 +1,12 @@
 import { likeService } from '../services/index.service.js';
 
+
+/**
+ * get all like of post, given a post id
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
 export async function httpGetAllLikesOfPost(req, res) {
 	console.log(req.params.postId);
 	const likes = await likeService.getLikes({
@@ -12,7 +19,12 @@ export async function httpGetAllLikesOfPost(req, res) {
 	return res.status(200).json(response);
 }
 
-// TODO: Create get likes
+/**
+ * get all like of comment, given a comment id
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
 export async function httpGetAllLikesOfComment(req, res) {
 	console.log(req.params.commentId);
 	const likes = await likeService.getLikes({
@@ -25,6 +37,12 @@ export async function httpGetAllLikesOfComment(req, res) {
 	return res.status(200).json(response);
 }
 
+/**
+ * create a new post, given a post request
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
 export async function httpPostNewLikeToPost(req, res) {
 	const like = req.body;
 	console.log(like);
