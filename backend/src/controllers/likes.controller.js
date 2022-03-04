@@ -57,16 +57,13 @@ export async function httpPostNewLikeToPost(req, res) {
 }
 
 export async function httpGetLiked(req, res) {
+	console.log(req.params.authorId);
 	if (!req.params.authorId) {
 		return res.status(400).json({
 			error: 'Missing required property',
 		});
 	}
 
-	const liked = await likeService.getLiked({
-		authorid: parseInt(req.params.commentid),
-		page: parseInt(req.query.page),
-		size: parseInt(req.query.size),
-	});
+	const liked = await likeService.getLiked(req.params.authorId);
 	return res.status(200).json(liked);
 }
