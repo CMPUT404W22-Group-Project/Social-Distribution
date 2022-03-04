@@ -11,7 +11,7 @@ export async function getLikes(options) {
 	if (postId) {
 		return await prisma.likes.findMany({
 			where: {
-				postId: postid,
+				postId: postId,
 			},
 		});
 	}
@@ -19,7 +19,7 @@ export async function getLikes(options) {
 	if (commentId) {
 		return await prisma.likes.findMany({
 			where: {
-				commentId: commentid,
+				commentId: commentId,
 			},
 		});
 	}
@@ -28,13 +28,10 @@ export async function getLikes(options) {
 }
 
 export async function postLike(like) {
-	return await prisma.post.create({
+	return await prisma.likes.create({
 		data: {
 			postId: like.postId,
 			authorId: like.authorId,
-			Post: like.Post,
-			//Comment: like.Comment
-			Author: like.Author,
 		},
 	});
 }
@@ -51,4 +48,14 @@ export async function getLiked(options) {
 			},
 		});
 	}
+}
+
+
+export async function getTotal(postId) {
+    return await prisma.like.aggregate({
+        where: {
+            postId: postId,
+        },
+        _count: true,
+    });
 }
