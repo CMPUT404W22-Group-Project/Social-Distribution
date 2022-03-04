@@ -25,9 +25,10 @@ export async function httpGetAllLikesOfComment(req, res) {
 	return res.status(200).json(response);
 }
 
-export async function httpPostNewLike(req, res) {
+export async function httpPostNewLikeToPost(req, res) {
 	const like = req.body;
-	if (!like.postId || !like.authorId || !like.post || !like.author) {
+	console.log(like);
+	if (!like.postId || !like.authorId) {
 		return res.status(400).json({
 			error: 'Missing required property',
 		});
