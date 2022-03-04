@@ -50,7 +50,7 @@ export async function getComments(options) {
 			published: 'desc',
 		},
 	});
-
+}
 
 export async function newComment(comment) {
 	return await prisma.comment.create({
@@ -74,4 +74,4 @@ export async function getTotal(postId) {
 
 	});
 }
-}
+
