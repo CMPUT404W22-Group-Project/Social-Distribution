@@ -9,17 +9,17 @@ import path from 'path';
  * @returns All the posts of an author
  */
 export async function getAllPublicPosts(req, res) {
-  const posts = await postService.getPublicPosts();
-  const host = `${req.protocol}://${req.get('host')}`;
-  const author = await authorService.getAuthors({ id: req.params.authorId });
+    const posts = await postService.getPublicPosts();
+    const host = `${req.protocol}://${req.get('host')}`;
+    const author = await authorService.getAuthors({ id: req.params.authorId });
 
-  posts.forEach((post) => {
-    post.type = 'post';
-    post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-    post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
-    post.host = `${host}/`;
-    post.author = { type: 'author', ...author[0] };
-  });
+    posts.forEach((post) => {
+        post.type = 'post';
+        post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
+        post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+        post.host = `${host}/`;
+        post.author = { type: 'author', ...author[0] };
+    });
 
   const response = {
     type: 'posts',
