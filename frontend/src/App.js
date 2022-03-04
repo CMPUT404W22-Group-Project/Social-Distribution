@@ -4,6 +4,7 @@ import PostNew from './containers/Post/PostNew';
 import PublicPost from './containers/Post/PublicPost';
 import AuthorPost from './containers/Post/AuthorPost';
 import PostEdit from './containers/Post/PostEdit';
+import SinglePost from './containers/Post/SinglePost';
 import ProfilePictureCard from './components/ProfilePictureCard';
 import PostItem from './components/PostItem';
 import Header from './components/Header';
@@ -59,6 +60,10 @@ function App() {
                 <Route
                     path="/authors/:authorId/posts"
                     element={<AuthorPost />}
+                />
+                <Route
+                    path="/authors/:authorId/posts/:postId"
+                    element={<SinglePost />}
                 />
                 <Route
                     path="/authors/:authorId/posts/:postId/edit"

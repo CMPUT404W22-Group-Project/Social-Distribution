@@ -16,22 +16,7 @@ const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 const PostEdit = () => {
     let navigate = useNavigate();
-    const config = {
-        headers: {
-            'Access-Control-Allow-Origin': 'http://localhost:3000/',
-            'Access-Control-Allow-Credentials': 'true',
-            'Access-Control-Allow-Methods': 'GET, POST',
-            'Access-Control-Allow-Headers':
-                'Access-Control-Allow-Origin, Access-Control-Allow-Headers,X-Requested-With, Origin,Accept, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers',
-            'Content-Type': 'application/json',
-        },
-        proxy: {
-            host: 'localhost',
-            port: 8000,
-        },
-    };
     let { authorId, postId } = useParams();
-    const route = `${BACKEND_URL}/authors/${authorId}/posts/${postId}`;
     const [file, setFile] = useState('');
     const [fileName, setFileName] = useState('');
     const [category, setCategory] = useState('');
@@ -49,14 +34,16 @@ const PostEdit = () => {
     });
     //get post
     const getPost = () => {
-        console.log(route);
         axios
-            .get(route, config)
+            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`)
             .then((response) => {
-                console.log(response);
-                response.status === 200
-                    ? setPost({ ...response.data.items })
-                    : null;
+                response.status === 200 ? setPost({ ...response.data }) : null;
+                if (
+                    post.contentType === 'image/jpeg;base64' ||
+                    post.contentType === 'image/png;base64'
+                ) {
+                    setPost({ ...post, content: '' });
+                }
             })
             .catch((error) => {
                 console.log(error);
@@ -68,7 +55,12 @@ const PostEdit = () => {
     }, []);
     //reset every time contentType is changed
     useEffect(() => {
-        setPost({ ...post, content: '' });
+        if (
+            post.contentType === 'image/jpeg;base64' ||
+            post.contentType === 'image/png;base64'
+        ) {
+            setPost({ ...post, content: '' });
+        }
     }, [post.contentType]);
 
     const getBase64 = async (file) => {
@@ -83,12 +75,14 @@ const PostEdit = () => {
     };
     const editPost = async (authorId, post, file) => {
         if (
-            post.contentType === 'image/jpeg;base64' ||
-            post.contentType === 'image/png;base64'
+            (post.contentType === 'image/jpeg;base64' ||
+                post.contentType === 'image/png;base64') &&
+            file
         ) {
             try {
                 const b64String = await getBase64(file);
-                setPost({ ...post, content: b64String });
+                await setPost({ ...post, content: b64String });
+                console.log(post);
             } catch (err) {
                 alert('Something wrong with converting file');
             }
@@ -100,8 +94,7 @@ const PostEdit = () => {
                 post
             );
             // upload file with the post id from response object
-            console.log(response);
-            response.status === 201
+            response.status === 200
                 ? navigate(`/authors/${authorId}/posts/${postId}`)
                 : alert('Edit Post unsucessful');
         } catch (err) {
@@ -272,7 +265,7 @@ const PostEdit = () => {
             />
             <Breadcrumbs sx={{ my: 1 }} aria-label="breadcrumb" separator="|">
                 <Typography color="text.primary">Categories</Typography>
-                {post.categories.map((category, index) => {
+                {post.categories?.map((category, index) => {
                     return (
                         <Chip
                             key={index}
