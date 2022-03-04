@@ -11,4 +11,5 @@ router.put('/authors/:authorId/posts/:id', postController.putPost);
 router.delete('/authors/:authorId/posts/:id', postController.deletePost);
 router.post('/authors/:authorId/posts/:id', postController.updatePost);
 router.post('/authors/:authorId/posts/', postController.newPost);
+router.post('/authors/:authorId/posts/:id/image', postController.addPostImage);
 export { router };

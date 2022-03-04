@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
@@ -8,8 +10,12 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-
-const PostForm = () => {
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
+const PostNew = () => {
+  let navigate = useNavigate();
+  let { authorId } = useParams();
   // PostForm.propTypes = {
   //   props: PropTypes.object,
   //   id: PropTypes.string,
@@ -27,6 +33,8 @@ const PostForm = () => {
   //   image: PropTypes.string,
   //   commentsSrc: PropTypes.object,
   // };
+  const [file, setFile] = useState('');
+  const [fileName, setFileName] = useState('');
   const [category, setCategory] = useState('');
   const [post, setPost] = useState({
     title: '',
@@ -40,6 +48,49 @@ const PostForm = () => {
     visibility: '',
     unlisted: false,
   });
+  //reset every time contentType is changed
+  useEffect(() => {
+    setPost({ ...post, content: '' });
+  }, [post.contentType]);
+
+  const getBase64 = async (file) => {
+    let reader = new FileReader();
+    let b64String = '';
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      b64String = reader.result;
+      console.log(b64String);
+    };
+    return b64String;
+  };
+  const createPost = async (authorId, post, file) => {
+    if (
+      post.contentType === 'image/jpeg;base64' ||
+      post.contentType === 'image/png;base64'
+    ) {
+      try {
+        const b64String = await getBase64(file);
+        setPost({ ...post, content: b64String });
+      } catch (err) {
+        alert('Something wrong with converting file');
+      }
+    }
+    post.authorId = authorId;
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/authors/${authorId}/posts`,
+        post
+      );
+      // upload file with the post id from response object
+      response.status === 201
+        ? navigate(`/authors/${authorId}/posts`)
+        : alert('Post unsucessful');
+    } catch (err) {
+      // Handle Error Here
+      console.error(err);
+    }
+  };
+
   const handleChange = (prop) => (event) => {
     setPost({ ...post, [prop]: event.target.value });
   };
@@ -53,23 +104,63 @@ const PostForm = () => {
       categories: post.categories.filter((item) => item !== selectedCategory),
     });
   };
-
-  const renderContent = () => {
-    return (
-      <TextField
-        sx={{ my: 1 }}
-        required
-        fullWidth
-        id="post-content"
-        multiline
-        rows={10}
-        label="Content"
-        value={post.content}
-        onChange={handleChange('content')}
-      />
-    );
+  //on file change
+  const onFileChange = (event) => {
+    setFile(event.target.files[0]);
+    setFileName(event.target.value);
   };
-
+  const renderContent = () => {
+    if (
+      post.contentType === 'text/plain' ||
+      post.contentType === 'text/markdown' ||
+      post.contentType === 'application/base64'
+    ) {
+      return (
+        <TextField
+          sx={{ my: 1 }}
+          required
+          fullWidth
+          id="post-content"
+          multiline
+          rows={10}
+          label="Content"
+          value={post.content}
+          onChange={handleChange('content')}
+        />
+      );
+    } else if (
+      post.contentType === 'image/jpeg;base64' ||
+      post.contentType === 'image/png;base64'
+    ) {
+      return (
+        <>
+          <TextField
+            sx={{ my: 1 }}
+            required
+            fullWidth
+            id="post-image-link"
+            label="Image Link"
+            value={post.content}
+            onChange={handleChange('content')}
+          />
+          or
+          <br />
+          <TextField
+            sx={{ my: 1 }}
+            id="post-image-file"
+            type="file"
+            value={fileName}
+            onChange={() => {
+              onFileChange(event);
+            }}
+          />
+        </>
+      );
+    }
+  };
+  const onOkButtonClick = () => {
+    createPost(authorId, post, file);
+  };
   return (
     <Box
       sx={{
@@ -120,9 +211,9 @@ const PostForm = () => {
           defaultValue={false}
           labelId="select-unlist"
           id="post-select-unlist"
-          value={post.unlist}
+          value={post.unlisted}
           label="Unlist"
-          onChange={handleChange('unlist')}
+          onChange={handleChange('unlisted')}
         >
           <MenuItem value={true}>Yes</MenuItem>
           <MenuItem value={false}>No</MenuItem>
@@ -187,12 +278,30 @@ const PostForm = () => {
           <MenuItem value={'text/markdown'}>Markdown</MenuItem>
           <MenuItem value={'application/base64'}>Text Base64</MenuItem>
           <MenuItem value={'image/png;base64'}>PNG Base64</MenuItem>
-          <MenuItem value={'image/jpeg:base64'}>JPEG Base64</MenuItem>
+          <MenuItem value={'image/jpeg;base64'}>JPEG Base64</MenuItem>
         </Select>
       </FormControl>
       {renderContent()}
+      <Stack spacing={2} direction="row">
+        <Button
+          variant="contained"
+          onClick={() => {
+            onOkButtonClick();
+          }}
+        >
+          Ok
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            navigate(`/authors/${authorId}/posts`);
+          }}
+        >
+          Cancel
+        </Button>
+      </Stack>
     </Box>
   );
 };
 
-export default PostForm;
+export default PostNew;
