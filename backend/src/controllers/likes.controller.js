@@ -1,11 +1,10 @@
-import { likeService } from '../services/index.service.js';
-
+import { authorService, likeService } from '../services/index.service.js';
 
 /**
  * get all like of post, given a post id
- * @param {*} req 
- * @param {*} res 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @returns
  */
 export async function httpGetAllLikesOfPost(req, res) {
 	console.log(req.params.postId);
@@ -21,9 +20,9 @@ export async function httpGetAllLikesOfPost(req, res) {
 
 /**
  * get all like of comment, given a comment id
- * @param {*} req 
- * @param {*} res 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @returns
  */
 export async function httpGetAllLikesOfComment(req, res) {
 	console.log(req.params.commentId);
@@ -39,12 +38,13 @@ export async function httpGetAllLikesOfComment(req, res) {
 
 /**
  * create a new post, given a post request
- * @param {*} req 
- * @param {*} res 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @returns
  */
 export async function httpPostNewLikeToPost(req, res) {
 	const like = req.body;
+	const host = `${req.protocol}://${req.get('host')}`;
 	console.log(like);
 	if (!like.postId || !like.authorId) {
 		return res.status(400).json({
@@ -53,6 +53,12 @@ export async function httpPostNewLikeToPost(req, res) {
 	}
 
 	const newLike = await likeService.postLike(like);
+	const author = await authorService.getAuthors({ id: like.authorId });
+	const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
+	newLike.summary = `${author.displayName} Likes Your Post`;
+	newLike.author = author;
+	newLike.type = 'Like';
+	newLike.object = object;
 	return res.status(201).json(newLike);
 }
 

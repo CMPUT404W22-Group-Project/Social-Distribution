@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
@@ -281,15 +281,11 @@ const PostItem = ({ props }) => {
                     <IconButton aria-label="add to favorites">
                         <FavoriteIcon />
                     </IconButton>
-                    <Button
-                        onClick={() => {
-                            navigate(
-                                `/authors/${props.authorId}/posts/${postId}/likes`
-                            );
-                        }}
+                    <NavLink
+                        to={`/authors/${props.authorId}/posts/${postId}/likes`}
                     >
                         {props.likeCount}
-                    </Button>
+                    </NavLink>
                     <Typography variant="body1">{}</Typography>
                     <IconButton aria-label="share">
                         <ShareIcon />
