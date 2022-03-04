@@ -32,7 +32,7 @@ const LikeItem = ({ props }) => {
                         >
                             {`${props.author.displayName} likes `}
                             <Link href={props.object} underline="hover">
-                                {props.postId ? 'This Post' : 'This Comment'}
+                                {props.commentId ? 'This Comment' : 'This Post'}
                             </Link>
                         </Typography>
                     </>

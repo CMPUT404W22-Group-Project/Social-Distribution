@@ -7,10 +7,19 @@ import { authorService, likeService } from '../services/index.service.js';
  * @returns
  */
 export async function httpGetAllLikesOfPost(req, res) {
+	const host = `${req.protocol}://${req.get('host')}`;
 	console.log(req.params.postId);
 	const likes = await likeService.getLikes({
 		postId: parseInt(req.params.postid),
 	});
+	for (const like of likes) {
+		const author = await authorService.getAuthors({ id: like.authorId });
+		const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
+		like.summary = `${author.displayName} Likes Your Post`;
+		like.author = author;
+		like.type = 'Like';
+		like.object = object;
+	}
 	const response = {
 		type: 'likes',
 		items: likes,
@@ -63,13 +72,21 @@ export async function httpPostNewLikeToPost(req, res) {
 }
 
 export async function httpGetLiked(req, res) {
-	console.log(req.params.authorId);
+	const host = `${req.protocol}://${req.get('host')}`;
 	if (!req.params.authorId) {
 		return res.status(400).json({
 			error: 'Missing required property',
 		});
 	}
-
 	const liked = await likeService.getLiked(req.params.authorId);
+	const author = await authorService.getAuthors({ id: req.params.authorId });
+	liked.forEach((like) => {
+		const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
+		like.summary = `${author.displayName} Likes Your Post`;
+		like.type = 'Like';
+		like.object = object;
+		like.author = author;
+	});
+
 	return res.status(200).json(liked);
 }
