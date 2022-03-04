@@ -21,12 +21,12 @@ export async function getAllPublicPosts(req, res) {
         post.author = { type: 'author', ...author[0] };
     });
 
-  const response = {
-    type: 'posts',
-    items: posts,
-  };
+    const response = {
+        type: 'posts',
+        items: posts,
+    };
 
-  return res.status(200).json(response);
+    return res.status(200).json(response);
 }
 /**
  * Get all posts of a given author
