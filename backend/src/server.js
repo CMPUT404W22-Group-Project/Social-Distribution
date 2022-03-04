@@ -1,18 +1,20 @@
 import express from 'express';
+import router from './routes/index.router.js';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
-import app from './app.js';
-
+const app = express();
 const PORT = process.env.PORT || 8000;
 app.use(
 	cors({
-		origin: 'http://localhost:3000',
+		origin: '*',
 	})
 );
+
 app.use(express.json());
 app.use(fileUpload());
+router(app);
 app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT}... `);
 });

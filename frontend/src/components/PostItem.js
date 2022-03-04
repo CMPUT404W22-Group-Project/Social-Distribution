@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
@@ -27,9 +28,11 @@ import ProfilePictureCard from './ProfilePictureCard';
 import Comments from './Comments';
 
 const PostItem = ({ props }) => {
+    let navigate = useNavigate();
     PostItem.propTypes = {
         props: PropTypes.object,
         id: PropTypes.string,
+        url: PropTypes.string,
         authorId: PropTypes.string,
         source: PropTypes.string,
         origin: PropTypes.string,
@@ -174,6 +177,14 @@ const PostItem = ({ props }) => {
                                         <Button
                                             sx={{ minWidth: 100 }}
                                             variant="contained"
+                                            onClick={() => {
+                                                const postId = props.url
+                                                    .split('/')
+                                                    .pop();
+                                                navigate(
+                                                    `/authors/${props.authorId}/posts/${postId}/edit`
+                                                );
+                                            }}
                                         >
                                             Edit
                                         </Button>
