@@ -1,7 +1,8 @@
 import prisma from '../../prisma/client.js';
 
 /**
- *
+ * get likes from db
+ * options depend on post Id or comment Id
  * @param {*} options
  * @returns
  */
@@ -27,6 +28,11 @@ export async function getLikes(options) {
 	return await prisma.likes.findMany();
 }
 
+/**
+ * give a like json, create a like to db
+ * @param {*} like 
+ * @returns 
+ */
 export async function postLike(like) {
 	return await prisma.likes.create({
 		data: {
@@ -50,7 +56,11 @@ export async function getLiked(options) {
 	}
 }
 
-
+/**
+ * get a postId, get the total likes
+ * @param {*} postId 
+ * @returns 
+ */
 export async function getTotal(postId) {
     return await prisma.like.aggregate({
         where: {
