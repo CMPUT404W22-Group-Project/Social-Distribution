@@ -1,42 +1,75 @@
-import PrismaClient from "@prisma/client";
+import prisma from '../../prisma/client.js';
 
-const prisma = new PrismaClient.PrismaClient();
+export async function getComments(options) {
+	const { postId, id, page, size } = options;
 
-export async function getComments(options){
-    const {postid, id, page, size} = options;
+	if (id) {
+		return await prisma.comment.findUnique({
+			where: {
+				id: id,
+			},
+		});
+	}
 
-    if (id){
-        return await prisma.comment.findUnique({
-            where:{
-                id:id
-            }
-        });
-    }
+	if (page && size) {
+		return await prisma.comment.findMany({
+			where: {
+				postId: postId,
+			},
+			skip: size * (page - 1),
+			take: size,
+			include: {
+				author: {
+					select: {
+						displayName: true,
+						github: true,
+						profileImage: true,
+					},
+				},
+			},
+			orderBy: {
+				published: 'desc',
+			},
+		});
+	}
 
-    if (page && size){
-        return await prisma.comment.findMany({
-          where:{
-            postid: postid,
-            skip: size * (page - 1),
-            take: size
-          }
-        });
-    }
-
-    return await prisma.comment.findMany();
+	return await prisma.comment.findMany({
+		where: {
+			postId: postId,
+		},
+		include: {
+			author: {
+				select: {
+					displayName: true,
+					github: true,
+					profileImage: true,
+				},
+			},
+		},
+		orderBy: {
+			published: 'desc',
+		},
+	});
 }
 
-export async function postComment(comment){
-    return await prisma.comment.create({
-        data: {
-          author: comment.author,
-          authorId: comment.authorId,
-          post:comment.post,
-          postId:comment.postId,
-          contentType: comment.contentType,
-          comment: comment.comment,
-          published: comment.published,
-        },
-      })
-    
+export async function newComment(comment) {
+	return await prisma.comment.create({
+		data: {
+			id: comment.id,
+			authorId: comment.authorId,
+			postId: comment.postId,
+			contentType: comment.contentType,
+			comment: comment.comment,
+			published: new Date(comment.published),
+		},
+	});
+}
+
+export async function getTotal(postId) {
+	return await prisma.comment.aggregate({
+		where: {
+			postId: postId,
+		},
+		_count: true,
+	});
 }
