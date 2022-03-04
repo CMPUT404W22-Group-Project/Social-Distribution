@@ -1,9 +1,15 @@
 import { Router } from 'express';
-import * as commentController from "../controllers/comments.controller.js";
+import * as commentController from '../controllers/comments.controller.js';
 
 const router = Router();
 
-router.get('/service/authors/:authorid/posts/:postid/comments/', commentController.httpGetAllComments);
-router.post('/service/authors/:authorid/posts/:postid/comments/', commentController.httpGetAllComments);
+router.get(
+	'/authors/:authorId/posts/:postId/comments/',
+	commentController.getAllComments
+);
+router.post(
+	'/authors/:authorId/posts/:postId/comments/',
+	commentController.newComment
+);
 
 export { router };

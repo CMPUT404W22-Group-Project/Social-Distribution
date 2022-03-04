@@ -3,6 +3,7 @@ import {
 	authorService,
 	commentService,
 } from '../services/index.service.js';
+
 import cuid from 'cuid';
 import path from 'path';
 
@@ -13,6 +14,7 @@ import path from 'path';
  * @returns All the posts of an author
  */
 export async function getAllPublicPosts(req, res) {
+
 	const posts = await postService.getPublicPosts();
 	const host = `${req.protocol}://${req.get('host')}`;
 
@@ -54,6 +56,7 @@ export async function getAllPublicPosts(req, res) {
 	};
 
 	return res.status(200).json(response);
+
 }
 /**
  * Get all posts of a given author
@@ -103,6 +106,7 @@ export async function getAllPosts(req, res) {
 		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 	}
 
+
 	const response = {
 		type: 'posts',
 		items: posts,
@@ -125,6 +129,7 @@ export async function getOnePost(req, res) {
 	}
 
 	const author = await authorService.getAuthors({ id: post.authorId });
+
 	post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
@@ -153,6 +158,7 @@ export async function getOnePost(req, res) {
 		host: host,
 		...author,
 	};
+
 	const response = {
 		type: 'post',
 		...post,

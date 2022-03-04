@@ -1,2 +1,3 @@
 data
-package-lock.jaon
+package-lock.json
+/node_modules
