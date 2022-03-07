@@ -30,6 +30,7 @@ export async function getAllPublicPosts(req, res) {
 }
 /**
  * Get all posts of a given author
+ * TODO: Get public and friend posts only
  * @param {Express.Request} req
  * @param {Express.Response} res
  * @returns All the posts of an author
@@ -64,6 +65,7 @@ export async function getAllPosts(req, res) {
 
 /**
  * Get one post of a given author (using author id)
+ * TODO: Check if user is allowed to see post (public/friend, unlisted)
  * @param {Express.Request} req
  * @param {Express.Response} res
  * @returns The post information requested
@@ -100,6 +102,11 @@ export async function getOnePost(req, res) {
  * @returns New post
  */
 export async function putPost(req, res) {
+	// Check if the user is posting to their own author page
+	if (req.user.id !== req.params.authorId) {
+		return res.status(403).json({ error: 'Cannot post on this profile' });
+	}
+	
 	const post = req.body;
 	post.id = req.params.id;
 	post.authorId = req.user.id;
@@ -166,6 +173,11 @@ export async function updatePost(req, res) {
  * @returns New post
  */
 export async function newPost(req, res) {
+	// Check if the user is posting to their own author page
+	if (req.user.id !== req.params.authorId) {
+		return res.status(403).json({ error: 'Cannot post on this profile' });
+	}
+
 	const post = req.body;
 	post.authorId = req.user.id;
 	post.id = cuid();
