@@ -13,26 +13,10 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-const PostNew = () => {
+
+const PostEdit = () => {
     let navigate = useNavigate();
-    let { authorId } = useParams();
-    // PostForm.propTypes = {
-    //   props: PropTypes.object,
-    //   id: PropTypes.string,
-    //   source: PropTypes.string,
-    //   origin: PropTypes.string,
-    //   author: PropTypes.object,
-    //   title: PropTypes.string,
-    //   published: PropTypes.string,
-    //   description: PropTypes.string,
-    //   categories: PropTypes.arrayOf(PropTypes.string),
-    //   visibility: PropTypes.string,
-    //   unlisted: PropTypes.bool,
-    //   contentType: PropTypes.string,
-    //   content: PropTypes.string,
-    //   image: PropTypes.string,
-    //   commentsSrc: PropTypes.object,
-    // };
+    let { authorId, postId } = useParams();
     const [file, setFile] = useState('');
     const [fileName, setFileName] = useState('');
     const [category, setCategory] = useState('');
@@ -48,6 +32,27 @@ const PostNew = () => {
         visibility: '',
         unlisted: false,
     });
+    //get post
+    const getPost = () => {
+        axios
+            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`)
+            .then((response) => {
+                response.status === 200 ? setPost({ ...response.data }) : null;
+                if (
+                    post.contentType === 'image/jpeg;base64' ||
+                    post.contentType === 'image/png;base64'
+                ) {
+                    setPost({ ...post, content: '' });
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    //get post
+    useEffect(() => {
+        getPost();
+    }, []);
     //reset every time contentType is changed
     useEffect(() => {
         if (
@@ -64,18 +69,20 @@ const PostNew = () => {
         reader.readAsDataURL(file);
         reader.onload = function () {
             b64String = reader.result;
+            console.log(b64String);
         };
         return b64String;
     };
-    const createPost = async (authorId, post, file) => {
+    const editPost = async (authorId, post, file) => {
         if (
-            post.contentType === 'image/jpeg;base64' ||
-            post.contentType === 'image/png;base64'
+            (post.contentType === 'image/jpeg;base64' ||
+                post.contentType === 'image/png;base64') &&
+            file
         ) {
             try {
                 const b64String = await getBase64(file);
-                setPost({ ...post, content: b64String });
-                console.log(post.content);
+                await setPost({ ...post, content: b64String });
+                console.log(post);
             } catch (err) {
                 alert('Something wrong with converting file');
             }
@@ -83,14 +90,13 @@ const PostNew = () => {
         post.authorId = authorId;
         try {
             const response = await axios.post(
-                `${BACKEND_URL}/authors/${authorId}/posts`,
+                `${BACKEND_URL}/authors/${authorId}/posts/${postId}`,
                 post
             );
             // upload file with the post id from response object
-            console.log(response);
-            response.status === 201
-                ? navigate(`/authors/${authorId}/posts`)
-                : alert('Post unsucessful');
+            response.status === 200
+                ? navigate(`/authors/${authorId}/posts/${postId}`)
+                : alert('Edit Post unsucessful');
         } catch (err) {
             // Handle Error Here
             console.error(err);
@@ -167,7 +173,7 @@ const PostNew = () => {
         }
     };
     const onOkButtonClick = () => {
-        createPost(authorId, post, file);
+        editPost(authorId, post, file);
     };
     return (
         <Box
@@ -316,4 +322,4 @@ const PostNew = () => {
     );
 };
 
-export default PostNew;
+export default PostEdit;

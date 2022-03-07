@@ -1,6 +1,4 @@
-import PrismaClient from '@prisma/client';
-
-const prisma = new PrismaClient.PrismaClient();
+import prisma from '../../prisma/client.js';
 
 export async function getComments(options) {
 	const { postId, id, page, size } = options;
@@ -64,5 +62,14 @@ export async function newComment(comment) {
 			comment: comment.comment,
 			published: new Date(comment.published),
 		},
+	});
+}
+
+export async function getTotal(postId) {
+	return await prisma.comment.aggregate({
+		where: {
+			postId: postId,
+		},
+		_count: true,
 	});
 }

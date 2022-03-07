@@ -1,4 +1,10 @@
-import { postService, authorService } from '../services/index.service.js';
+import {
+	postService,
+	authorService,
+	commentService,
+	likeService,
+} from '../services/index.service.js';
+
 import cuid from 'cuid';
 import path from 'path';
 
@@ -11,16 +17,43 @@ import path from 'path';
 export async function getAllPublicPosts(req, res) {
 	const posts = await postService.getPublicPosts();
 	const host = `${req.protocol}://${req.get('host')}`;
-	const author = await authorService.getAuthors({ id: req.params.authorId });
 
-	posts.forEach((post) => {
+	for (const post of posts) {
+		//author
+		const author = await authorService.getAuthors({ id: post.authorId });
 		post.type = 'post';
 		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.host = `${host}/`;
-		post.author = { type: 'author', ...author };
-	});
+		post.author = {
+			type: 'author',
+			url: `${host}/authors/${post.authorId}`,
+			id: `${host}/authors/${post.authorId}`,
+			host: host,
+			...author,
+		};
 
+		//like
+		const likeCount = await likeService.getTotal(post.id);
+		post.likeCount = likeCount['_count'];
+		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
+		//comments
+		const page = 1;
+		const size = 5;
+		const total = await commentService.getTotal(post.id);
+		const comments = await commentService.getComments({
+			postId: post.id,
+			page: page,
+			size: size,
+		});
+
+		post.commentsSrc = {
+			page: page,
+			size: size,
+			total: total['_count'],
+			comments: comments,
+		};
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+	}
 	const response = {
 		type: 'posts',
 		items: posts,
@@ -47,13 +80,40 @@ export async function getAllPosts(req, res) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
 
-	posts.forEach((post) => {
+	for (const post of posts) {
+		//author
 		post.type = 'post';
 		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.host = `${host}/`;
-		post.author = { type: 'author', ...author };
-	});
+		post.author = {
+			type: 'author',
+			url: `${host}/authors/${post.authorId}`,
+			host: host,
+			...author,
+		};
+		//like
+		const likeCount = await likeService.getTotal(post.id);
+		post.likeCount = likeCount['_count'];
+
+		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
+		//comments
+		const page = 1;
+		const size = 5;
+		const total = await commentService.getTotal(post.id);
+		const comments = await commentService.getComments({
+			postId: post.id,
+			page: page,
+			size: size,
+		});
+
+		post.commentsSrc = {
+			page: page,
+			size: size,
+			total: total['_count'],
+			comments: comments,
+		};
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+	}
 
 	const response = {
 		type: 'posts',
@@ -78,18 +138,43 @@ export async function getOnePost(req, res) {
 	}
 
 	const author = await authorService.getAuthors({ id: post.authorId });
+
+	post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
+	//like
+	const likeCount = await likeService.getTotal(req.params.id);
+	post.likeCount = likeCount['_count'];
+	//comments
+	const page = 1;
+	const size = 5;
+	const total = await commentService.getTotal(post.id);
+	const comments = await commentService.getComments({
+		postId: post.id,
+		page: page,
+		size: size,
+	});
 
+	post.commentsSrc = {
+		page: page,
+		size: size,
+		total: total['_count'],
+		comments: comments,
+	};
 	post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-	post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
 	post.host = `${host}/`;
+	post.author = {
+		type: 'author',
+		url: `${host}/authors/${post.authorId}`,
+		host: host,
+		...author,
+	};
 
 	const response = {
 		type: 'post',
 		...post,
-		author,
+		...author,
 	};
 
 	return res.status(200).json(response);

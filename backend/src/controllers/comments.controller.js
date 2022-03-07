@@ -1,4 +1,4 @@
-import { commentService } from '../services/index.service.js';
+import { authorService, commentService } from '../services/index.service.js';
 import cuid from 'cuid';
 
 /**
@@ -57,7 +57,10 @@ export async function newComment(req, res) {
 		return res.status(400).json({ error: 'Missing required property' });
 
 	const newComment = await commentService.newComment(comment);
-	return res.status(200).json(newComment);
+	const author = await authorService.getAuthors({ id: newComment.authorId });
+	newComment.author = author;
+
+	return res.status(201).json(newComment);
 }
 
 /**

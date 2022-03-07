@@ -1,12 +1,25 @@
-import { likeService } from '../services/index.service.js';
+import { authorService, likeService } from '../services/index.service.js';
 
+/**
+ * get all like of post, given a post id
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 export async function httpGetAllLikesOfPost(req, res) {
-	console.log(req.params.postid);
+	const host = `${req.protocol}://${req.get('host')}`;
+	console.log(req.params.postId);
 	const likes = await likeService.getLikes({
-		postid: parseInt(req.params.postid),
-		page: parseInt(req.query.page),
-		size: parseInt(req.query.size),
+		postId: parseInt(req.params.postid),
 	});
+	for (const like of likes) {
+		const author = await authorService.getAuthors({ id: like.authorId });
+		const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
+		like.summary = `${author.displayName} Likes Your Post`;
+		like.author = author;
+		like.type = 'Like';
+		like.object = object;
+	}
 	const response = {
 		type: 'likes',
 		items: likes,
@@ -14,13 +27,16 @@ export async function httpGetAllLikesOfPost(req, res) {
 	return res.status(200).json(response);
 }
 
-// TODO: Create get likes
+/**
+ * get all like of comment, given a comment id
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 export async function httpGetAllLikesOfComment(req, res) {
-	console.log(req.params.commentid);
+	console.log(req.params.commentId);
 	const likes = await likeService.getLikes({
-		commentid: parseInt(req.params.commentid),
-		page: parseInt(req.query.page),
-		size: parseInt(req.query.size),
+		commentId: parseInt(req.params.commentid),
 	});
 	const response = {
 		type: 'likes',
@@ -29,29 +45,48 @@ export async function httpGetAllLikesOfComment(req, res) {
 	return res.status(200).json(response);
 }
 
-export async function httpPostNewLike(req, res) {
+/**
+ * create a new post, given a post request
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
+export async function httpPostNewLikeToPost(req, res) {
 	const like = req.body;
-	if (!like.postId || !like.authorId || !like.post || !like.author) {
+	const host = `${req.protocol}://${req.get('host')}`;
+	console.log(like);
+	if (!like.postId || !like.authorId) {
 		return res.status(400).json({
 			error: 'Missing required property',
 		});
 	}
 
 	const newLike = await likeService.postLike(like);
+	const author = await authorService.getAuthors({ id: like.authorId });
+	const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
+	newLike.summary = `${author.displayName} Likes Your Post`;
+	newLike.author = author;
+	newLike.type = 'Like';
+	newLike.object = object;
 	return res.status(201).json(newLike);
 }
 
 export async function httpGetLiked(req, res) {
+	const host = `${req.protocol}://${req.get('host')}`;
 	if (!req.params.authorId) {
 		return res.status(400).json({
 			error: 'Missing required property',
 		});
 	}
-
-	const liked = await likeService.getLiked({
-		authorid: parseInt(req.params.commentid),
-		page: parseInt(req.query.page),
-		size: parseInt(req.query.size),
+	const liked = await likeService.getLiked(req.params.authorId);
+	const author = await authorService.getAuthors({ id: req.params.authorId });
+	liked.forEach((like) => {
+		const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
+		like.summary = `${author.displayName} Likes Your Post`;
+		like.type = 'Like';
+		like.object = object;
+		like.author = author;
 	});
+
 	return res.status(200).json(liked);
 }
