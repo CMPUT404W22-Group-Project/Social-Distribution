@@ -2,8 +2,10 @@ import { router as posts } from './posts.router.js';
 import { router as author } from './authors.router.js';
 import { router as comment } from './comments.router.js';
 import { router as likes } from './likes.router.js';
+import { router as auth } from './auth.router.js';
 
 export default function (app) {
+	app.use('/', auth);
 	app.use('/', author);
 	app.use('/', posts);
 	app.use('/', comment);
