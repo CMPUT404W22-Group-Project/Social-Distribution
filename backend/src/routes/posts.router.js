@@ -4,7 +4,7 @@ import { authenticateToken } from '../auth/index.js';
 
 const router = Router();
 
-router.get('/posts',authenticateToken, postController.getAllPublicPosts);
+router.get('/posts', postController.getAllPublicPosts);
 router.get('/authors/:authorId/posts/', postController.getAllPosts);
 router.get('/authors/:authorId/posts/:id', postController.getOnePost);
 
