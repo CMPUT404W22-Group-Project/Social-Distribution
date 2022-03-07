@@ -102,6 +102,7 @@ export async function getOnePost(req, res) {
 export async function putPost(req, res) {
 	const post = req.body;
 	post.id = req.params.id;
+	post.authorId = req.user.id;
 	post.published = new Date();
 
 	if (!validPost(post))
@@ -119,9 +120,17 @@ export async function putPost(req, res) {
  */
 export async function deletePost(req, res) {
 	const id = req.params.id;
+	const authorId = req.params.authorId;
+
 	if (!id) {
 		return res.status(400).json({ error: 'Missing required property' });
 	}
+
+	// Check if the user is allowed to delete the post
+	if (authorId !== req.user.id) {
+		return res.status(403).json({ error: 'Not allowed' });
+	}
+
 	await postService.deletePost(id);
 	return res.status(204);
 }
@@ -135,6 +144,12 @@ export async function deletePost(req, res) {
 export async function updatePost(req, res) {
 	const post = req.body;
 	post.id = req.params.id;
+	const authorId = req.params.authorId;
+
+	// Check if the user is allowed to update the post
+	if (authorId !== req.user.id) {
+		return res.status(403).json({ error: 'Not allowed' });
+	}
 
 	if (!validPost(post)) {
 		return res.status(400).json({ error: 'Missing required property' });
@@ -152,6 +167,7 @@ export async function updatePost(req, res) {
  */
 export async function newPost(req, res) {
 	const post = req.body;
+	post.authorId = req.user.id;
 	post.id = cuid();
 	post.published = new Date();
 
