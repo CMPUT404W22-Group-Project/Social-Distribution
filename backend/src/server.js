@@ -2,6 +2,7 @@ import express from 'express';
 import router from './routes/index.router.js';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ app.use(
 
 app.use(express.json());
 app.use(fileUpload());
+app.use(cookieParser());
 router(app);
 app.listen(PORT, () => {
 	console.log(`Listening on port ${PORT}... `);

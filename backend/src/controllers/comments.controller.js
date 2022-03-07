@@ -40,13 +40,13 @@ export async function getAllComments(req, res) {
 
 /**
  * Create a new comment on a post
- * TODO: Use request session user to get author instead of JSON body
  * @param {Express.Request} req
  * @param {Express.Response} res
  * @returns New comment
  */
 export async function newComment(req, res) {
 	const comment = req.body;
+	comment.authorId = req.user.id;
 	comment.postId = req.params.postId;
 	comment.id = cuid();
 	comment.published = new Date();
