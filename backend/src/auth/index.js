@@ -25,11 +25,11 @@ export async function newAccessToken(email, id) {
 }
 
 /**
- * Autehnticate a user using access token cookie
+ * Authenticate a user using access token cookie
  * @param {Express.Request} req
  * @param {Express.Response} res
  * @param {Express.NextFunction} next
- * @returns
+ * @returns Next function if valid, 401 or 403 if not valid
  */
 export async function authenticateToken(req, res, next) {
 	const token = req.cookies.TOKEN;
@@ -37,7 +37,13 @@ export async function authenticateToken(req, res, next) {
 		return res.sendStatus(401);
 	}
 	try {
-		req.user = jwt.verify(token, process.env.TOKEN);
+		req.user = jwt.verify(token, process.env.JWT_SECRET);
+
+		// Check if JWT is expired
+		if (req.user.exp < Math.round(Date.now() / 1000)) {
+			return res.sendStatus(401);
+		}
+		
 		next();
 	} catch (err) {
 		return res.sendStatus(403);
