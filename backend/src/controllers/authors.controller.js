@@ -105,8 +105,7 @@ export async function newAuthor(req, res) {
 	// Hash the password and store the new user in the database
 	user.password = await argon2.hash(user.password);
 	const newUser = await authorService.newAuthor(user);
-
-	return res.status(201).json(newUser);
+	return res.status(201).json({ type: 'author', ...newUser });
 }
 
 /**

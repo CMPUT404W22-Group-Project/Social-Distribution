@@ -1,5 +1,9 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import axios from 'axios';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { signIn } from '../../actions';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -11,6 +15,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 function Copyright(props) {
     return (
@@ -32,17 +38,41 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignUp() {
+const SignUp = (props) => {
+    let navigate = useNavigate();
+    SignUp.propTypes = {
+        props: PropTypes.object,
+        signIn: PropTypes.func,
+    };
+    console.log(props);
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         // eslint-disable-next-line no-console
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        signUp(
+            data.get('email'),
+            data.get('password'),
+            data.get('displayName')
+        );
     };
-
+    const signUp = (email, password, displayName) => {
+        axios
+            .post(`${BACKEND_URL}/register`, {
+                email: email,
+                password: password,
+                displayName: displayName,
+            })
+            .then((response) => {
+                console.log(response);
+                if (response.status === 201) {
+                    props.signIn(response.data);
+                    navigate('/posts');
+                }
+            })
+            .catch((error) => {
+                alert(error.response.data.error);
+            });
+    };
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -71,7 +101,7 @@ export default function SignUp() {
                             <Grid item xs={12}>
                                 <TextField
                                     autoComplete="given-name"
-                                    name="Name"
+                                    name="displayName"
                                     required
                                     fullWidth
                                     id="displayName"
@@ -122,4 +152,10 @@ export default function SignUp() {
             </Container>
         </ThemeProvider>
     );
-}
+};
+const mapStateToProps = (state) => ({
+    isSignedIn: state.auth.isSignedIn,
+    author: state.auth.author,
+});
+
+export default connect(mapStateToProps, { signIn })(SignUp);
