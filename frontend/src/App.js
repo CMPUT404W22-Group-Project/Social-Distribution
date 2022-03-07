@@ -11,7 +11,7 @@ import Header from './components/Header';
 import Profile from './containers/Profile/Profile';
 import ProfileEdit from './containers/Profile/ProfileEdit';
 import Login from './containers/Login/Login';
-import SignUp from './containers/Login/SignUp';
+import SignUp from './containers/Login/Signup';
 import PostLikes from './containers/Like/PostLikes';
 const mockAuthor = {
     type: 'author',
