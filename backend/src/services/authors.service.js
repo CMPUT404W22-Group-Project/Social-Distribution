@@ -22,30 +22,41 @@ export async function getAuthors(options) {
 }
 
 /**
- * post a author to database, if it already
- * exist, then update it.
+ * Create an author
  * @param {Author object} author
  * @returns
  */
 export async function newAuthor(author) {
-	return await prisma.author.upsert({
-		where: {
-			id: author.id,
-		},
-		update: {
-			email: author.email != null ? author.email : undefined,
-			password: author.password != null ? author.password : undefined,
-			displayName: author.displayName != null ? author.displayName : undefined,
-			github: author.github != null ? author.github : undefined,
-			profileImage: author.profileImage != null ? author.profileImage : undefined,
-		},
-		create: {
+	return await prisma.author.create({
+		data: {
 			id: author.id, // Required
 			email: author.email, // Required
 			password: author.password, // Required
 			displayName: author.displayName != null ? author.displayName : undefined,
 			github: author.github != null ? author.github : undefined,
-			profileImage: author.profileImage != null ? author.profileImage : undefined,
+			profileImage:
+				author.profileImage != null ? author.profileImage : undefined,
+		},
+	});
+}
+
+/**
+ * Update an author
+ * @param {Author object} author 
+ * @returns 
+ */
+export async function updateAuthor(author) {
+	return await prisma.author.update({
+		where: {
+			id: author.id,
+		},
+		data: {
+			email: author.email != null ? author.email : undefined,
+			password: author.password != null ? author.password : undefined,
+			displayName: author.displayName != null ? author.displayName : undefined,
+			github: author.github != null ? author.github : undefined,
+			profileImage:
+				author.profileImage != null ? author.profileImage : undefined,
 		},
 	});
 }
@@ -62,7 +73,7 @@ export async function checkUserExists(email) {
 		},
 		select: {
 			email: true,
-			id: true
-		}
+			id: true,
+		},
 	});
 }

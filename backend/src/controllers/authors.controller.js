@@ -52,6 +52,37 @@ export async function getOneAuthor(req, res) {
 }
 
 /**
+ * Update author/user information
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns Updated author information
+ */
+export async function updateAuthor(req, res) {
+	const author = req.body;
+	author.id = req.user.id;
+
+	// Check if the user is modifying their own profile
+	if (req.params.id !== req.user.id) {
+		return res
+			.status(401)
+			.json({ error: "Cannot modify someone else's profile" });
+	}
+
+	// Check if the email is already taken
+	if (author.email && (await authorService.checkUserExists(author.email))) {
+		return res.status(409).json({ error: 'Email in use' });
+	}
+
+	// Hash the password if the password is being updated
+	if (author.password) {
+		author.password = await argon2.hash(author.password);
+	}
+
+	const updatedAuthor = await authorService.updateAuthor(author);
+	return res.status(200).json(updatedAuthor);
+}
+
+/**
  * Create a new author/user
  * @param {Express.Request} req
  * @param {Express.Response} res
