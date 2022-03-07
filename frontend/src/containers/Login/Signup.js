@@ -1,8 +1,5 @@
-import React, { useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { signIn } from '../../actions';
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,8 +11,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-const theme = createTheme();
 
 function Copyright(props) {
     return (
@@ -35,18 +30,9 @@ function Copyright(props) {
     );
 }
 
-const Login = (props) => {
-    let navigate = useNavigate();
-    Login.propTypes = {
-        props: PropTypes.object,
-        isSignedIn: PropTypes.bool,
-        author: PropTypes.object,
-        signIn: PropTypes.func,
-    };
+const theme = createTheme();
 
-    useEffect(() => {
-        props.isSignedIn ? navigate('/posts') : null;
-    }, [props.isSignedIn]);
+export default function SignUp() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -56,18 +42,7 @@ const Login = (props) => {
             password: data.get('password'),
         });
     };
-    // const handleSignIn = () => {
-    //     const mockAuthor = {
-    //         type: 'author',
-    //         id: '1d698d25ff008f7538453c120f581471',
-    //         url: 'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
-    //         host: 'http://127.0.0.1:5454/',
-    //         displayName: 'Greg Johnson',
-    //         github: 'http://github.com/gjohnson',
-    //         profileImage: 'https://i.imgur.com/k7XVwpB.jpeg',
-    //     };
-    //     props.signIn(mockAuthor);
-    // };
+
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -84,61 +59,67 @@ const Login = (props) => {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        Sign up
                     </Typography>
                     <Box
                         component="form"
-                        onSubmit={handleSubmit}
                         noValidate
-                        sx={{ mt: 1 }}
+                        onSubmit={handleSubmit}
+                        sx={{ mt: 3 }}
                     >
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                        />
-
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    autoComplete="given-name"
+                                    name="Name"
+                                    required
+                                    fullWidth
+                                    id="displayName"
+                                    label="Name"
+                                    autoFocus
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    label="Email Address"
+                                    name="email"
+                                    autoComplete="email"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    id="password"
+                                    autoComplete="new-password"
+                                />
+                            </Grid>
+                        </Grid>
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Sign In
+                            Sign Up
                         </Button>
-                        <Grid container>
-                            <Grid item xs></Grid>
+                        <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <NavLink to="/signup">
-                                    {"Don't have an account? Sign Up"}
+                                <NavLink to="/">
+                                    Already have an account? Sign in
                                 </NavLink>
                             </Grid>
                         </Grid>
                     </Box>
                 </Box>
-                <Copyright sx={{ mt: 8, mb: 4 }} />
+                <Copyright sx={{ mt: 5 }} />
             </Container>
         </ThemeProvider>
     );
-};
-const mapStateToProps = (state) => ({
-    isSignedIn: state.auth.isSignedIn,
-    author: state.auth.author,
-});
-
-export default connect(mapStateToProps, { signIn })(Login);
+}

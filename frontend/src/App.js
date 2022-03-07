@@ -11,6 +11,7 @@ import Header from './components/Header';
 import Profile from './containers/Profile/Profile';
 import ProfileEdit from './containers/Profile/ProfileEdit';
 import Login from './containers/Login/Login';
+import Signup from './containers/Login/Signup';
 import PostLikes from './containers/Like/PostLikes';
 const mockAuthor = {
     type: 'author',
@@ -67,6 +68,7 @@ function App() {
             <Header />
             <Routes>
                 <Route path="/" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
                 <Route path="/posts" element={<PublicPost />} />
                 <Route path="/authors/:authorId" element={<Profile />} />
                 <Route
