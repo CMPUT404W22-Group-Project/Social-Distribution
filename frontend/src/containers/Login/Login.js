@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,7 +17,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
-
+const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 function Copyright(props) {
     return (
         <Typography
@@ -47,27 +48,32 @@ const Login = (props) => {
     useEffect(() => {
         props.isSignedIn ? navigate('/posts') : null;
     }, [props.isSignedIn]);
+
+    //sumbit form
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        logIn(data.get('email'), data.get('password'));
     };
-    // const handleSignIn = () => {
-    //     const mockAuthor = {
-    //         type: 'author',
-    //         id: '1d698d25ff008f7538453c120f581471',
-    //         url: 'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
-    //         host: 'http://127.0.0.1:5454/',
-    //         displayName: 'Greg Johnson',
-    //         github: 'http://github.com/gjohnson',
-    //         profileImage: 'https://i.imgur.com/k7XVwpB.jpeg',
-    //     };
-    //     props.signIn(mockAuthor);
-    // };
+
+    //sign in
+    const logIn = (email, password) => {
+        axios
+            .post(`${BACKEND_URL}/login`, {
+                email: email,
+                password: password,
+            })
+            .then((response) => {
+                console.log(response);
+                if (response.status === 200) {
+                    props.signIn(response.data);
+                    navigate('/posts');
+                }
+            })
+            .catch((error) => {
+                alert(error.response.data.error);
+            });
+    };
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
