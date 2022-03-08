@@ -62,7 +62,7 @@ const SignUp = (props) => {
                 email: email,
                 password: password,
                 displayName: displayName,
-            })
+            }, {withCredentials: true})
             .then((response) => {
                 console.log(response);
                 if (response.status === 201) {
