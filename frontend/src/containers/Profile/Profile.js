@@ -36,8 +36,10 @@ const Profile = () => {
             );
             setAuthor(response.data);
             //follow up request
-
-            const ghUserName = response.data.github.split('/').pop();
+            let ghUserName;
+            response.data.github
+                ? (ghUserName = response.data.github.split('/').pop())
+                : null;
             response.status === 200 && ghUserName
                 ? getGHEvents(ghUserName)
                 : null;

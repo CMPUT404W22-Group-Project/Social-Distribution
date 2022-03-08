@@ -32,18 +32,17 @@ export async function newAuthor(author) {
 			id: author.id, // Required
 			email: author.email, // Required
 			password: author.password, // Required
-			displayName: author.displayName != null ? author.displayName : undefined,
-			github: author.github != null ? author.github : undefined,
-			profileImage:
-				author.profileImage != null ? author.profileImage : undefined,
+			displayName: author.displayName != null ? author.displayName : '',
+			github: author.github != null ? author.github : '',
+			profileImage: author.profileImage != null ? author.profileImage : '',
 		},
 	});
 }
 
 /**
  * Update an author
- * @param {Author object} author 
- * @returns 
+ * @param {Author object} author
+ * @returns
  */
 export async function updateAuthor(author) {
 	return await prisma.author.update({
@@ -53,10 +52,9 @@ export async function updateAuthor(author) {
 		data: {
 			email: author.email != null ? author.email : undefined,
 			password: author.password != null ? author.password : undefined,
-			displayName: author.displayName != null ? author.displayName : undefined,
-			github: author.github != null ? author.github : undefined,
-			profileImage:
-				author.profileImage != null ? author.profileImage : undefined,
+			displayName: author.displayName != null ? author.displayName : '',
+			github: author.github != null ? author.github : '',
+			profileImage: author.profileImage != null ? author.profileImage : '',
 		},
 	});
 }
@@ -72,8 +70,12 @@ export async function checkUserExists(email) {
 			email: email,
 		},
 		select: {
-			email: true,
+			password: false,
 			id: true,
+			email: false,
+			displayName: true,
+			github: true,
+			profileImage: true,
 		},
 	});
 }

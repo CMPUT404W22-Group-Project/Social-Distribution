@@ -105,6 +105,8 @@ export async function newAuthor(req, res) {
 	// Hash the password and store the new user in the database
 	user.password = await argon2.hash(user.password);
 	const newUser = await authorService.newAuthor(user);
+	delete newUser.password;
+	delete newUser.email;
 	return res.status(201).json({ type: 'author', ...newUser });
 }
 
@@ -133,7 +135,7 @@ export async function login(req, res) {
 	// Create new JWT token and set it as a cookie
 	const token = await newAccessToken(user.email, user.id);
 	res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
-	return res.status(200).json({ token: token });
+	return res.status(200).json({ token: token, ...userExists });
 }
 
 /**
