@@ -48,7 +48,6 @@ const SignUp = (props) => {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
         signUp(
             data.get('email'),
             data.get('password'),
