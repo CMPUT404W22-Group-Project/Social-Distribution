@@ -68,10 +68,10 @@ export async function updateAuthor(req, res) {
 			.json({ error: "Cannot modify someone else's profile" });
 	}
 
-	// Check if the email is already taken
-	if (author.email && (await authorService.checkUserExists(author.email))) {
-		return res.status(409).json({ error: 'Email in use' });
-	}
+	// // Check if the email is already taken
+	// if (author.email && (await authorService.checkUserExists(author.email))) {
+	// 	return res.status(409).json({ error: 'Email in use' });
+	// }
 
 	// Hash the password if the password is being updated
 	if (author.password) {

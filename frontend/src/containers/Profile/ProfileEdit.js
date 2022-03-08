@@ -33,9 +33,9 @@ const ProfileEdit = () => {
                 author,
                 { withCredentials: true }
             );
-            response.status === 201
+            response.status === 200
                 ? navigate(`/authors/${authorId}`)
-                : alert('Post unsucessful');
+                : alert('Update unsucessful');
         } catch (err) {
             // Handle Error Here
             console.error(err);

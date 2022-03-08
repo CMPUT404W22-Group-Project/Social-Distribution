@@ -59,10 +59,14 @@ const Login = (props) => {
     //sign in
     const logIn = (email, password) => {
         axios
-            .post(`${BACKEND_URL}/login`, {
-                email: email,
-                password: password,
-            })
+            .post(
+                `${BACKEND_URL}/login`,
+                {
+                    email: email,
+                    password: password,
+                },
+                { withCredentials: true }
+            )
             .then((response) => {
                 console.log(response);
                 if (response.status === 200) {
