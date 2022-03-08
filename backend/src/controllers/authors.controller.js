@@ -133,7 +133,7 @@ export async function login(req, res) {
 	// Create new JWT token and set it as a cookie
 	const token = await newAccessToken(user.email, user.id);
 	res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
-	return res.status(200).json({ token: token, ...userExists });
+	return res.status(200).json({ ...userExists });
 }
 
 /**
