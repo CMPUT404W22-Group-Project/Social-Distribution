@@ -48,12 +48,14 @@ const Header = (props) => {
     //handle logout
     const handleLogOut = () => {
         setAnchorElUser(null);
-        axios.get(`${BACKEND_URL}/logout`).catch((error) => {
-            if (error.response.status == 401) {
-                props.signOut();
-                navigate('/post');
-            }
-        });
+        axios
+            .get(`${BACKEND_URL}/logout`, { withCredentials: true })
+            .catch((error) => {
+                if (error.response.status == 401) {
+                    props.signOut();
+                    navigate('/post');
+                }
+            });
     };
     //user menu
     const renderUserMenu = () => {
