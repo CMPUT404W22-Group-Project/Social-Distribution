@@ -33,12 +33,13 @@ const ProfileEdit = () => {
                 author,
                 { withCredentials: true }
             );
-            response.status === 200
-                ? navigate(`/authors/${authorId}`)
-                : alert('Update unsucessful');
-        } catch (err) {
+            if (response.status === 200) {
+                navigate(`/authors/${authorId}`);
+            }
+        } catch (error) {
             // Handle Error Here
-            console.error(err);
+            console.error(error);
+            alert(error.response.data.error);
         }
     };
     useEffect(() => {
