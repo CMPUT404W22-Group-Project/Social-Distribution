@@ -84,7 +84,7 @@ const PostNew = () => {
         try {
             const response = await axios.post(
                 `${BACKEND_URL}/authors/${authorId}/posts`,
-                post
+                post, {withCredentials: true}
             );
             // upload file with the post id from response object
             console.log(response);
