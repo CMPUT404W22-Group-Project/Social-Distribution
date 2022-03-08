@@ -21,6 +21,8 @@ export async function getAllAuthors(req, res) {
 		author.url = `${host}/authors/${author.id}`;
 		author.id = `${host}/authors/${author.id}`;
 		author.host = `${host}/`;
+		delete author.email;
+		delete author.password;
 	});
 
 	const response = {
@@ -43,7 +45,8 @@ export async function getOneAuthor(req, res) {
 	author.url = `${host}/authors/${author.id}`;
 	author.id = `${host}/authors/${author.id}`;
 	author.host = `${host}/`;
-
+	delete author.email;
+	delete author.password;
 	const response = {
 		type: 'author',
 		...author,
@@ -95,11 +98,6 @@ export async function newAuthor(req, res) {
 	// Check if all the required parameters exist
 	if (!validAuthor(user)) {
 		return res.status(400).json({ error: 'Missing required property' });
-	}
-
-	// Check if the user already exists
-	if (await authorService.checkUserExists(user.email)) {
-		return res.status(409).json({ error: 'Email already in use' });
 	}
 
 	// Hash the password and store the new user in the database
