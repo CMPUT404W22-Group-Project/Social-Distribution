@@ -45,6 +45,7 @@ const SignUp = (props) => {
         signIn: PropTypes.func,
     };
     console.log(props);
+    //sumbit form
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -54,6 +55,7 @@ const SignUp = (props) => {
             data.get('displayName')
         );
     };
+    //sign up
     const signUp = (email, password, displayName) => {
         axios
             .post(`${BACKEND_URL}/register`, {
@@ -65,7 +67,8 @@ const SignUp = (props) => {
                 console.log(response);
                 if (response.status === 201) {
                     props.signIn(response.data);
-                    navigate('/posts');
+                    //to profile
+                    navigate(`/authors/${response.data.id}`);
                 }
             })
             .catch((error) => {

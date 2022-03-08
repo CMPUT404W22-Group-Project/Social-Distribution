@@ -21,6 +21,8 @@ export async function getAllAuthors(req, res) {
 		author.url = `${host}/authors/${author.id}`;
 		author.id = `${host}/authors/${author.id}`;
 		author.host = `${host}/`;
+		delete author.email;
+		delete author.password;
 	});
 
 	const response = {
@@ -43,7 +45,8 @@ export async function getOneAuthor(req, res) {
 	author.url = `${host}/authors/${author.id}`;
 	author.id = `${host}/authors/${author.id}`;
 	author.host = `${host}/`;
-
+	delete author.email;
+	delete author.password;
 	const response = {
 		type: 'author',
 		...author,
@@ -68,10 +71,10 @@ export async function updateAuthor(req, res) {
 			.json({ error: "Cannot modify someone else's profile" });
 	}
 
-	// Check if the email is already taken
-	if (author.email && (await authorService.checkUserExists(author.email))) {
-		return res.status(409).json({ error: 'Email in use' });
-	}
+	// // Check if the email is already taken
+	// if (author.email && (await authorService.checkUserExists(author.email))) {
+	// 	return res.status(409).json({ error: 'Email in use' });
+	// }
 
 	// Hash the password if the password is being updated
 	if (author.password) {
@@ -97,14 +100,11 @@ export async function newAuthor(req, res) {
 		return res.status(400).json({ error: 'Missing required property' });
 	}
 
-	// Check if the user already exists
-	if (await authorService.checkUserExists(user.email)) {
-		return res.status(409).json({ error: 'Email already in use' });
-	}
-
 	// Hash the password and store the new user in the database
 	user.password = await argon2.hash(user.password);
 	const newUser = await authorService.newAuthor(user);
+	delete newUser.password;
+	delete newUser.email;
 	return res.status(201).json({ type: 'author', ...newUser });
 }
 
@@ -133,7 +133,7 @@ export async function login(req, res) {
 	// Create new JWT token and set it as a cookie
 	const token = await newAccessToken(user.email, user.id);
 	res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
-	return res.status(200).json({ token: token });
+	return res.status(200).json({ token: token, ...userExists });
 }
 
 /**
