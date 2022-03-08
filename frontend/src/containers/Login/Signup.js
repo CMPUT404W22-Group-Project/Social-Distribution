@@ -58,15 +58,11 @@ const SignUp = (props) => {
     //sign up
     const signUp = (email, password, displayName) => {
         axios
-            .post(
-                `${BACKEND_URL}/register`,
-                {
-                    email: email,
-                    password: password,
-                    displayName: displayName,
-                },
-                { withCredentials: true }
-            )
+            .post(`${BACKEND_URL}/register`, {
+                email: email,
+                password: password,
+                displayName: displayName,
+            }, {withCredentials: true})
             .then((response) => {
                 console.log(response);
                 if (response.status === 201) {
