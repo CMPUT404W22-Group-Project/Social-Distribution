@@ -12,8 +12,8 @@ datasource db {
 
 // Store authors
 model Author {
-    id           String    @id @default(cuid())
-    email        String    @unique
+    id           String      @id @default(cuid())
+    email        String      @unique
     password     String
     displayName  String
     github       String?
@@ -21,6 +21,8 @@ model Author {
     Post         Post[]
     Comment      Comment[]
     Likes        Likes[]
+    Inbox        Inbox[]
+    Followers    Followers[]
 }
 
 // Store posts. Each post has a primary key, and references a foreign key author id
@@ -42,6 +44,7 @@ model Post {
     likeCount   Int       @default(0)
     Comment     Comment[]
     Likes       Likes[]
+    Inbox       Inbox[]
 }
 
 // Store comments. Each comment has a primary key, and references a foreign keys author id and post id
@@ -64,4 +67,36 @@ model Likes {
     author   Author @relation(fields: [authorId], references: [id])
 
     @@id([postId, authorId])
+}
+
+// Store inbox.  Primary key is a combined post id and author id
+model Inbox {
+    type     String // "post", "follow", "like", or "comment"
+    typeId   String // If post, then post id.  If following, then following author id.  If like, then liked post id.  If comment, then comment id
+    authorId String
+    dateTime DateTime // Timestamp the event
+    post     Post     @relation(fields: [typeId], references: [id])
+    author   Author   @relation(fields: [authorId], references: [id])
+
+    @@id([typeId, authorId])
+}
+
+// Store followers.  AuthorId follows FollowingId
+model Followers {
+    authorId    String // Author id
+    followingId String // The author id of the one being followed.  No relation is enforced because they can be on a different host
+    author      Author @relation(fields: [authorId], references: [id])
+
+    @@id([authorId, followingId])
+}
+
+// Store follow requests.  AuthorId wants to follow FollowReqId
+model FollowRequest {
+    // Can be either remote host or CUID
+    // Eg. http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471 (different host) or cl0h7864c0001rsv835tr1dxf (local)
+    authorId    String // Requester
+    followReqId String // Requested
+    // No relations because either could be on a different host or local
+
+    @@id([authorId, followReqId])
 }
