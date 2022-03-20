@@ -286,11 +286,7 @@ export async function addPostImage(req, res) {
 		return res.status(400).json({ error: 'No file uploaded' });
 
 	const file = req.files.file;
-	const fileName =
-		file.mimetype === 'image/png'
-			? `${req.params.id}.png`
-			: `${req.params.id}.jpeg`;
-	console.log(file);
+	const fileName = req.params.id;
 	await file.mv(path.join(__dirname, 'public', 'posts', fileName), (err) => {
 		if (err) {
 			console.log(err);
@@ -311,6 +307,22 @@ export async function addPostImage(req, res) {
 		.json({ filename: fileName, filePath: `/public/posts/${fileName}` });
 }
 
+/**
+ * Upload image to backend folder
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns Image
+ */
+export async function getImage(req, res) {
+	const fileName = req.params.id;
+	const filePath = path.join(__dirname, 'public', 'posts', fileName);
+	res.sendFile(filePath, (err) => {
+		if (err) {
+			console.log(err);
+			return res.status(500).send(err);
+		}
+	});
+}
 /**
  * Check if post has all the required arguments
  * @param {Post object} post
