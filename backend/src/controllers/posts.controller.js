@@ -286,7 +286,11 @@ export async function addPostImage(req, res) {
 		return res.status(400).json({ error: 'No file uploaded' });
 
 	const file = req.files.file;
-	const fileName = req.params.id;
+	const fileName =
+		file.mimetype === 'image/png'
+			? `${req.params.id}.png`
+			: `${req.params.id}.jpeg`;
+	console.log(file);
 	await file.mv(path.join(__dirname, 'public', 'posts', fileName), (err) => {
 		if (err) {
 			console.log(err);
@@ -314,7 +318,16 @@ export async function addPostImage(req, res) {
  * @returns Image
  */
 export async function getImage(req, res) {
-	const fileName = req.params.id;
+	const postType = await postService.getContentType(req.params.id);
+	let fileName;
+	if (postType === 'image/png;base64') {
+		fileName = `${req.params.id}.png`;
+	} else if (postType === 'image/jpeg;base64') {
+		fileName = `${req.params.id}.jpeg`;
+	} else {
+		return res.status(404).json({ error: 'No Image Found' });
+	}
+
 	const filePath = path.join(__dirname, 'public', 'posts', fileName);
 	res.sendFile(filePath, (err) => {
 		if (err) {
