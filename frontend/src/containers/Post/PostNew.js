@@ -58,43 +58,55 @@ const PostNew = () => {
         }
     }, [post.contentType]);
 
-    const getBase64 = async (file) => {
-        let reader = new FileReader();
-        let b64String = '';
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            b64String = reader.result;
-        };
-        return b64String;
-    };
+    // const getBase64 = async (file) => {
+    //     let reader = new FileReader();
+    //     let b64String = '';
+    //     reader.readAsDataURL(file);
+    //     reader.onload = function () {
+    //         b64String = reader.result;
+    //     };
+    //     return b64String;
+    // };
     const createPost = async (authorId, post, file) => {
-        if (
-            post.contentType === 'image/jpeg;base64' ||
-            post.contentType === 'image/png;base64'
-        ) {
-            try {
-                const b64String = await getBase64(file);
-                setPost({ ...post, content: b64String });
-                console.log(post.content);
-            } catch (err) {
-                alert('Something wrong with converting file');
-            }
-        }
         post.authorId = authorId;
-        try {
-            const response = await axios.post(
-                `${BACKEND_URL}/authors/${authorId}/posts`,
-                post, {withCredentials: true}
-            );
-            // upload file with the post id from response object
-            console.log(response);
-            response.status === 201
-                ? navigate(`/authors/${authorId}/posts`)
-                : alert('Post unsucessful');
-        } catch (err) {
-            // Handle Error Here
-            console.error(err);
-        }
+
+        axios
+            .post(`${BACKEND_URL}/authors/${authorId}/posts`, post, {
+                withCredentials: true,
+            })
+            .then((response) => {
+                console.log(response);
+                if (response.status === 201) {
+                    if (
+                        (post.contentType === 'image/jpeg;base64' &&
+                            file !== '') ||
+                        (post.contentType === 'image/png;base64' && file !== '')
+                    ) {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        axios
+                            .post(
+                                `${BACKEND_URL}/authors/${authorId}/posts/${response.data.id}/image`,
+                                formData,
+                                {
+                                    withCredentials: true,
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data',
+                                    },
+                                }
+                            )
+                            .then((imageRes) => {
+                                imageRes.status === 201
+                                    ? navigate(`/authors/${authorId}/posts`)
+                                    : null;
+                            });
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        // upload file with the post id from response object
     };
 
     const handleChange = (prop) => (event) => {

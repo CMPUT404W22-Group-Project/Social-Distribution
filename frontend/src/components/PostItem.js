@@ -75,7 +75,10 @@ const PostItem = ({ props }) => {
     };
     const deletePost = async () => {
         const response = await axios.delete(
-            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`
+            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`,
+            {
+                withCredentials: true,
+            }
         );
         response.status === 204
             ? navigate(`/authors/${props.authorId}/posts/${postId}`)
