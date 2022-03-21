@@ -27,7 +27,6 @@ const PostEdit = () => {
         description: '',
         contentType: 'text/plain',
         content: '',
-        image: '',
         categories: [],
         visibility: '',
         unlisted: false,
@@ -63,35 +62,47 @@ const PostEdit = () => {
         }
     }, [post.contentType]);
 
-    const getBase64 = async (file) => {
+    const getBase64 = async (file, callback) => {
         let reader = new FileReader();
-        let b64String = '';
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            b64String = reader.result;
-            console.log(b64String);
+        await reader.readAsDataURL(file);
+        reader.onload = () => {
+            callback(reader.result);
         };
-        return b64String;
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
     };
+
     const editPost = async (authorId, post, file) => {
-        if (
-            (post.contentType === 'image/jpeg;base64' ||
-                post.contentType === 'image/png;base64') &&
-            file
-        ) {
-            try {
-                const b64String = await getBase64(file);
-                await setPost({ ...post, content: b64String });
-                console.log(post);
-            } catch (err) {
-                alert('Something wrong with converting file');
-            }
-        }
         post.authorId = authorId;
+        if (
+            post.contentType === 'image/jpeg;base64' ||
+            post.contentType === 'image/png;base64'
+        ) {
+            if (file !== '') {
+                try {
+                    await getBase64(file, (result) => {
+                        post.content = result;
+                    });
+                    console.log(post);
+                    postRequestToId(authorId, post);
+                } catch (err) {
+                    alert('Something wrong with converting file');
+                }
+            }
+        } else {
+            postRequestToId(authorId, post);
+        }
+    };
+
+    const postRequestToId = async (authorId, post) => {
         try {
             const response = await axios.post(
                 `${BACKEND_URL}/authors/${authorId}/posts/${postId}`,
-                post
+                post,
+                {
+                    withCredentials: true,
+                }
             );
             // upload file with the post id from response object
             response.status === 200

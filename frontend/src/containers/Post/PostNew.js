@@ -43,7 +43,6 @@ const PostNew = () => {
         description: '',
         contentType: 'text/plain',
         content: '',
-        image: '',
         categories: [],
         visibility: '',
         unlisted: false,
@@ -58,57 +57,95 @@ const PostNew = () => {
         }
     }, [post.contentType]);
 
-    // const getBase64 = async (file) => {
-    //     let reader = new FileReader();
-    //     let b64String = '';
-    //     reader.readAsDataURL(file);
-    //     reader.onload = function () {
-    //         b64String = reader.result;
-    //     };
-    //     return b64String;
-    // };
-    const createPost = async (authorId, post, file) => {
-        post.authorId = authorId;
-
-        axios
-            .post(`${BACKEND_URL}/authors/${authorId}/posts`, post, {
-                withCredentials: true,
-            })
-            .then((response) => {
-                console.log(response);
-                if (response.status === 201) {
-                    if (
-                        (post.contentType === 'image/jpeg;base64' &&
-                            file !== '') ||
-                        (post.contentType === 'image/png;base64' && file !== '')
-                    ) {
-                        const formData = new FormData();
-                        formData.append('file', file);
-                        axios
-                            .post(
-                                `${BACKEND_URL}/authors/${authorId}/posts/${response.data.id}/image`,
-                                formData,
-                                {
-                                    withCredentials: true,
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data',
-                                    },
-                                }
-                            )
-                            .then((imageRes) => {
-                                imageRes.status === 201
-                                    ? navigate(`/authors/${authorId}/posts`)
-                                    : null;
-                            });
-                    }
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        // upload file with the post id from response object
+    const getBase64 = async (file, callback) => {
+        let reader = new FileReader();
+        await reader.readAsDataURL(file);
+        reader.onload = function () {
+            callback(reader.result);
+        };
     };
 
+    // const createPost = async (authorId, post, file) => {
+    //     post.authorId = authorId;
+
+    //     axios
+    //         .post(`${BACKEND_URL}/authors/${authorId}/posts`, post, {
+    //             withCredentials: true,
+    //         })
+    //         .then((response) => {
+    //             console.log(response);
+    //             if (response.status === 201) {
+    //                 if (
+    //                     (post.contentType === 'image/jpeg;base64' &&
+    //                         file !== '') ||
+    //                     (post.contentType === 'image/png;base64' && file !== '')
+    //                 ) {
+    //                     const formData = new FormData();
+    //                     formData.append('file', file);
+    //                     axios
+    //                         .post(
+    //                             `${BACKEND_URL}/authors/${authorId}/posts/${response.data.id}/image`,
+    //                             formData,
+    //                             {
+    //                                 withCredentials: true,
+    //                                 headers: {
+    //                                     'Content-Type': 'multipart/form-data',
+    //                                 },
+    //                             }
+    //                         )
+    //                         .then((imageRes) => {
+    //                             imageRes.status === 201
+    //                                 ? navigate(`/authors/${authorId}/posts`)
+    //                                 : null;
+    //                         });
+    //                 }
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    //     // upload file with the post id from response object
+    // };
+
+    const createPost = async (authorId, post, file) => {
+        post.authorId = authorId;
+        if (
+            post.contentType === 'image/jpeg;base64' ||
+            post.contentType === 'image/png;base64'
+        ) {
+            if (file) {
+                try {
+                    await getBase64(file, (result) => {
+                        post.content = result;
+                    });
+                    postRequest(authorId, post);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        } else {
+            postRequest(authorId, post);
+        }
+    };
+    //make post request
+    const postRequest = async (authorId, post) => {
+        try {
+            const response = await axios.post(
+                `${BACKEND_URL}/authors/${authorId}/posts`,
+                post,
+                {
+                    withCredentials: true,
+                }
+            );
+            console.log('req made');
+            response.status === 201
+                ? navigate(`/authors/${authorId}/posts`)
+                : alert(' Post unsucessful');
+        } catch (error) {
+            // Handle Error Here
+            console.log(error);
+        }
+    };
     const handleChange = (prop) => (event) => {
         setPost({ ...post, [prop]: event.target.value });
     };
@@ -169,6 +206,7 @@ const PostNew = () => {
                         sx={{ my: 1 }}
                         id="post-image-file"
                         type="file"
+                        accept=".jpeg,.png"
                         value={fileName}
                         onChange={() => {
                             onFileChange(event);
