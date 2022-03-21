@@ -81,11 +81,10 @@ const PostEdit = () => {
         ) {
             if (file !== '') {
                 try {
-                    await getBase64(file, (result) => {
-                        post.content = result;
+                    await getBase64(file, async (result) => {
+                        post.content = await result;
+                        postRequestToId(authorId, post);
                     });
-                    console.log(post);
-                    postRequestToId(authorId, post);
                 } catch (err) {
                     alert('Something wrong with converting file');
                 }
@@ -108,9 +107,9 @@ const PostEdit = () => {
             response.status === 200
                 ? navigate(`/authors/${authorId}/posts/${postId}`)
                 : alert('Edit Post unsucessful');
-        } catch (err) {
+        } catch (error) {
             // Handle Error Here
-            console.error(err);
+            alert(error.response.status);
         }
     };
 

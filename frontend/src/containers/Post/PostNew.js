@@ -115,12 +115,12 @@ const PostNew = () => {
         ) {
             if (file) {
                 try {
-                    await getBase64(file, (result) => {
-                        post.content = result;
+                    await getBase64(file, async (result) => {
+                        post.content = await result;
+                        postRequest(authorId, post);
                     });
-                    postRequest(authorId, post);
                 } catch (err) {
-                    console.error(err);
+                    alert('Something wrong with converting file');
                 }
             }
         } else {
@@ -143,7 +143,7 @@ const PostNew = () => {
                 : alert(' Post unsucessful');
         } catch (error) {
             // Handle Error Here
-            console.log(error);
+            alert(error.response.status);
         }
     };
     const handleChange = (prop) => (event) => {
