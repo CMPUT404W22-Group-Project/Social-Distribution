@@ -131,6 +131,7 @@ export async function updatePost(post) {
 }
 
 /**
+ 
  * Delete a post by id
  * @param {String} id
  * @returns
@@ -139,6 +140,40 @@ export async function deletePost(id) {
 	return await prisma.post.delete({
 		where: {
 			id: id,
+		},
+	});
+}
+
+/**
+ * Update post content by id
+ * @param {String} id
+ * @param {String}content
+ * @returns
+ */
+export async function updatePostContent(id, content) {
+	return await prisma.post.update({
+		where: {
+			id: id,
+		},
+		data: {
+			content: content,
+		},
+	});
+}
+
+/**
+ * get content by id
+ * @param {String} id
+ * @param {String}content
+ * @returns
+ */
+export async function getContentType(id) {
+	return await prisma.post.findUnique({
+		where: {
+			id: id,
+		},
+		select: {
+			contentType: true,
 		},
 	});
 }

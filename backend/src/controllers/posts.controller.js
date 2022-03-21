@@ -7,7 +7,7 @@ import {
 
 import cuid from 'cuid';
 import path from 'path';
-
+const __dirname = path.resolve();
 /**
  * Get all posts that are public
  * @param {Express.Request} req
@@ -191,7 +191,7 @@ export async function putPost(req, res) {
 	if (req.user.id !== req.params.authorId) {
 		return res.status(403).json({ error: 'Cannot post on this profile' });
 	}
-	
+
 	const post = req.body;
 	post.id = req.params.id;
 	post.authorId = req.user.id;
@@ -282,25 +282,60 @@ export async function newPost(req, res) {
  * @returns New post
  */
 export async function addPostImage(req, res) {
-	const fileName = req.params.id;
 	if (req.files === null)
 		return res.status(400).json({ error: 'No file uploaded' });
+
 	const file = req.files.file;
-	file.mv(
-		path.join(__dirname, '..', '..', 'public', 'uploads', fileName),
-		(err) => {
-			if (err) {
-				console.log(err);
-				return res.status(500).send(err);
-			}
-			return res
-				.status(200)
-				.json({ filename: fileName, filePath: `/public/uploads/${fileName}` });
+	const fileName =
+		file.mimetype === 'image/png'
+			? `${req.params.id}.png`
+			: `${req.params.id}.jpeg`;
+	console.log(file);
+	await file.mv(path.join(__dirname, 'public', 'posts', fileName), (err) => {
+		if (err) {
+			console.log(err);
+			return res.status(500).send(err);
 		}
+	});
+	const host = `${req.protocol}://${req.get('host')}`;
+	const content = `${host}/authors/${req.params.authorId}/posts/${req.params.id}/image`;
+	const updatedPost = await postService.updatePostContent(
+		req.params.id,
+		content
 	);
-	return res.status(201).json(newPost);
+	if (updatedPost === null) {
+		res.status(500).send({ error: 'file to update content path' });
+	}
+	return res
+		.status(201)
+		.json({ filename: fileName, filePath: `/public/posts/${fileName}` });
 }
 
+/**
+ * Upload image to backend folder
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns Image
+ */
+export async function getImage(req, res) {
+	const postType = await postService.getContentType(req.params.id);
+	let fileName;
+	if (postType === 'image/png;base64') {
+		fileName = `${req.params.id}.png`;
+	} else if (postType === 'image/jpeg;base64') {
+		fileName = `${req.params.id}.jpeg`;
+	} else {
+		return res.status(404).json({ error: 'No Image Found' });
+	}
+
+	const filePath = path.join(__dirname, 'public', 'posts', fileName);
+	res.sendFile(filePath, (err) => {
+		if (err) {
+			console.log(err);
+			return res.status(500).send(err);
+		}
+	});
+}
 /**
  * Check if post has all the required arguments
  * @param {Post object} post
