@@ -131,7 +131,6 @@ export async function updatePost(post) {
 }
 
 /**
- 
  * Delete a post by id
  * @param {String} id
  * @returns
