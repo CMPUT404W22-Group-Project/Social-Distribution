@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@prisma/client": "^3.10.0",
 		"argon2": "^0.28.5",
+		"axios": "^0.26.1",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
 		"cuid": "^2.1.8",
