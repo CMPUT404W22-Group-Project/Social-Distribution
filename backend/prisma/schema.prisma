@@ -44,7 +44,6 @@ model Post {
     likeCount   Int       @default(0)
     Comment     Comment[]
     Likes       Likes[]
-    Inbox       Inbox[]
 }
 
 // Store comments. Each comment has a primary key, and references a foreign keys author id and post id
@@ -73,9 +72,9 @@ model Likes {
 model Inbox {
     type     String // "post", "follow", "like", or "comment"
     typeId   String // If post, then post id.  If following, then following author id.  If like, then liked post id.  If comment, then comment id
+    likedId  String? // Contains the author id that liked the post.  This field is only populated if the type is "like"
     authorId String
     dateTime DateTime // Timestamp the event
-    post     Post     @relation(fields: [typeId], references: [id])
     author   Author   @relation(fields: [authorId], references: [id])
 
     @@id([typeId, authorId])
