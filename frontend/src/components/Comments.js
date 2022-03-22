@@ -55,6 +55,9 @@ const Comments = ({ props }) => {
                     authorId: authorId,
                     contentType: contentType,
                     comment: comment,
+                },
+                {
+                    withCredentials: true,
                 }
             )
             .then((response) => {
