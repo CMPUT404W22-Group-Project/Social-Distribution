@@ -32,3 +32,31 @@ export async function getFollowers(req, res) {
 
 	return res.status(200).json(followers);
 }
+
+export async function deleteFollower(req, res) {
+	await followersService.deleteFollower(
+		req.params.foreignAuthorId,
+		req.params.authorId
+	);
+	return res.sendStatus(204);
+}
+
+export async function addFollower(req, res) {
+	if (req.user.id !== req.params.foreignAuthorId) {
+		return res.sendStatus(401);
+	}
+
+	await followersService.addFollower(
+		req.params.foreignAuthorId,
+		req.params.authorId
+	);
+	return res.sendStatus(204);
+}
+
+export async function checkIsFollower(req, res) {
+	const isFollower = await followersService.checkIsFollower(
+		req.params.foreignAuthorId,
+		req.params.authorId
+	);
+	return res.status(200).json(isFollower);
+}

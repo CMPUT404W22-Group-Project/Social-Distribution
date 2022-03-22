@@ -5,8 +5,18 @@ import { authenticateToken } from '../auth/index.js';
 const router = Router();
 
 router.get('/authors/:authorId/followers', followersController.getFollowers);
-router.delete('/authors/:authorId/followers/:foreignAuthorId');
-router.put('/authors/:authorId/followers/:foreignAuthorId', authenticateToken);
-router.get('/authors/:authorId/followers/:foreignAuthorId');
+router.delete(
+	'/authors/:authorId/followers/:foreignAuthorId',
+	followersController.deleteFollower
+);
+router.put(
+	'/authors/:authorId/followers/:foreignAuthorId',
+	authenticateToken,
+	followersController.addFollower
+);
+router.get(
+	'/authors/:authorId/followers/:foreignAuthorId',
+	followersController.checkIsFollower
+);
 
 export { router };
