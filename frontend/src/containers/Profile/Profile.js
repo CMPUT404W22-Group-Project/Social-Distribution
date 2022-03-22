@@ -74,6 +74,14 @@ const Profile = () => {
                     Edit
                 </Button>
                 <Button variant="contained">Follow</Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        navigate(`/authors/${authorId}/followers`);
+                    }}
+                >
+                    Followers
+                </Button>
             </Stack>
             <Avatar
                 alt="Profile-image"
