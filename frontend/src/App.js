@@ -13,6 +13,12 @@ import ProfileEdit from './containers/Profile/ProfileEdit';
 import Login from './containers/Login/Login';
 import Signup from './containers/Login/Signup';
 import PostLikes from './containers/Like/PostLikes';
+
+//remote compatibility
+import RemoteAuthors from './remoteComponents/RemoteAuthors';
+import RemoteAuthor from './remoteComponents/RemoteAuthor';
+import RemotePosts from './remoteComponents/RemotePosts';
+
 const mockAuthor = {
     type: 'author',
     id: 'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
@@ -69,7 +75,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/posts" element={<PublicPost />} />
+                <Route path="/public/posts" element={<PublicPost />} />
                 <Route path="/authors/:authorId" element={<Profile />} />
                 <Route
                     path="/authors/:authorId/edit"
@@ -103,6 +109,9 @@ function App() {
                     path="/authors/:authorId/post/new"
                     element={<PostNew />}
                 />
+                <Route path="/authors" element={<RemoteAuthors />} />
+                <Route path="/author" element={<RemoteAuthor />} />
+                <Route path="/posts" element={<RemotePosts />} />
             </Routes>
         </>
     );
