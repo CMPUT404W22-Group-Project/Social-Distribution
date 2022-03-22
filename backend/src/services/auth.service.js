@@ -1,6 +1,4 @@
-import PrismaClient from '@prisma/client';
-
-const prisma = new PrismaClient.PrismaClient();
+import prisma from '../../prisma/client.js';
 
 export async function getHashedPassword(email) {
 	return await prisma.author.findUnique({
