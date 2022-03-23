@@ -91,11 +91,7 @@ const RemotePost = ({ props }) => {
                     </Typography>
                 );
             case 'text/markdown':
-                return (
-                    <Typography variant="body1" color="text.secondary">
-                        <ReactMarkdown>{props.content}</ReactMarkdown>
-                    </Typography>
-                );
+                return <ReactMarkdown>{props.content}</ReactMarkdown>;
             case 'application/base64':
                 var decodeContent = atob(props.content);
                 return (

@@ -33,11 +33,7 @@ const CommentItem = ({ props }) => {
                     </Typography>
                 );
             case 'text/markdown':
-                return (
-                    <Typography variant="body1" color="text.secondary">
-                        <ReactMarkdown>{props.comment}</ReactMarkdown>
-                    </Typography>
-                );
+                return <ReactMarkdown>{props.comment}</ReactMarkdown>;
         }
     };
 
