@@ -22,20 +22,18 @@ export async function getAllPublicPosts(req, res) {
 		//author
 		const author = await authorService.getAuthors({ id: post.authorId });
 		post.type = 'post';
-		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-		post.host = `${host}/`;
+		author.id = `${host}/authors/${post.authorId}`;
 		post.author = {
 			type: 'author',
 			url: `${host}/authors/${post.authorId}`,
-			id: `${host}/authors/${post.authorId}`,
-			host: host,
+			host: `${host}/`,
 			...author,
 		};
 
 		//like
 		const likeCount = await likeService.getTotal(post.id);
 		post.likeCount = likeCount['_count'];
-		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
+		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments/`;
 		//comments
 		const page = 1;
 		const size = 5;
@@ -52,7 +50,7 @@ export async function getAllPublicPosts(req, res) {
 			total: total['_count'],
 			comments: comments,
 		};
-		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	}
 	const response = {
 		type: 'posts',
@@ -79,16 +77,16 @@ export async function getAllPosts(req, res) {
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
-
+	author.id = `${host}/authors/${author.id}/`;
 	for (const post of posts) {
 		//author
 		post.type = 'post';
-		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.host = `${host}/`;
+
 		post.author = {
 			type: 'author',
-			url: `${host}/authors/${post.authorId}`,
-			host: host,
+			url: `${host}/authors/${post.authorId}/`,
+			host: `${host}/`,
 			...author,
 		};
 		//like
@@ -112,7 +110,7 @@ export async function getAllPosts(req, res) {
 			total: total['_count'],
 			comments: comments,
 		};
-		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	}
 
 	const response = {
@@ -139,7 +137,7 @@ export async function getOnePost(req, res) {
 
 	const author = await authorService.getAuthors({ id: post.authorId });
 
-	post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
@@ -162,12 +160,12 @@ export async function getOnePost(req, res) {
 		total: total['_count'],
 		comments: comments,
 	};
-	post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-	post.host = `${host}/`;
+	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
+	author.id = `${host}/authors/${post.authorId}/`;
 	post.author = {
 		type: 'author',
-		url: `${host}/authors/${post.authorId}`,
-		host: host,
+		url: `${host}/authors/${post.authorId}/`,
+		host: `${host}/`,
 		...author,
 	};
 
