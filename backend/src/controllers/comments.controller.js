@@ -60,6 +60,8 @@ export async function newComment(req, res) {
 	const author = await authorService.getAuthors({ id: newComment.authorId });
 	newComment.author = author;
 
+	// TODO: Add comment to inbox
+
 	return res.status(201).json(newComment);
 }
 
