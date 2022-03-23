@@ -99,7 +99,7 @@ export async function updateAuthor(req, res) {
  */
 export async function newAuthor(req, res) {
 	const user = req.body;
-	const host = `${req.protocol}://${req.get('host')}/`;
+	const host = `${req.protocol}://${req.get('host')}`;
 	user.id = cuid();
 
 	// Check if all the required parameters exist
@@ -113,9 +113,8 @@ export async function newAuthor(req, res) {
 	delete newUser.password;
 	delete newUser.email;
 
-	newUser.host = host;
-	newUser.url = `${host}/authors/${newUser.id}`;
-
+	newUser.url = `${host}/authors/${newUser.id}/`;
+	newUser.host = `${host}/`;
 	// Create new JWT token and set it as a cookie
 	const token = await newAccessToken(user.email, user.id);
 	res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
@@ -130,7 +129,7 @@ export async function newAuthor(req, res) {
  */
 export async function login(req, res) {
 	const user = req.body;
-	const host = `${req.protocol}://${req.get('host')}/`;
+	const host = `${req.protocol}://${req.get('host')}`;
 	// Check if the user email exists
 	const userExists = await authorService.checkUserExists(user.email);
 	if (!userExists) {
@@ -143,8 +142,8 @@ export async function login(req, res) {
 	if (!(await authenticatePassword(user.email, user.password))) {
 		return res.status(401).json({ error: 'Password mismatch' });
 	}
-	userExists.host = host;
 	userExists.url = `${host}/authors/${userExists.id}/`;
+	userExists.host = `${host}/`;
 	// Create new JWT token and set it as a cookie
 	const token = await newAccessToken(user.email, user.id);
 	res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
