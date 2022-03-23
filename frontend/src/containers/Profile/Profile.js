@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Avatar from '@mui/material/Avatar';
@@ -8,9 +10,14 @@ import GithubActivity from '../../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-const Profile = () => {
+const Profile = ({ props }) => {
+    Profile.propTypes = {
+        props: PropTypes.object,
+        auth: PropTypes.object,
+    };
     let navigate = useNavigate();
     let { authorId } = useParams();
+    const isOwnProfile = props.auth.author.id === authorId;
     const [GHActivity, setGHActivity] = useState([]);
     const [author, setAuthor] = useState({
         id: '',
@@ -52,8 +59,9 @@ const Profile = () => {
     useEffect(() => {
         getAuthorById(authorId);
     }, []);
-    return (
-        <>
+
+    const renderedButton = () => {
+        return (
             <Stack
                 spacing={2}
                 direction="column"
@@ -65,15 +73,19 @@ const Profile = () => {
                     position: 'absolute',
                 }}
             >
-                <Button
-                    variant="contained"
-                    onClick={() => {
-                        navigate(`/authors/${authorId}/edit`);
-                    }}
-                >
-                    Edit
-                </Button>
-                <Button variant="contained">Follow</Button>
+                {isOwnProfile ? (
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            navigate(`/authors/${authorId}/edit`);
+                        }}
+                    >
+                        Edit
+                    </Button>
+                ) : null}
+                {isOwnProfile ? null : (
+                    <Button variant="contained">Follow</Button>
+                )}
                 <Button
                     variant="contained"
                     onClick={() => {
@@ -83,6 +95,12 @@ const Profile = () => {
                     Followers
                 </Button>
             </Stack>
+        );
+    };
+
+    return (
+        <>
+            {renderedButton()}
             <Avatar
                 alt="Profile-image"
                 src={author.profileImage}
@@ -148,4 +166,8 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+const mapStateToProps = (state, ownProps) => ({
+    props: { ...ownProps.props, auth: state.auth },
+});
+
+export default connect(mapStateToProps)(Profile);
