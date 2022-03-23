@@ -32,5 +32,5 @@ export async function postToInbox() { }
  */
 export async function deleteInbox(req, res) {
     await inboxService.clearInbox(req.params.id);
-    return res.status(204);
+    return res.sendStatus(204);
 }
