@@ -17,12 +17,12 @@ export async function getAllComments(req, res) {
 
 	comments.forEach((comment) => {
 		comment.type = 'comment';
-		comment.id = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${comment.id}`;
+		comment.id = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${comment.id}/`;
 		comment.author = {
 			type: 'author',
-			url: `${host}/authors/${comment.authorId}`,
-			id: `${host}/authors/${comment.authorId}`,
-			host: host,
+			url: `${host}/authors/${comment.authorId}/`,
+			id: `${host}/authors/${comment.authorId}/`,
+			host: `${host}/`,
 			...comment.author,
 		};
 	});
@@ -31,8 +31,8 @@ export async function getAllComments(req, res) {
 		type: 'comments',
 		page: req.query.page,
 		size: req.query.size,
-		post: `${host}/authors/${req.params.authorId}/posts/${req.params.postId}`,
-		id: `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments`,
+		post: `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/`,
+		id: `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/`,
 		comments: comments,
 	};
 	return res.status(200).json(response);

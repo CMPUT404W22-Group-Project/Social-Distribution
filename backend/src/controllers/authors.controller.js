@@ -42,19 +42,20 @@ export async function getOneAuthor(req, res) {
 	const author = await authorService.getAuthors({ id: req.params.id });
 	if (!author) {
 		res.status(404).json({ error: 'No author not found' });
+	} else {
+		const host = `${req.protocol}://${req.get('host')}`;
+		author.url = `${host}/authors/${author.id}/`;
+		console.log(author);
+		author.id = `${host}/authors/${author.id}/`;
+		author.host = `${host}/`;
+		delete author.email;
+		delete author.password;
+		const response = {
+			type: 'author',
+			...author,
+		};
+		return res.status(200).json(response);
 	}
-	const host = `${req.protocol}://${req.get('host')}`;
-	author.url = `${host}/authors/${author.id}/`;
-	console.log(author);
-	author.id = `${host}/authors/${author.id}/`;
-	author.host = `${host}/`;
-	delete author.email;
-	delete author.password;
-	const response = {
-		type: 'author',
-		...author,
-	};
-	return res.status(200).json(response);
 }
 
 /**
