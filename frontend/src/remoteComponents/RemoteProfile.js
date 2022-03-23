@@ -85,7 +85,7 @@ const RemoteProfile = ({ props }) => {
                                 onClick={() => {
                                     navigate('/posts', {
                                         state: {
-                                            postLink: `${props.url}/posts`,
+                                            postLink: `${props.url}posts/`,
                                         },
                                     });
                                 }}

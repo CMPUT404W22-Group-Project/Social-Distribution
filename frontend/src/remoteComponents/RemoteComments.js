@@ -8,23 +8,24 @@ import RemoteComment from './RemoteComment';
 
 const RemoteComments = ({ props }) => {
     RemoteComments.propTypes = {
-        props: PropTypes.object,
-        comments: PropTypes.string,
+        props: PropTypes.any,
+        url: PropTypes.string,
     };
+    console.log(props);
     const size = 5;
     const [page, setPage] = useState(1);
-    const [comments, setComments] = useState(props.comments);
+    const [comments, setComments] = useState([]);
     //use useEffect to fetch comments upon page change
 
-    const getComments = (page, size) => {
-        axios.get(`${props}?page=${page}&size=${size}`).then((response) => {
+    const getComments = () => {
+        axios.get(`${props}comments/`).then((response) => {
             response.status === 200
                 ? setComments(response.data.comments)
                 : null;
         });
     };
     useEffect(() => {
-        getComments(props.comments, page, size);
+        getComments(page, size);
     }, [page]);
     const handlePageChange = (event, value) => {
         setPage(value);

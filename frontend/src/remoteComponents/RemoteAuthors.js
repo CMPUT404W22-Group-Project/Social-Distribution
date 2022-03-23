@@ -10,24 +10,26 @@ const RemoteAuthors = () => {
     //     'http://localhost:8000',
     //     // 'https://project-socialdistribution.herokuapp.com/api',
     // ];
+    let temp = [];
     const [authors, setAuthors] = useState([]);
-
+    const [nodes, setNodes] = useState([
+        'https://project-socialdistribution.herokuapp.com/api',
+        'http://localhost:8000',
+    ]);
     const getAuthors = async (node) => {
-        const response = await axios.get(`${node}/authors`);
-        response.status === 200
-            ? setAuthors([...authors, ...response.data.items])
-            : null;
+        const response = await axios.get(`${node}/authors/`);
+        temp = [...temp, ...response.data.items];
+        setAuthors([...temp]);
     };
+
     useEffect(() => {
-        const nodes = [
+        setNodes([
+            'https://project-socialdistribution.herokuapp.com/api',
             'http://localhost:8000',
-            // 'https://project-socialdistribution.herokuapp.com/api',
-        ];
-        // for (const node of nodes) {
-        //     getAuthors(node);
-        // }
-        nodes.forEach(async (node) => {
-            getAuthors(node);
+            'http://localhost:8000',
+        ]);
+        nodes.forEach(async function (node) {
+            await getAuthors(node);
         });
     }, []);
 

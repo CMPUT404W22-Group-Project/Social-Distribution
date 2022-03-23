@@ -258,7 +258,7 @@ const RemotePost = ({ props }) => {
                 </CardActions>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                        <RemoteComments props={props.comments} />
+                        <RemoteComments props={props.id} />
                     </CardContent>
                 </Collapse>
             </Card>

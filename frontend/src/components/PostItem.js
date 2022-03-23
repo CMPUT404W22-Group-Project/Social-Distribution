@@ -102,7 +102,7 @@ const PostItem = ({ props }) => {
                             key={index}
                             underline="hover"
                             color="inherit"
-                            href={`/?category=${category}`}
+                            href={`/public/posts?category=${category}`}
                         >
                             {category}
                         </Link>

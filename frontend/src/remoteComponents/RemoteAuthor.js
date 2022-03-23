@@ -19,6 +19,8 @@ const RemoteAuthor = () => {
         displayName: '',
         github: '',
         profileImage: '',
+        host: '',
+        url: '',
     });
     const getGHEvents = async (user) => {
         try {
@@ -65,20 +67,19 @@ const RemoteAuthor = () => {
                     position: 'absolute',
                 }}
             >
+                <Button variant="contained">Follow</Button>
                 <Button
                     variant="contained"
                     onClick={() => {
-                        navigate('/posts', {
+                        navigate('/follwers', {
                             state: {
-                                postsLink: `${authorLink}/posts`,
+                                followerLink: `${authorLink}/follwers`,
                             },
                         });
                     }}
                 >
-                    Posts
+                    Followers
                 </Button>
-                <Button variant="contained">Follow</Button>
-                <Button variant="contained">Followers</Button>
             </Stack>
             <Avatar
                 alt="Profile-image"

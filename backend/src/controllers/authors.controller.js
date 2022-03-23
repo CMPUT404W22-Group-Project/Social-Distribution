@@ -18,8 +18,8 @@ export async function getAllAuthors(req, res) {
 
 	authors.forEach((author) => {
 		author.type = 'author';
-		author.url = `${host}/authors/${author.id}`;
-		author.id = `${host}/authors/${author.id}`;
+		author.url = `${host}/authors/${author.id}/`;
+		author.id = `${host}/authors/${author.id}/`;
 		author.host = `${host}/`;
 		delete author.email;
 		delete author.password;
@@ -40,10 +40,13 @@ export async function getAllAuthors(req, res) {
  */
 export async function getOneAuthor(req, res) {
 	const author = await authorService.getAuthors({ id: req.params.id });
+	if (!author) {
+		res.status(404).json({ error: 'No author not found' });
+	}
 	const host = `${req.protocol}://${req.get('host')}`;
-
-	author.url = `${host}/authors/${author.id}`;
-	author.id = `${host}/authors/${author.id}`;
+	author.url = `${host}/authors/${author.id}/`;
+	console.log(author);
+	author.id = `${host}/authors/${author.id}/`;
 	author.host = `${host}/`;
 	delete author.email;
 	delete author.password;
@@ -96,7 +99,7 @@ export async function updateAuthor(req, res) {
  */
 export async function newAuthor(req, res) {
 	const user = req.body;
-	const host = `${req.protocol}://${req.get('host')}`;
+	const host = `${req.protocol}://${req.get('host')}/`;
 	user.id = cuid();
 
 	// Check if all the required parameters exist
@@ -127,7 +130,7 @@ export async function newAuthor(req, res) {
  */
 export async function login(req, res) {
 	const user = req.body;
-	const host = `${req.protocol}://${req.get('host')}`;
+	const host = `${req.protocol}://${req.get('host')}/`;
 	// Check if the user email exists
 	const userExists = await authorService.checkUserExists(user.email);
 	if (!userExists) {
@@ -141,7 +144,7 @@ export async function login(req, res) {
 		return res.status(401).json({ error: 'Password mismatch' });
 	}
 	userExists.host = host;
-	userExists.url = `${host}/authors/${userExists.id}`;
+	userExists.url = `${host}/authors/${userExists.id}/`;
 	// Create new JWT token and set it as a cookie
 	const token = await newAccessToken(user.email, user.id);
 	res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
