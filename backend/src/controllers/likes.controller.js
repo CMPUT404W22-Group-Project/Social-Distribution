@@ -68,6 +68,9 @@ export async function httpPostNewLikeToPost(req, res) {
 	newLike.author = author;
 	newLike.type = 'Like';
 	newLike.object = object;
+
+	// TODO: Send like to inbox
+
 	return res.status(201).json(newLike);
 }
 

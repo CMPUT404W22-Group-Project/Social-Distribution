@@ -272,6 +272,9 @@ export async function newPost(req, res) {
 		return res.status(400).json({ error: 'Missing required property' });
 
 	const newPost = await postService.newPost(post);
+
+	// TODO: Send posts to followers and friends
+
 	return res.status(201).json(newPost);
 }
 

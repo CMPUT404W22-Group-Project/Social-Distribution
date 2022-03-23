@@ -50,6 +50,9 @@ export async function addFollower(req, res) {
 		req.params.foreignAuthorId,
 		req.params.authorId
 	);
+
+	// TODO: Add follower to inbox
+
 	return res.sendStatus(204);
 }
 
