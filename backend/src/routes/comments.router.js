@@ -93,7 +93,7 @@ const router = Router();
  *         description: The size of a page
  *     responses:
  *       200:
- *         description: a specific user
+ *         description: the comments found
  *         content:
  *           application/json:
  *             schema:
@@ -117,10 +117,10 @@ router.get(
  *         schema:
  *           $ref: '#/components/schemas/Comment'
  *         required: true
- *         description: The number of pages
+ *         description: post comment in a post
  *     responses:
  *       201:
- *         description: a specific user
+ *         description: comments posted
  *         content:
  *           application/json:
  *             schema:
