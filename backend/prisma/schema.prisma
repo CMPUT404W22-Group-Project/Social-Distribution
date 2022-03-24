@@ -12,6 +12,7 @@ datasource db {
 
 // Store authors
 model Author {
+    admin         Boolean?
     id            String          @id @default(cuid())
     email         String          @unique
     password      String
@@ -112,3 +113,10 @@ model FriendRequest {
 // If you just follow, you can see their public posts
 // If you follow and they do not accept your friend request, you can only see their public posts
 // If you both follow and friend, you can see each other's public and friend posts
+
+model Nodes {
+    type     String // "send", "receive".  If type is send, then our node has permission to send to their remote node.  If recieve, then remote nodes have permission to send to our node.
+    url      String @id
+    username String
+    password String
+}
