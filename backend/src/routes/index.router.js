@@ -6,6 +6,8 @@ import { router as inbox } from './inbox.router.js';
 import { router as followers } from './followers.router.js';
 import { router as nodes } from './nodes.router.js';
 
+
+
 export default function (app) {
 	app.use('/', author);
 	app.use('/', posts);

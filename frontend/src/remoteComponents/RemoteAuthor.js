@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
-import GithubActivity from '../../components/GithubActivity';
+import GithubActivity from '../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-const Profile = ({ props }) => {
-    Profile.propTypes = {
-        props: PropTypes.object,
-        auth: PropTypes.object,
-    };
+
+const RemoteAuthor = () => {
     let navigate = useNavigate();
-    let { authorId } = useParams();
-    const isOwnProfile = props.auth.author.id === authorId;
+    let location = useLocation();
+
+    const authorLink = location.state.authorLink;
     const [GHActivity, setGHActivity] = useState([]);
     const [author, setAuthor] = useState({
         id: '',
         displayName: '',
         github: '',
         profileImage: '',
+        host: '',
+        url: '',
     });
     const getGHEvents = async (user) => {
         try {
@@ -36,11 +33,9 @@ const Profile = ({ props }) => {
             console.error(err);
         }
     };
-    const getAuthorById = async (authorId) => {
+    const getAuthorById = async (authorLink) => {
         try {
-            const response = await axios.get(
-                `${BACKEND_URL}/authors/${authorId}`
-            );
+            const response = await axios.get(`${authorLink}`);
             setAuthor(response.data);
             //follow up request
             let ghUserName;
@@ -57,11 +52,10 @@ const Profile = ({ props }) => {
     };
 
     useEffect(() => {
-        getAuthorById(authorId);
+        getAuthorById(authorLink);
     }, []);
-
-    const renderedButton = () => {
-        return (
+    return (
+        <>
             <Stack
                 spacing={2}
                 direction="column"
@@ -73,34 +67,20 @@ const Profile = ({ props }) => {
                     position: 'absolute',
                 }}
             >
-                {isOwnProfile ? (
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            navigate(`/authors/${authorId}/edit`);
-                        }}
-                    >
-                        Edit
-                    </Button>
-                ) : null}
-                {isOwnProfile ? null : (
-                    <Button variant="contained">Follow</Button>
-                )}
+                <Button variant="contained">Follow</Button>
                 <Button
                     variant="contained"
                     onClick={() => {
-                        navigate(`/authors/${authorId}/followers`);
+                        navigate('/follwers', {
+                            state: {
+                                followerLink: `${authorLink}/follwers`,
+                            },
+                        });
                     }}
                 >
                     Followers
                 </Button>
             </Stack>
-        );
-    };
-
-    return (
-        <>
-            {renderedButton()}
             <Avatar
                 alt="Profile-image"
                 src={author.profileImage}
@@ -166,8 +146,4 @@ const Profile = ({ props }) => {
     );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-    props: { ...ownProps.props, auth: state.auth },
-});
-
-export default connect(mapStateToProps)(Profile);
+export default RemoteAuthor;

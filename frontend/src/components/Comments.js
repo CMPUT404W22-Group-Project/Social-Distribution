@@ -56,7 +56,9 @@ const Comments = ({ props }) => {
                     contentType: contentType,
                     comment: comment,
                 },
-                { withCredentials: true }
+                {
+                    withCredentials: true,
+                }
             )
             .then((response) => {
                 console.log(response.data);

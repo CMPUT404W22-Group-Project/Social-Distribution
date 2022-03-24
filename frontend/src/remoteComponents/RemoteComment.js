@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import ListItem from '@mui/material/ListItem';
@@ -10,10 +11,10 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
-import ProfilePictureCard from './ProfilePictureCard';
+import RemoteProfile from './RemoteProfile';
 
-const CommentItem = ({ props }) => {
-    CommentItem.propTypes = {
+const RemoteComment = ({ props }) => {
+    RemoteComment.propTypes = {
         props: PropTypes.object,
         author: PropTypes.object,
         published: PropTypes.string,
@@ -41,7 +42,7 @@ const CommentItem = ({ props }) => {
         <ListItem>
             <Card>
                 <CardHeader
-                    avatar={<ProfilePictureCard props={props.author} />}
+                    avatar={<RemoteProfile props={props.author} />}
                     title={renderContent()}
                     subheader={`Published:${publishedDate}`}
                 />
@@ -55,4 +56,8 @@ const CommentItem = ({ props }) => {
     );
 };
 
-export default CommentItem;
+const mapStateToProps = (state, ownProps) => ({
+    props: { ...ownProps.props, auth: state.auth },
+});
+
+export default connect(mapStateToProps)(RemoteComment);

@@ -11,6 +11,7 @@ import path from 'path';
 import axios from 'axios';
 import { postToInbox } from '../services/inbox.service.js';
 
+const __dirname = path.resolve();
 /**
  * Get all posts that are public
  * @param {Express.Request} req
@@ -25,20 +26,18 @@ export async function getAllPublicPosts(req, res) {
 		//author
 		const author = await authorService.getAuthors({ id: post.authorId });
 		post.type = 'post';
-		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-		post.host = `${host}/`;
+		author.id = `${host}/authors/${post.authorId}`;
 		post.author = {
 			type: 'author',
 			url: `${host}/authors/${post.authorId}`,
-			id: `${host}/authors/${post.authorId}`,
-			host: host,
+			host: `${host}/`,
 			...author,
 		};
 
 		//like
 		const likeCount = await likeService.getTotal(post.id);
 		post.likeCount = likeCount['_count'];
-		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
+		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments/`;
 		//comments
 		const page = 1;
 		const size = 5;
@@ -55,7 +54,7 @@ export async function getAllPublicPosts(req, res) {
 			total: total['_count'],
 			comments: comments,
 		};
-		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	}
 	const response = {
 		type: 'posts',
@@ -82,16 +81,16 @@ export async function getAllPosts(req, res) {
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
-
+	author.id = `${host}/authors/${author.id}/`;
 	for (const post of posts) {
 		//author
 		post.type = 'post';
-		post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
 		post.host = `${host}/`;
+
 		post.author = {
 			type: 'author',
-			url: `${host}/authors/${post.authorId}`,
-			host: host,
+			url: `${host}/authors/${post.authorId}/`,
+			host: `${host}/`,
 			...author,
 		};
 		//like
@@ -115,7 +114,7 @@ export async function getAllPosts(req, res) {
 			total: total['_count'],
 			comments: comments,
 		};
-		post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+		post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	}
 
 	const response = {
@@ -142,7 +141,7 @@ export async function getOnePost(req, res) {
 
 	const author = await authorService.getAuthors({ id: post.authorId });
 
-	post.id = `${host}/authors/${post.authorId}/posts/${post.id}`;
+	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
@@ -165,12 +164,12 @@ export async function getOnePost(req, res) {
 		total: total['_count'],
 		comments: comments,
 	};
-	post.url = `${host}/authors/${post.authorId}/posts/${post.id}`;
-	post.host = `${host}/`;
+	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
+	author.id = `${host}/authors/${post.authorId}/`;
 	post.author = {
 		type: 'author',
-		url: `${host}/authors/${post.authorId}`,
-		host: host,
+		url: `${host}/authors/${post.authorId}/`,
+		host: `${host}/`,
 		...author,
 	};
 
@@ -316,25 +315,60 @@ export async function newPost(req, res) {
  * @returns New post
  */
 export async function addPostImage(req, res) {
-	const fileName = req.params.id;
 	if (req.files === null)
 		return res.status(400).json({ error: 'No file uploaded' });
+
 	const file = req.files.file;
-	file.mv(
-		path.join(__dirname, '..', '..', 'public', 'uploads', fileName),
-		(err) => {
-			if (err) {
-				console.log(err);
-				return res.status(500).send(err);
-			}
-			return res
-				.status(200)
-				.json({ filename: fileName, filePath: `/public/uploads/${fileName}` });
+	const fileName =
+		file.mimetype === 'image/png'
+			? `${req.params.id}.png`
+			: `${req.params.id}.jpeg`;
+	console.log(file);
+	await file.mv(path.join(__dirname, 'public', 'posts', fileName), (err) => {
+		if (err) {
+			console.log(err);
+			return res.status(500).send(err);
 		}
+	});
+	const host = `${req.protocol}://${req.get('host')}`;
+	const content = `${host}/authors/${req.params.authorId}/posts/${req.params.id}/image`;
+	const updatedPost = await postService.updatePostContent(
+		req.params.id,
+		content
 	);
-	return res.status(201).json(newPost);
+	if (updatedPost === null) {
+		res.status(500).send({ error: 'file to update content path' });
+	}
+	return res
+		.status(201)
+		.json({ filename: fileName, filePath: `/public/posts/${fileName}` });
 }
 
+/**
+ * Upload image to backend folder
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns Image
+ */
+export async function getImage(req, res) {
+	const postType = await postService.getContentType(req.params.id);
+	let fileName;
+	if (postType === 'image/png;base64') {
+		fileName = `${req.params.id}.png`;
+	} else if (postType === 'image/jpeg;base64') {
+		fileName = `${req.params.id}.jpeg`;
+	} else {
+		return res.status(404).json({ error: 'No Image Found' });
+	}
+
+	const filePath = path.join(__dirname, 'public', 'posts', fileName);
+	res.sendFile(filePath, (err) => {
+		if (err) {
+			console.log(err);
+			return res.status(500).send(err);
+		}
+	});
+}
 /**
  * Check if post has all the required arguments
  * @param {Post object} post

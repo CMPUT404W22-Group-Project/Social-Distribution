@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { NavLink, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import moment from 'moment';
-import { styled } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -24,20 +21,12 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
-import ProfilePictureCard from './ProfilePictureCard';
-import Comments from './Comments';
+import RemoteProfile from './RemoteProfile';
+import RemoteComments from './RemoteComments';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
-const PostItem = ({ props }) => {
-    let navigate = useNavigate();
-    PostItem.propTypes = {
+const RemotePost = ({ props }) => {
+    RemotePost.propTypes = {
         props: PropTypes.object,
         id: PropTypes.string,
         url: PropTypes.string,
@@ -54,14 +43,13 @@ const PostItem = ({ props }) => {
         unlisted: PropTypes.bool,
         contentType: PropTypes.string,
         content: PropTypes.string,
+        comments: PropTypes.string,
         commentsSrc: PropTypes.object,
         auth: PropTypes.object,
     };
     //verify isOwnPost?
-    const isOwnPost = props.auth.author.id === props.authorId;
     const postId = props.url?.split('/').pop();
     //for post menu
-    const [dialog, setDialog] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -69,24 +57,6 @@ const PostItem = ({ props }) => {
     };
     const handleClose = () => {
         setAnchorEl(null);
-    };
-    const handleDeleteButtonClick = () => {
-        setDialog(true);
-    };
-    const deletePost = async () => {
-        const response = await axios.delete(
-            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`,
-            {
-                withCredentials: true,
-            }
-        );
-        response.status === 204
-            ? navigate(`/authors/${props.authorId}/posts/${postId}`)
-            : alert('Delete failed');
-        handleDialogClose();
-    };
-    const handleDialogClose = () => {
-        setDialog(false);
     };
     const publishedDate = moment(props.published).format(
         'MMMM Do YYYY, h:mm:ss a'
@@ -149,14 +119,7 @@ const PostItem = ({ props }) => {
                 );
         }
     };
-    //delete button
-    const DeleteButton = styled(Button)(({ theme }) => ({
-        color: theme.palette.getContrastText(red[500]),
-        backgroundColor: red[500],
-        '&:hover': {
-            backgroundColor: red[700],
-        },
-    }));
+
     //expand more for commentsSrc
 
     const [expanded, setExpanded] = useState(false);
@@ -166,13 +129,12 @@ const PostItem = ({ props }) => {
     };
 
     //like post
-    const likePost = (authorId, postId) => {
+    const likePost = (author) => {
         axios
-            .post(`${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`, {
-                authorId: authorId,
-                postId: postId,
-            }, 
-            { withCredentials: true })
+            .post(`${props.url}/likes`, {
+                author: author,
+                object: props.url,
+            })
             .then((response) => {
                 response.status === 201
                     ? window.location.reload()
@@ -180,19 +142,15 @@ const PostItem = ({ props }) => {
             });
     };
     const [disableLiked, setDisableLiked] = useState(false);
-    const getAuthorLiked = (postId) => {
-        axios
-            .get(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}/likes`,
-                { withCredentials: true }
-            )
-            .then((response) => {
-                response.data.items.map((data) => {
-                    data.authorId = props.auth.author.id
-                        ? setDisableLiked(true)
-                        : null;
-                });
+    const getAuthorLiked = () => {
+        axios.get(`${props.url}/likes`).then((response) => {
+            response.data.items.map((data) => {
+                data.author.id = props.auth.author.url
+                    ? setDisableLiked(true)
+                    : null;
             });
+            props.likeCount = response.data.items.length;
+        });
     };
     useEffect(() => {
         getAuthorLiked(postId);
@@ -201,7 +159,7 @@ const PostItem = ({ props }) => {
         <>
             <Card>
                 <CardHeader
-                    avatar={<ProfilePictureCard props={props.author} />}
+                    avatar={<RemoteProfile props={props.author} />}
                     action={
                         <>
                             <IconButton
@@ -228,23 +186,6 @@ const PostItem = ({ props }) => {
                                     horizontal: 'right',
                                 }}
                             >
-                                {isOwnPost ? (
-                                    <MenuItem
-                                        disabled={isOwnPost ? false : true}
-                                    >
-                                        <Button
-                                            sx={{ minWidth: 100 }}
-                                            variant="contained"
-                                            onClick={() => {
-                                                navigate(
-                                                    `/authors/${props.authorId}/posts/${postId}/edit`
-                                                );
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                    </MenuItem>
-                                ) : null}
                                 <MenuItem>
                                     <Button
                                         sx={{ minWidth: 100 }}
@@ -271,21 +212,6 @@ const PostItem = ({ props }) => {
                                         Origin
                                     </Button>
                                 </MenuItem>
-                                {isOwnPost ? (
-                                    <MenuItem
-                                        disabled={isOwnPost ? false : true}
-                                    >
-                                        <DeleteButton
-                                            sx={{ minWidth: 100 }}
-                                            variant="contained"
-                                            onClick={() => {
-                                                handleDeleteButtonClick();
-                                            }}
-                                        >
-                                            Delete
-                                        </DeleteButton>
-                                    </MenuItem>
-                                ) : null}
                             </Menu>
                         </>
                     }
@@ -297,35 +223,21 @@ const PostItem = ({ props }) => {
                     <Typography variant="title">{`Description:${props.description}`}</Typography>
                     {renderCategories()}
                     {renderContent()}
-                    {/* <CardMedia
-          component="img"
-          height="194"
-          image="/static/images/cards/paella.jpg"
-          alt="Paella dish"
-        />
-        <Typography variant="body1" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
-        </Typography> */}
                 </CardContent>
                 <CardActions disableSpacing>
                     <IconButton
                         aria-label="like-this-post"
                         onClick={() => {
                             setDisableLiked(true);
-                            likePost(props.auth.author.id, postId);
+                            const author = props.auth.author;
+                            author.id = props.auth.author.url;
+                            likePost(author);
                         }}
                         disabled={disableLiked ? true : null}
                     >
                         <FavoriteIcon />
                     </IconButton>
-                    <NavLink
-                        to={`/authors/${props.authorId}/posts/${postId}/likes`}
-                    >
-                        {props.likeCount}
-                    </NavLink>
-                    <Typography variant="body1">{}</Typography>
+                    <Typography>{props.likeCount}</Typography>
                     <IconButton aria-label="share">
                         <ShareIcon />
                     </IconButton>
@@ -340,51 +252,9 @@ const PostItem = ({ props }) => {
                         View Comments
                     </Button>
                 </CardActions>
-                <Dialog
-                    open={dialog}
-                    onClose={() => {
-                        handleDialogClose();
-                    }}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {' Delete '}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Are you sure you want to delete this post?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            onClick={() => {
-                                handleDialogClose();
-                            }}
-                        >
-                            No
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                handleDialogClose();
-                                deletePost();
-                                window.location.reload();
-                            }}
-                            autoFocus
-                        >
-                            Yes
-                        </Button>
-                    </DialogActions>
-                </Dialog>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                        <Comments
-                            props={{
-                                postId,
-                                authorId: props.authorId,
-                                ...props.commentsSrc,
-                            }}
-                        />
+                        <RemoteComments props={props.id} />
                     </CardContent>
                 </Collapse>
             </Card>
@@ -395,4 +265,4 @@ const mapStateToProps = (state, ownProps) => ({
     props: { ...ownProps.props, auth: state.auth },
 });
 
-export default connect(mapStateToProps)(PostItem);
+export default connect(mapStateToProps)(RemotePost);

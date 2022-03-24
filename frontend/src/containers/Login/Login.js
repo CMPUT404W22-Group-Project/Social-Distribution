@@ -46,7 +46,7 @@ const Login = (props) => {
     };
 
     useEffect(() => {
-        props.isSignedIn ? navigate('/posts') : null;
+        props.isSignedIn ? navigate('/public/posts') : null;
     }, [props.isSignedIn]);
 
     //sumbit form
@@ -71,7 +71,7 @@ const Login = (props) => {
                 console.log(response);
                 if (response.status === 200) {
                     props.signIn(response.data);
-                    navigate('/posts');
+                    navigate('/public/posts');
                 }
             })
             .catch((error) => {
