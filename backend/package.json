@@ -6,7 +6,8 @@
 	"type": "module",
 	"scripts": {
 		"watch": "nodemon",
-		"start": "node src/server.js",
+		"start":"node src/server.js",
+		"depoly": "npx prisma generate && node src/server.js",
 		"migrate:dev": "npx prisma migrate dev",
 		"migrate:prod": "npx prisma migrate deploy",
 		"test": "jest --detectOpenHandles"
