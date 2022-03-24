@@ -2,12 +2,20 @@ import { followersService } from '../services/index.service.js';
 import axios from 'axios';
 
 export async function getFollowers(req, res) {
+	const followers = await getFollowersJSON({
+		authorId: req.params.authorId,
+		protocol: req.protocol,
+		host: req.get('host'),
+	});
+	return res.status(200).json(followers);
+}
+
+export async function getFollowersJSON(options) {
 	const { localFollowers, remoteFollowers } =
-		await followersService.getFollowers(req.params.authorId);
-	const host = `${req.protocol}://${req.get('host')}`;
+		await followersService.getFollowers(options.authorId, options.host);
+	const host = `${options.protocol}://${options.host}`;
 
 	localFollowers.forEach((follower) => {
-		follower.type = 'author';
 		follower.type = 'author';
 		follower.url = `${host}/authors/${follower.id}`;
 		follower.id = `${host}/authors/${follower.id}`;
@@ -19,9 +27,10 @@ export async function getFollowers(req, res) {
 	const followerList = localFollowers;
 	for (const follower of remoteFollowers) {
 		try {
+			// TODO: Check nodes table for node and use basic auth
 			followerList.push((await axios.get(follower.authorId)).data);
-		} catch {
-			console.log('Unable to get follower information');
+		} catch (err) {
+			console.error(`${err.message} on ${follower.authorId}`);
 		}
 	}
 
@@ -30,7 +39,7 @@ export async function getFollowers(req, res) {
 		items: followerList,
 	};
 
-	return res.status(200).json(followers);
+	return followers;
 }
 
 export async function deleteFollower(req, res) {

@@ -1,26 +1,35 @@
 import prisma from '../../prisma/client.js';
-// import { PrismaClient } from '@prisma/client';
-// const prisma = new PrismaClient();
 
-export async function getFollowers(authorId) {
-	const localFollowers = await prisma.author.findMany({
+export async function getFollowers(authorId, host) {
+	const remoteFollowers = [];
+	const localFollowersList = [];
+
+	const followers = await prisma.followers.findMany({
 		where: {
-			id: authorId,
+			followingId: authorId,
 		},
 	});
 
-	const remoteFollowers = await prisma.followers.findMany({
+	for (const follower of followers) {
+		if (
+			// If local http URL
+			follower.authorId.startsWith(host) ||
+			// Or if CUID
+			follower.authorId.startsWith('c')
+		) {
+			localFollowersList.push(
+				follower.authorId.split('/').filter(String).slice(-1)[0]
+			);
+		} else {
+			remoteFollowers.push(follower);
+		}
+	}
+
+	const localFollowers = await prisma.author.findMany({
 		where: {
-			AND: [
-				{
-					followingId: authorId,
-				},
-				{
-					authorId: {
-						startsWith: 'http',
-					},
-				},
-			],
+			id: {
+				in: localFollowersList,
+			},
 		},
 	});
 
