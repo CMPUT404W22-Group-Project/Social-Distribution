@@ -19,6 +19,7 @@ export async function getPosts(options) {
 		return await prisma.post.findMany({
 			where: {
 				authorId: authorId,
+				unlisted: false,
 			},
 			skip: size * (page - 1),
 			take: size,
@@ -29,6 +30,10 @@ export async function getPosts(options) {
 	}
 
 	return await prisma.post.findMany({
+		where: {
+			authorId: authorId,
+			unlisted: false,
+		},
 		orderBy: {
 			published: 'desc',
 		},
