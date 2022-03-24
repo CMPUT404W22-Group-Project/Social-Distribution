@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import PostItem from '../../components/PostItem';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
+const BACKEND_URL = 'https://www.socialdisturbutionnetworks.ca'; //process.env.REACT_APP_BACKEND_URL
 
 const AuthorPost = ({ props }) => {
     AuthorPost.propTypes = {

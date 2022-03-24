@@ -33,7 +33,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import ProfilePictureCard from './ProfilePictureCard';
 import Comments from './Comments';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
+const BACKEND_URL = 'https://www.socialdisturbutionnetworks.ca'; //process.env.REACT_APP_BACKEND_URL
 
 const PostItem = ({ props }) => {
     let navigate = useNavigate();

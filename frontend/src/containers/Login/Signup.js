@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
+const BACKEND_URL = 'https://www.socialdisturbutionnetworks.ca'; //process.env.REACT_APP_BACKEND_URL
 
 function Copyright(props) {
     return (
@@ -58,11 +58,15 @@ const SignUp = (props) => {
     //sign up
     const signUp = (email, password, displayName) => {
         axios
-            .post(`${BACKEND_URL}/register`, {
-                email: email,
-                password: password,
-                displayName: displayName,
-            }, {withCredentials: true})
+            .post(
+                `${BACKEND_URL}/register`,
+                {
+                    email: email,
+                    password: password,
+                    displayName: displayName,
+                },
+                { withCredentials: true }
+            )
             .then((response) => {
                 console.log(response);
                 if (response.status === 201) {

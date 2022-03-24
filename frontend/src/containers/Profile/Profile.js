@@ -9,7 +9,7 @@ import List from '@mui/material/List';
 import GithubActivity from '../../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
+const BACKEND_URL = 'https://www.socialdisturbutionnetworks.ca'; //process.env.REACT_APP_BACKEND_URL
 const Profile = ({ props }) => {
     Profile.propTypes = {
         props: PropTypes.object,
