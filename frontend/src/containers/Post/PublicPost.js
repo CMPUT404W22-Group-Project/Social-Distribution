@@ -10,7 +10,8 @@ const PublicPost = () => {
 
   const getAllPublicPosts = () => {
     axios
-      .get(`${BACKEND_URL}/posts`)
+      .get(`${BACKEND_URL}/posts`,
+      { withCredentials: true })
       .then((response) => {
         response.status === 200 ? setPosts([...response.data.items]) : null;
       })

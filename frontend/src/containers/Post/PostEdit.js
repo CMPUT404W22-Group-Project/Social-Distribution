@@ -35,7 +35,8 @@ const PostEdit = () => {
     //get post
     const getPost = () => {
         axios
-            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`)
+            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`,
+            { withCredentials: true })
             .then((response) => {
                 response.status === 200 ? setPost({ ...response.data }) : null;
                 if (
@@ -91,7 +92,8 @@ const PostEdit = () => {
         try {
             const response = await axios.post(
                 `${BACKEND_URL}/authors/${authorId}/posts/${postId}`,
-                post
+                post, 
+                { withCredentials: true }
             );
             // upload file with the post id from response object
             response.status === 200

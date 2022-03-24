@@ -13,7 +13,8 @@ const PostLikes = () => {
     }, []);
     const getLikes = (postId) => {
         axios
-            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`)
+            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`,
+            { withCredentials: true })
             .then((response) => {
                 setLikes([...response.data.items]);
             });

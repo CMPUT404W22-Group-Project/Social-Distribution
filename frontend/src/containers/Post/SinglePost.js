@@ -10,7 +10,8 @@ const SinglePost = () => {
     const [post, setPost] = useState({});
     const getPost = () => {
         axios
-            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`)
+            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`, 
+            { withCredentials: true })
             .then((response) => {
                 response.status === 200 ? setPost({ ...response.data }) : null;
             })

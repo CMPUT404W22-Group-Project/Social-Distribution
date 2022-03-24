@@ -75,7 +75,8 @@ const PostItem = ({ props }) => {
     };
     const deletePost = async () => {
         const response = await axios.delete(
-            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`
+            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`,
+            { withCredentials: true }
         );
         response.status === 204
             ? navigate(`/authors/${props.authorId}/posts/${postId}`)
@@ -172,7 +173,8 @@ const PostItem = ({ props }) => {
             .post(`${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`, {
                 authorId: authorId,
                 postId: postId,
-            })
+            }, 
+            { withCredentials: true })
             .then((response) => {
                 response.status === 201
                     ? window.location.reload()
@@ -183,7 +185,8 @@ const PostItem = ({ props }) => {
     const getAuthorLiked = (postId) => {
         axios
             .get(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}/likes`
+                `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}/likes`,
+                { withCredentials: true }
             )
             .then((response) => {
                 response.data.items.map((data) => {
