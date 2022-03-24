@@ -30,6 +30,10 @@ export async function getPosts(options) {
 	}
 
 	return await prisma.post.findMany({
+		where: {
+			authorId: authorId,
+			unlisted: false,
+		},
 		orderBy: {
 			published: 'desc',
 		},

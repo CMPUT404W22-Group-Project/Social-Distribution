@@ -1,4 +1,9 @@
-import { authorService, commentService } from '../services/index.service.js';
+import {
+	authorService,
+	commentService,
+	inboxService,
+	postService,
+} from '../services/index.service.js';
 import cuid from 'cuid';
 
 /**
@@ -39,6 +44,37 @@ export async function getAllComments(req, res) {
 }
 
 /**
+ * Get one comment
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns Comment object
+ */
+export async function getOneComment(req, res) {
+	const comment = await commentService.getComments({
+		id: req.params.commentId,
+	});
+	const author = await authorService.getAuthors({
+		id: comment.authorId,
+	});
+	const host = `${req.protocol}://${req.get('host')}`;
+	comment.type = 'comment';
+	comment.id = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${comment.id}`;
+	comment.author = {
+		type: 'author',
+		url: `${host}/authors/${comment.authorId}`,
+		id: `${host}/authors/${comment.authorId}`,
+		host: host,
+		displayName: author.displayName,
+		github: author.github,
+		profileImage: author.profileImage,
+	};
+	delete comment.authorId;
+	delete comment.postId;
+
+	return res.status(200).json(comment);
+}
+
+/**
  * Create a new comment on a post
  * @param {Express.Request} req
  * @param {Express.Response} res
@@ -58,8 +94,20 @@ export async function newComment(req, res) {
 
 	const newComment = await commentService.newComment(comment);
 	const author = await authorService.getAuthors({ id: newComment.authorId });
+	const post = await postService.getPosts({ id: comment.postId });
+
+	newComment.id = `${req.protocol}://${req.get('host')}/authors/${
+		post.authorId
+	}/posts/${post.id}/comments/${comment.id}/`;
 	newComment.author = author;
 
+	// Send to inbox
+	inboxService.postToInbox({
+		type: 'comment',
+		src: newComment.id,
+		owner: post.authorId,
+	});
+	
 	return res.status(201).json(newComment);
 }
 

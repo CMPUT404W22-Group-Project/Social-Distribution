@@ -1,4 +1,9 @@
-import { authorService, likeService } from '../services/index.service.js';
+import {
+	authorService,
+	inboxService,
+	likeService,
+} from '../services/index.service.js';
+import axios from 'axios';
 
 /**
  * get all like of post, given a post id
@@ -51,23 +56,45 @@ export async function httpGetAllLikesOfComment(req, res) {
  * @param {*} res
  * @returns
  */
+// FIXME: Post route should be inbox, not likes
 export async function httpPostNewLikeToPost(req, res) {
 	const like = req.body;
 	const host = `${req.protocol}://${req.get('host')}`;
-	console.log(like);
+	like.authorId = like.object.split('/authors/')[1].split('/posts/')[0];
+	like.postId = like.object.split('/authors/')[1].split('/posts/')[1];
+
 	if (!like.postId || !like.authorId) {
 		return res.status(400).json({
 			error: 'Missing required property',
 		});
 	}
 
-	const newLike = await likeService.postLike(like);
-	const author = await authorService.getAuthors({ id: like.authorId });
-	const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
+	const newLike = await likeService.postLike({
+		authorId: like.author.id,
+		postId: like.postId,
+	});
+
+	let author;
+	if (like.author.id.startsWith(host)) {
+		author = await authorService.getAuthors({ id: like.author.id });
+	} else {
+		// TODO: Basic auth
+		author = (await axios.get(like.author.id)).data;
+	}
+
 	newLike.summary = `${author.displayName} Likes Your Post`;
 	newLike.author = author;
 	newLike.type = 'Like';
-	newLike.object = object;
+	newLike.object = like.object;
+
+	// TODO: Send like to inbox
+	inboxService.postToInbox({
+		type: 'like',
+		src: like.object,
+		owner: `${host}/authors/${like.authorId}/`,
+		likedAuthor: `${host}/authors/${like.author.id}/`,
+	});
+
 	return res.status(201).json(newLike);
 }
 

@@ -12,15 +12,19 @@ datasource db {
 
 // Store authors
 model Author {
-    id           String    @id @default(cuid())
-    email        String    @unique
-    password     String
-    displayName  String
-    github       String?
-    profileImage String?
-    Post         Post[]
-    Comment      Comment[]
-    Likes        Likes[]
+    admin         Boolean?
+    id            String          @id @default(cuid())
+    email         String          @unique
+    password      String
+    displayName   String
+    github        String?
+    profileImage  String?
+    Post          Post[]
+    Comment       Comment[]
+    Likes         Likes[]
+    Inbox         Inbox[]
+    FriendRequest FriendRequest[]
+    Friends       Friends[]
 }
 
 // Store posts. Each post has a primary key, and references a foreign key author id
@@ -64,4 +68,55 @@ model Likes {
     author   Author @relation(fields: [authorId], references: [id])
 
     @@id([postId, authorId])
+}
+
+// Store inbox.  Primary key is a combined post id and author id
+model Inbox {
+    type        String // "post", "follow", "like", or "comment"
+    src         String // If post, then post id.  If following, then following author id.  If like, then liked post id.  If comment, then comment id.  (URL if remote)
+    likedAuthor String? // Contains the author id that liked the post.  This field is only populated if the type is "like"
+    owner       String
+    dateTime    DateTime? // Timestamp the event
+    author      Author    @relation(fields: [owner], references: [id])
+
+    @@id([src, owner])
+}
+
+// Store followers.  AuthorId follows FollowingId
+model Followers {
+    authorId    String // Author id
+    followingId String // The author id of the one being followed.  
+    // No relation is enforced because they can be on a different host
+
+    @@id([authorId, followingId])
+}
+
+// Store friendships.  AuthorId is friends with FriendId, but FriendId is not neccessarily friends with AuthorId
+model Friends {
+    authorId String // Local CUID or remote host
+    friendId String // Local CUID
+    friend   Author @relation(fields: [friendId], references: [id])
+
+    @@id([authorId, friendId])
+}
+
+// Store follow requests.  AuthorId wants to follow FollowReqId
+model FriendRequest {
+    authorId    String // Requester.  Can be either remote host or CUID:  Eg. http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471 (different host) or cl0h7864c0001rsv835tr1dxf (local)
+    friendReqId String // Requested.  Must be local CUID
+    friend      Author @relation(fields: [friendReqId], references: [id])
+
+    @@id([authorId, friendReqId])
+}
+
+// If you follow and friend, then you can see their public and friend posts
+// If you just follow, you can see their public posts
+// If you follow and they do not accept your friend request, you can only see their public posts
+// If you both follow and friend, you can see each other's public and friend posts
+
+model Nodes {
+    type     String // "send", "receive".  If type is send, then our node has permission to send to their remote node.  If recieve, then remote nodes have permission to send to our node.
+    url      String @id
+    username String
+    password String
 }

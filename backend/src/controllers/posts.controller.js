@@ -4,9 +4,13 @@ import {
 	commentService,
 	likeService,
 } from '../services/index.service.js';
+import { getFollowersJSON } from './followers.controller.js';
 
 import cuid from 'cuid';
 import path from 'path';
+import axios from 'axios';
+import { postToInbox } from '../services/inbox.service.js';
+
 const __dirname = path.resolve();
 /**
  * Get all posts that are public
@@ -261,15 +265,46 @@ export async function newPost(req, res) {
 		return res.status(403).json({ error: 'Cannot post on this profile' });
 	}
 
+	const host = `${req.protocol}://${req.get('host')}`;
 	const post = req.body;
 	post.authorId = req.user.id;
 	post.id = cuid();
 	post.published = new Date();
+	post.origin = `${host}/authors/${req.user.id}/posts`;
 
 	if (!validPost(post))
 		return res.status(400).json({ error: 'Missing required property' });
 
 	const newPost = await postService.newPost(post);
+
+	// TODO: Send posts to friends
+	const followers = await getFollowersJSON({
+		authorId: req.params.authorId,
+		protocol: req.protocol,
+		host: req.get('host'),
+	});
+
+	followers.items.forEach((follower) => {
+		if (follower.host.startsWith(host)) {
+			postToInbox({
+				type: 'post',
+				src: post.id,
+				owner: `${host}/authors/${req.user.id}`,
+			});
+		} else {
+			// TODO: Use basic auth
+			axios
+				.post(`${follower.url}/inbox`, {
+					type: 'post',
+					owner: `${host}/authors/${req.user.id}`,
+					src: `${post.origin}/${post.id}`,
+				})
+				.catch((err) => {
+					console.error(`${err.message} on ${follower.url}/inbox`);
+				});
+		}
+	});
+
 	return res.status(201).json(newPost);
 }
 

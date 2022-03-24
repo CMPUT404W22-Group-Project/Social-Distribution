@@ -101,6 +101,10 @@ const router = Router();
  *                 $ref: '#/components/schemas/Comments'
  */
 router.get(
+	'/authors/:authorId/posts/:postId/comments/:commentId',
+	commentController.getOneComment
+);
+router.get(
 	'/authors/:authorId/posts/:postId/comments/',
 	commentController.getAllComments
 );

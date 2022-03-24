@@ -19,7 +19,8 @@ const AuthorPost = ({ props }) => {
     let navigate = useNavigate();
     const getAllPosts = () => {
         axios
-            .get(`${BACKEND_URL}/authors/${authorId}/posts`)
+            .get(`${BACKEND_URL}/authors/${authorId}/posts`,
+            { withCredentials: true })
             .then((response) => {
                 response.status === 200
                     ? setPosts([...response.data.items])
