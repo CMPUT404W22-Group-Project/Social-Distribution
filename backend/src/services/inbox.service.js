@@ -4,38 +4,65 @@ import prisma from '../../prisma/client.js';
 
 /**
  * Get inbox items
- * @param {Options} options 
+ * @param {Options} options
  * @returns Inbox items
- * 
+ *
  * TODO: Get posts, comments, likes, and follows from the inbox items
  */
 export async function getInbox(options) {
-    const { id, page, size } = options;
-    if (id && page && size) {
-        return await prisma.inbox.findMany({
-            where: {
-                authorId: id,
-            },
-            skip: size * (page - 1),
-            take: size,
-            orderBy: {
-                dateTime: 'desc'
-            }
-        });
-        // console.log(inbox);
-
-    }
+	const { id, page, size } = options;
+	if (id && page && size) {
+		return await prisma.inbox.findMany({
+			where: {
+				authorId: id,
+			},
+			skip: size * (page - 1),
+			take: size,
+			orderBy: {
+				dateTime: 'desc',
+			},
+		});
+	}
 }
 
 /**
  * Clear the inbox for a user
  * @param {String} id Author id
- * @returns 
+ * @returns
  */
 export async function clearInbox(id) {
-    return await prisma.inbox.deleteMany({
-        where: {
-            authorId: id,
-        },
-    });
+	return await prisma.inbox.deleteMany({
+		where: {
+			authorId: id,
+		},
+	});
+}
+
+/**
+ * Post to inbox
+ * @param {Options} options 
+ * @returns New inbox object
+ */
+export async function postToInbox(options) {
+	const { type, src, owner, likedAuthor } = options;
+	if (type === 'like') {
+		return await prisma.inbox.create({
+			data: {
+				type: type,
+				src: src,
+				owner: owner,
+				dateTime: new Date(),
+				likedAuthor: likedAuthor,
+			},
+		});
+	} else {
+		return await prisma.inbox.create({
+			data: {
+				type: type,
+				src: src,
+				owner: owner,
+				dateTime: new Date(),
+			},
+		});
+	}
 }
