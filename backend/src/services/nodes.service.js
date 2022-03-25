@@ -1,4 +1,4 @@
-import prisma from "../../prisma/client.js";
+import prisma from '../../prisma/client.js';
 // import { PrismaClient } from '@prisma/client';
 // const prisma = new PrismaClient();
 
@@ -25,6 +25,7 @@ export async function getNode(url) {
 	return await prisma.nodes.findUnique({
 		where: {
 			url: url,
+			type: 'send',
 		},
 	});
 }

@@ -14,5 +14,5 @@ export async function removeNode(req, res) {
 
 export async function getNode(req, res) {
 	const node = await nodesService.getNode(req.body.url);
-	return res.sendStatus(200).json(node);
+	return res.status(200).json(node);
 }
