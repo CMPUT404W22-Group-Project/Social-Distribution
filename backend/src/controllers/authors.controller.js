@@ -4,49 +4,40 @@ import cuid from 'cuid';
 import argon2 from 'argon2';
 import axios from 'axios';
 
-async function httpGetAuthorById(url, id) {
-	try {
-		const node = await nodesService.getNodeByUrl(url);
-		const token = btoa(`${node.username}:${node.password}`);
-		const config = {
-			headers: {
-				Authorization: `Basic ${token}`,
-				'Access-Control-Allow-Origin': 'http://localhost:8000',
-				'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE',
-				'Access-Control-Allow-Headers':
-					'Access-Control-Allow-Headers, Origin,Accept, Content-Type, ',
-			},
-		};
+async function httpGetAuthorById({ url, id }) {
+	const node = await nodesService.getNodeByUrl(url);
 
-		const response = await axios.get(`${node.url}/authors/${id}/`, config);
-		return response.data;
-	} catch (error) {
-		return 503;
-	}
+	const response = await axios.get(`${node.url}/authors/${id}`, {
+		auth: { username: node.username, password: node.password },
+	});
+
+	return response.data;
 }
 
 async function httpGetAuthors(node) {
 	let authors = [];
-	const token = btoa(`${node.username}:${node.password}`);
-	const config = {
-		headers: {
-			Authorization: `Basic ${token}`,
-			'Access-Control-Allow-Origin': 'http://localhost:8000',
-			'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE',
-			'Access-Control-Allow-Headers':
-				'Access-Control-Allow-Headers, Origin,Accept, Content-Type, ',
-		},
-	};
-	const response = await axios.get(`${node.url}/authors`, config);
-	console.log(response.status);
+	// const token = btoa(`${node.username}:${node.password}`);
+	// const config = {
+	// 	headers: {
+	// 		Authorization: `Basic ${token}`,
+	// 		'Access-Control-Allow-Origin': 'http://localhost:8000',
+	// 		'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE',
+	// 		'Access-Control-Allow-Headers':
+	// 			'Access-Control-Allow-Headers, Origin,Accept, Content-Type, ',
+	// 	},
+	// };
+	const response = await axios.get(`${node.url}/authors`, {
+		auth: { username: node.username, password: node.password },
+	});
+
 	if (response.status === 200) {
 		const remoteAuthors = response.data.items;
 
 		await remoteAuthors.forEach((remoteAuthor) => {
 			if (!remoteAuthor.url) {
 				remoteAuthor.url = `${node.url}/authors/${remoteAuthor.id}`;
-				remoteAuthor.node = node.url;
 			}
+			remoteAuthor.node = node.url;
 			authors = [...authors, remoteAuthor];
 		});
 		return authors;
@@ -76,7 +67,6 @@ export async function getRemoteAuthors(req, res) {
 		try {
 			const result = await httpGetAuthors(node);
 			authors = [...authors, ...result];
-			console.log(authors);
 		} catch (error) {
 			return res.status(503);
 		}
