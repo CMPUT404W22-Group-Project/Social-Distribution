@@ -51,3 +51,16 @@ export async function authenticateNode(origin, username, password) {
 		},
 	});
 }
+
+
+export async function authenticateAuthors(origin, username, password) {
+	return await prisma.author.findFirst({
+		where: {
+			AND: [
+				{
+					email: username,
+				}
+			],
+		},
+	});
+}
