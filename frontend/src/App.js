@@ -13,6 +13,7 @@ import ProfileEdit from './containers/Profile/ProfileEdit';
 import Login from './containers/Login/Login';
 import Signup from './containers/Login/Signup';
 import PostLikes from './containers/Like/PostLikes';
+import Admin from './containers/Admin/Admin';
 
 //remote compatibility
 import RemoteAuthors from './remoteComponents/RemoteAuthors';
@@ -112,6 +113,7 @@ function App() {
                 <Route path="/authors" element={<RemoteAuthors />} />
                 <Route path="/author" element={<RemoteAuthor />} />
                 <Route path="/posts" element={<RemotePosts />} />
+                <Route path="/admin" element={<Admin />} />
             </Routes>
         </>
     );

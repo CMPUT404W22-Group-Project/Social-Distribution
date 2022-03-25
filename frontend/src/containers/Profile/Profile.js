@@ -18,6 +18,7 @@ const Profile = ({ props }) => {
     let navigate = useNavigate();
     let { authorId } = useParams();
     const isOwnProfile = props.auth.author.id === authorId;
+    const isAdmin = props.auth.author.admin;
     const [GHActivity, setGHActivity] = useState([]);
     const [author, setAuthor] = useState({
         id: '',
@@ -73,6 +74,16 @@ const Profile = ({ props }) => {
                     position: 'absolute',
                 }}
             >
+                {isAdmin ? (
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            navigate(`/admin`);
+                        }}
+                    >
+                        Admin
+                    </Button>
+                ) : null}
                 {isOwnProfile ? (
                     <Button
                         variant="contained"

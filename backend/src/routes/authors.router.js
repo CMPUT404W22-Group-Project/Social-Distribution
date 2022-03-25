@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import * as authorController from '../controllers/authors.controller.js';
-import { authenticateToken } from '../auth/index.js';
+import { authenticateToken, isAdmin } from '../auth/index.js';
 
 const router = Router();
-
 
 /**
  * @swagger
@@ -40,7 +39,7 @@ const router = Router();
  *         email: abc@gmail.com
  *         password: 12345
  *         displauName: Jack
- * 
+ *
  *     Authors:
  *       type: object
  *       properties:
@@ -52,12 +51,12 @@ const router = Router();
  *         items: []
  */
 
- /**
-  * @swagger
-  * tags:
-  *   name: Authors
-  *   description: The author managing API
-  */
+/**
+ * @swagger
+ * tags:
+ *   name: Authors
+ *   description: The author managing API
+ */
 
 /**
  * @swagger
@@ -138,7 +137,6 @@ router.get('/authors/:id', authorController.getOneAuthor);
  */
 router.post('/authors/:id', authenticateToken, authorController.updateAuthor);
 
-
 /**
  * @swagger
  * /register:
@@ -213,5 +211,13 @@ router.post('/login', authorController.login);
  *         description: Usr log out
  */
 router.get('/logout', authorController.logout);
+
+router.put(
+	'/authors/:id',
+	authenticateToken,
+	isAdmin,
+	authorController.adminUpdateAuthor
+);
+router.delete('/authors/:id', isAdmin, authorController.adminDeleteAuthor);
 
 export { router };

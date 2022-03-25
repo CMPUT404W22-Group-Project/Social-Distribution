@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -146,4 +147,7 @@ const RemoteAuthor = () => {
     );
 };
 
-export default RemoteAuthor;
+const mapStateToProps = (state) => ({
+    nodes: state.node.nodes,
+});
+export default connect(mapStateToProps)(RemoteAuthor);

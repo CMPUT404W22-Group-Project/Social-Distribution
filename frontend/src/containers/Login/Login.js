@@ -68,7 +68,6 @@ const Login = (props) => {
                 { withCredentials: true }
             )
             .then((response) => {
-                console.log(response);
                 if (response.status === 200) {
                     props.signIn(response.data);
                     navigate('/public/posts');

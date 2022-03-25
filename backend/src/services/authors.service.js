@@ -76,6 +76,20 @@ export async function checkUserExists(email) {
 			displayName: true,
 			github: true,
 			profileImage: true,
+			admin: true,
+		},
+	});
+}
+
+/**
+ * Delete an author
+ * @param {id} String
+ * @returns
+ */
+export async function deleteAuthor(id) {
+	return await prisma.author.delete({
+		where: {
+			id: id,
 		},
 	});
 }
