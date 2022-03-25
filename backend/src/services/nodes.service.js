@@ -40,6 +40,14 @@ export async function getNode() {
 	});
 }
 
+export async function getNodeByUrl(url) {
+	return await prisma.nodes.findUnique({
+		where: {
+			url: url,
+		},
+	});
+}
+
 export async function getAllNodes() {
 	const nodes = await prisma.nodes.findMany();
 	return nodes;

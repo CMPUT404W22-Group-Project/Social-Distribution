@@ -1,7 +1,92 @@
-import { authorService } from '../services/index.service.js';
+import { authorService, nodesService } from '../services/index.service.js';
 import { authenticatePassword, newAccessToken } from '../auth/index.js';
 import cuid from 'cuid';
 import argon2 from 'argon2';
+import axios from 'axios';
+
+async function httpGetAuthorById(url, id) {
+	try {
+		const node = await nodesService.getNodeByUrl(url);
+		const token = btoa(`${node.username}:${node.password}`);
+		const config = {
+			headers: {
+				Authorization: `Basic ${token}`,
+				'Access-Control-Allow-Origin': 'http://localhost:8000',
+				'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE',
+				'Access-Control-Allow-Headers':
+					'Access-Control-Allow-Headers, Origin,Accept, Content-Type, ',
+			},
+		};
+
+		const response = await axios.get(`${node.url}/authors/${id}/`, config);
+		return response.data;
+	} catch (error) {
+		return 503;
+	}
+}
+
+async function httpGetAuthors(node) {
+	let authors = [];
+	const token = btoa(`${node.username}:${node.password}`);
+	const config = {
+		headers: {
+			Authorization: `Basic ${token}`,
+			'Access-Control-Allow-Origin': 'http://localhost:8000',
+			'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE',
+			'Access-Control-Allow-Headers':
+				'Access-Control-Allow-Headers, Origin,Accept, Content-Type, ',
+		},
+	};
+	const response = await axios.get(`${node.url}/authors`, config);
+	console.log(response.status);
+	if (response.status === 200) {
+		const remoteAuthors = response.data.items;
+
+		await remoteAuthors.forEach((remoteAuthor) => {
+			if (!remoteAuthor.url) {
+				remoteAuthor.url = `${node.url}/authors/${remoteAuthor.id}`;
+				remoteAuthor.node = node.url;
+			}
+			authors = [...authors, remoteAuthor];
+		});
+		return authors;
+	}
+}
+
+export async function getRemoteAuthorById(req, res) {
+	try {
+		const author = await httpGetAuthorById({
+			url: req.query.node,
+			id: req.params.id,
+		});
+
+		if (author === 503) {
+			return res.status(503);
+		}
+		return res.status(200).json({ ...author });
+	} catch (error) {
+		return res.status(503);
+	}
+}
+
+export async function getRemoteAuthors(req, res) {
+	let authors = [];
+	const nodes = await nodesService.getNode();
+	for (const node of nodes) {
+		try {
+			const result = await httpGetAuthors(node);
+			authors = [...authors, ...result];
+			console.log(authors);
+		} catch (error) {
+			return res.status(503);
+		}
+	}
+	const response = {
+		type: 'authors',
+		items: authors,
+	};
+	return res.status(200).json(response);
+}
 
 /**
  * Get all the authors of a given host
@@ -10,7 +95,7 @@ import argon2 from 'argon2';
  * @returns JSON with all authors on a host
  */
 export async function getAllAuthors(req, res) {
-	const authors = await authorService.getAuthors({
+	let authors = await authorService.getAuthors({
 		page: parseInt(req.query.page),
 		size: parseInt(req.query.size),
 	});

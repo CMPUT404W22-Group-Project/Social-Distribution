@@ -9,11 +9,15 @@ import GithubActivity from '../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
+const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
+
 const RemoteAuthor = () => {
     let navigate = useNavigate();
     let location = useLocation();
 
-    const authorLink = location.state.authorLink;
+    const node = location.state.node;
+    const authorId = location.state.authorId;
+    console.log(node, authorId);
     const [GHActivity, setGHActivity] = useState([]);
     const [author, setAuthor] = useState({
         id: '',
@@ -34,9 +38,13 @@ const RemoteAuthor = () => {
             console.error(err);
         }
     };
-    const getAuthorById = async (authorLink) => {
+    const getAuthorById = async (node, authorId) => {
+        const requestUrl = `${BACKEND_URL}/remote/authors/${authorId}/`;
+
         try {
-            const response = await axios.get(`${authorLink}`);
+            const response = await axios.get(`${requestUrl}`, {
+                params: { node: node },
+            });
             setAuthor(response.data);
             //follow up request
             let ghUserName;
@@ -53,7 +61,7 @@ const RemoteAuthor = () => {
     };
 
     useEffect(() => {
-        getAuthorById(authorLink);
+        getAuthorById(node, authorId);
     }, []);
     return (
         <>
@@ -74,7 +82,8 @@ const RemoteAuthor = () => {
                     onClick={() => {
                         navigate('/follwers', {
                             state: {
-                                followerLink: `${authorLink}/follwers`,
+                                node: node,
+                                authorId: authorId,
                             },
                         });
                     }}

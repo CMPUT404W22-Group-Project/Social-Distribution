@@ -12,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const RemoteProfile = ({ props }) => {
+    console.log(props);
     let navigate = useNavigate();
     RemoteProfile.propTypes = {
         props: PropTypes.object,
@@ -21,9 +22,14 @@ const RemoteProfile = ({ props }) => {
         github: PropTypes.string,
         type: PropTypes.string,
         url: PropTypes.string,
+        node: PropTypes.any,
     };
     const [anchorEl, setAnchorEl] = useState(null);
 
+    //adapter...
+    let authorId = props.id.split('/').at(-2);
+    authorId = authorId ? authorId : props.id;
+    console.log(authorId);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -71,11 +77,14 @@ const RemoteProfile = ({ props }) => {
                             <Button
                                 variant="contained"
                                 onClick={() => {
-                                    navigate('/author', {
-                                        state: {
-                                            authorLink: `${props.url}`,
-                                        },
-                                    });
+                                    props.node
+                                        ? navigate('/author', {
+                                              state: {
+                                                  node: props.node,
+                                                  authorId: authorId,
+                                              },
+                                          })
+                                        : navigate(`/authors/${authorId}`);
                                 }}
                             >
                                 Profile
@@ -83,11 +92,14 @@ const RemoteProfile = ({ props }) => {
                             <Button
                                 variant="contained"
                                 onClick={() => {
-                                    navigate('/posts', {
-                                        state: {
-                                            postLink: `${props.url}posts/`,
-                                        },
-                                    });
+                                    props.node
+                                        ? navigate(`/authors/${authorId}/posts`)
+                                        : navigate('/posts', {
+                                              state: {
+                                                  node: props.node,
+                                                  authorId: authorId,
+                                              },
+                                          });
                                 }}
                             >
                                 Posts

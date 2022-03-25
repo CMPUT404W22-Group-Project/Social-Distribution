@@ -220,4 +220,7 @@ router.put(
 );
 router.delete('/authors/:id', isAdmin, authorController.adminDeleteAuthor);
 
+router.get('/remote/authors', authorController.getRemoteAuthors);
+router.get('/remote/authors/:id', authorController.getRemoteAuthorById);
+
 export { router };

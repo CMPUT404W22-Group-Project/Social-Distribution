@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getNodes } from '../actions/index';
 import Grid from '@mui/material/Grid';
 import RemoteProfile from './RemoteProfile';
 import axios from 'axios';
-
-const RemoteAuthors = (props) => {
-    RemoteAuthors.propTypes = {
-        props: PropTypes.object,
-        getNodes: PropTypes.func,
-        nodes: PropTypes.arrayOf(PropTypes.object),
-    };
+const BACKEND_URL = 'http://localhost:8000';
+const RemoteAuthors = () => {
     //placeholder, get nodes when admin is done
     // const nodes = [
-    //     'http://localhost:8000',
+    //     ,
     //     // 'https://project-socialdistribution.herokuapp.com/api',
     // ];
     let temp = [];
     const [authors, setAuthors] = useState([]);
 
-    const getAuthors = async (node) => {
+    const getAuthors = async () => {
         // const token = btoa(`${node.username}:${node.password}`);
         // const config = {
         //     headers: {
@@ -32,26 +26,19 @@ const RemoteAuthors = (props) => {
         //     },
         // };
         //
-        const response = await axios.get(`${node.url}/authors/`, {
-            auth: {
-                username: node.username,
-                password: node.password,
-            },
-        });
-        temp = [...temp, ...response.data.items];
+        const remoteResponse = await axios.get(`${BACKEND_URL}/remote/authors`);
+        const localResponse = await axios.get(`${BACKEND_URL}/authors`);
+        temp = [
+            ...temp,
+            ...remoteResponse.data.items,
+            ...localResponse.data.items,
+        ];
         setAuthors([...temp]);
     };
 
     useEffect(() => {
-        props.getNodes();
+        getAuthors();
     }, []);
-    useEffect(() => {
-        if (props.nodes) {
-            props.nodes.forEach(async function (node) {
-                await getAuthors(node);
-            });
-        }
-    }, [props.nodes]);
 
     return (
         <Grid container spacing={2}>
