@@ -40,7 +40,6 @@ const PostItem = ({ props }) => {
     PostItem.propTypes = {
         props: PropTypes.object,
         id: PropTypes.string,
-        url: PropTypes.string,
         authorId: PropTypes.string,
         source: PropTypes.string,
         origin: PropTypes.string,
@@ -58,8 +57,11 @@ const PostItem = ({ props }) => {
         auth: PropTypes.object,
     };
     //verify isOwnPost?
+
+    //get postId
     const isOwnPost = props.auth.author.id === props.authorId;
-    const postId = props.url?.split('/').pop();
+    const postId = props.id?.split('/')[6];
+
     //for post menu
     const [dialog, setDialog] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -168,11 +170,14 @@ const PostItem = ({ props }) => {
     //like post
     const likePost = (authorId, postId) => {
         axios
-            .post(`${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`, {
-                authorId: authorId,
-                postId: postId,
-            }, 
-            { withCredentials: true })
+            .post(
+                `${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`,
+                {
+                    authorId: authorId,
+                    postId: postId,
+                },
+                { withCredentials: true }
+            )
             .then((response) => {
                 response.status === 201
                     ? window.location.reload()
