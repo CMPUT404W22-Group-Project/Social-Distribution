@@ -76,6 +76,7 @@ export async function checkUserExists(email) {
 			displayName: true,
 			github: true,
 			profileImage: true,
+			admin: true,
 		},
 	});
 }

@@ -16,7 +16,10 @@ export async function addNode(node) {
 export async function removeNode(node) {
 	return await prisma.nodes.delete({
 		where: {
-			url: node.url,
+			type_url: {
+				type: node.type,
+				url: node.url,
+			},
 		},
 	});
 }
@@ -34,4 +37,8 @@ export async function getNode(url) {
 	} catch {
 		return null;
 	}
+}
+export async function getAllNodes() {
+	const nodes = await prisma.nodes.findMany();
+	return nodes;
 }

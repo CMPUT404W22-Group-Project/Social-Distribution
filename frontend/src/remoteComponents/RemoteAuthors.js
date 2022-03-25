@@ -24,7 +24,7 @@ const RemoteAuthors = () => {
 
     useEffect(() => {
         const nodes = [
-            'https://project-socialdistribution.herokuapp.com/api',
+            'http://project-socialdistribution.herokuapp.com/api',
             'http://localhost:8000',
         ];
         nodes.forEach(async function (node) {

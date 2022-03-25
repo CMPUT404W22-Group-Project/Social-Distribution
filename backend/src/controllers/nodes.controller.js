@@ -16,3 +16,8 @@ export async function getNode(req, res) {
 	const node = await nodesService.getNode(req.body.url);
 	return res.status(200).json(node);
 }
+
+export async function getAllNode(req, res) {
+	const nodes = await nodesService.getAllNodes();
+	return res.status(200).json(nodes);
+}

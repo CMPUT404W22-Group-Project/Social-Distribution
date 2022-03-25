@@ -18,11 +18,17 @@ export async function isAdmin(options) {
 			where: {
 				email: email,
 			},
+			select: {
+				admin: true,
+			},
 		});
 	} else if (id) {
 		return await prisma.author.findUnique({
 			where: {
 				id: id,
+			},
+			select: {
+				admin: true,
 			},
 		});
 	}

@@ -43,7 +43,9 @@ export async function authenticateToken(req, res, next) {
 		const username = credentials.split(':')[0];
 		const password = credentials.split(':')[1];
 
-		if (await authService.authenticateNode(req.get('origin'), username, password)) {
+		if (
+			await authService.authenticateNode(req.get('origin'), username, password)
+		) {
 			return next();
 		} else {
 			return res.sendStatus(401);
@@ -76,7 +78,8 @@ export async function authenticateToken(req, res, next) {
  * @param {Express.NextFunction} next
  */
 export async function isAdmin(req, res, next) {
-	if (!(await authService.isAdmin({ id: req.user.id }))) {
+	const auth = await authService.isAdmin({ id: req.user.id });
+	if (!auth.admin) {
 		return res.sendStatus(401);
 	}
 	next();
