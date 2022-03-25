@@ -116,7 +116,9 @@ model FriendRequest {
 
 model Nodes {
     type     String // "send", "receive".  If type is send, then our node has permission to send to their remote node.  If recieve, then remote nodes have permission to send to our node.
-    url      String @id
+    url      String
     username String
     password String
+
+    @@id([type, url])
 }

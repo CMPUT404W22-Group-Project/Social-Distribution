@@ -22,10 +22,16 @@ export async function removeNode(node) {
 }
 
 export async function getNode(url) {
-	return await prisma.nodes.findUnique({
-		where: {
-			url: url,
-			type: 'send',
-		},
-	});
+	try {
+		return await prisma.nodes.findUnique({
+			where: {
+				type_url: {
+					type: 'send',
+					url: url,
+				},
+			},
+		});
+	} catch {
+		return null;
+	}
 }
