@@ -45,7 +45,6 @@ export async function getOneAuthor(req, res) {
 	} else {
 		const host = `${req.protocol}://${req.get('host')}`;
 		author.url = `${host}/authors/${author.id}/`;
-		console.log(author);
 		author.id = `${host}/authors/${author.id}/`;
 		author.host = `${host}/`;
 		delete author.email;
@@ -90,6 +89,29 @@ export async function updateAuthor(req, res) {
 
 	const updatedAuthor = await authorService.updateAuthor(author);
 	return res.status(200).json(updatedAuthor);
+}
+//ADD ONE BOOLEAN FIELD TO REPRESENT STATE AUTHOR like activated?
+export async function adminUpdateAuthor(req, res) {
+	const author = req.body;
+	author.id = req.params.id;
+
+	const result = await authorService.getAuthors({ id: req.params.id });
+	if (!result) {
+		res.status(404).json({ error: 'No author not found' });
+	}
+	const updatedAuthor = await authorService.updateAuthor(author);
+	delete updatedAuthor.email;
+	delete updatedAuthor.password;
+	return res.status(200).json(updatedAuthor);
+}
+
+export async function adminDeleteAuthor(req, res) {
+	const result = await authorService.deleteAuthor({ id: req.params.id });
+	if (!result) {
+		res.status(404).json({ error: 'No author not found' });
+	}
+
+	return res.status(204).json(result);
 }
 
 /**
