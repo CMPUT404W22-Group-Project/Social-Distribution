@@ -39,9 +39,6 @@ export async function authenticateNode(origin, username, password) {
 					password: password,
 				},
 				{
-					url: origin,
-				},
-				{
 					type: 'receive',
 				},
 			],
