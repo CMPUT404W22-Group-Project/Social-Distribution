@@ -13,8 +13,8 @@ export async function removeNode(req, res) {
 }
 
 export async function getNode(req, res) {
-	const node = await nodesService.getNode(req.body.url);
-	return res.status(200).json(node);
+	const nodes = await nodesService.getNode();
+	return res.status(200).json(nodes);
 }
 
 export async function getAllNode(req, res) {

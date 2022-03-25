@@ -17,7 +17,7 @@ import Select from '@mui/material/Select';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Typography from '@mui/material/Typography';
-
+import Box from '@mui/material/Box';
 const BACKEND_URL = 'http://localhost:8000';
 const Admin = () => {
     const [nodes, setNodes] = useState([]);
@@ -128,16 +128,16 @@ const Admin = () => {
 
     const renderAddNodeForm = () => {
         return (
-            <>
+            <Box component="div" sx={{ mx: 10 }}>
                 <Typography
-                    sx={{ ml: 10, my: 1 }}
+                    sx={{ my: 1 }}
                     variant="h4"
                     gutterBottom
                     component="div"
                 >
                     Add Node Form
                 </Typography>
-                <FormControl sx={{ mx: 10, my: 1 }}>
+                <FormControl fullWidth sx={{ mx: 1, my: 1 }}>
                     <InputLabel id="post-visibility-select-label">
                         Type
                     </InputLabel>
@@ -153,6 +153,7 @@ const Admin = () => {
                     </Select>
                 </FormControl>
                 <TextField
+                    fullWidth
                     sx={{ my: 1, mx: 1 }}
                     required
                     id="new-node-url"
@@ -161,6 +162,7 @@ const Admin = () => {
                     onChange={handleChange('url')}
                 />
                 <TextField
+                    fullWidth
                     sx={{ my: 1, mx: 1 }}
                     required
                     id="new-node-username"
@@ -169,6 +171,7 @@ const Admin = () => {
                     onChange={handleChange('username')}
                 />
                 <TextField
+                    fullWidth
                     sx={{ my: 1, mx: 1 }}
                     required
                     id="new-node-password"
@@ -176,7 +179,16 @@ const Admin = () => {
                     value={newNode.password}
                     onChange={handleChange('password')}
                 />
-            </>
+                <Button
+                    variant="outlined"
+                    onClick={() => {
+                        postNode(newNode);
+                    }}
+                    sx={{ ml: 1, my: 2 }}
+                >
+                    Sumbit
+                </Button>
+            </Box>
         );
     };
 
@@ -216,15 +228,6 @@ const Admin = () => {
                 })}
             </List>
             {renderAddNodeForm()}
-            <Button
-                variant="outlined"
-                onClick={() => {
-                    postNode(newNode);
-                }}
-                sx={{ ml: 1, my: 2 }}
-            >
-                Sumbit
-            </Button>
             <Typography
                 sx={{ ml: 10 }}
                 variant="h2"

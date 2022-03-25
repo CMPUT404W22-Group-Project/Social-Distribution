@@ -24,14 +24,11 @@ export async function removeNode(node) {
 	});
 }
 
-export async function getNode(url) {
+export async function getNode() {
 	try {
-		return await prisma.nodes.findUnique({
+		return await prisma.nodes.findMany({
 			where: {
-				type_url: {
-					type: 'send',
-					url: url,
-				},
+				type: 'send',
 			},
 		});
 	} catch {
