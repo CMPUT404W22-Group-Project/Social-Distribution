@@ -34,8 +34,11 @@ async function httpGetAuthors(node) {
 		const remoteAuthors = response.data.items;
 
 		await remoteAuthors.forEach((remoteAuthor) => {
-			if (!remoteAuthor.url) {
-				remoteAuthor.url = `${node.url}/authors/${remoteAuthor.id}`;
+			if (node.url === 'http://cmput404-project-t12.herokuapp.com/service') {
+				remoteAuthor.url = `${node.url}/authors/${remoteAuthor.id}/`;
+				remoteAuthor.id = remoteAuthor.url;
+				remoteAuthor.type = 'author';
+				remoteAuthor.profileImage = `http://cmput404-project-t12.herokuapp.com${remoteAuthor.profileImage}`;
 			}
 			remoteAuthor.node = node.url;
 			authors = [...authors, remoteAuthor];

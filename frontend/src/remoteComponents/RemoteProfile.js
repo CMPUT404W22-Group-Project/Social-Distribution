@@ -12,7 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const RemoteProfile = ({ props }) => {
-    console.log(props);
     let navigate = useNavigate();
     RemoteProfile.propTypes = {
         props: PropTypes.object,
@@ -24,12 +23,11 @@ const RemoteProfile = ({ props }) => {
         url: PropTypes.string,
         node: PropTypes.any,
     };
-    const [anchorEl, setAnchorEl] = useState(null);
-
-    //adapter...
-    let authorId = props.id.split('/').at(-2);
-    authorId = authorId ? authorId : props.id;
+    console.log(props);
+    const authorId = props ? props.id.split('/').at(-2) : null;
     console.log(authorId);
+
+    const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
