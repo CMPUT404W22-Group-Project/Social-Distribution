@@ -16,8 +16,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 import CommentItem from './CommentItem';
 const Comments = ({ props }) => {
     Comments.propTypes = {
@@ -39,7 +37,7 @@ const Comments = ({ props }) => {
     const getComments = useCallback((page, size) => {
         axios
             .get(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
+                `/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
             )
             .then((response) => {
                 response.status === 200
@@ -50,7 +48,7 @@ const Comments = ({ props }) => {
     const postComment = (authorId, contentType, comment) => {
         axios
             .post(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${props.postId}/comments`,
+                `/authors/${props.authorId}/posts/${props.postId}/comments`,
                 {
                     authorId: authorId,
                     contentType: contentType,

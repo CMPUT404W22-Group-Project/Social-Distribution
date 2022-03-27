@@ -12,7 +12,6 @@ import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const PostNew = () => {
 
     useEffect(() => {
@@ -136,7 +135,7 @@ const PostNew = () => {
     const postRequest = async (authorId, post) => {
         try {
             const response = await axios.post(
-                `${BACKEND_URL}/authors/${authorId}/posts`,
+                `/authors/${authorId}/posts`,
                 post,
                 {
                     withCredentials: true,

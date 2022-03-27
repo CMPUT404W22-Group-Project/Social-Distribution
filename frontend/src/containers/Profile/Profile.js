@@ -9,7 +9,6 @@ import List from '@mui/material/List';
 import GithubActivity from '../../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const Profile = ({ props }) => {
 
     useEffect(() => {
@@ -45,7 +44,7 @@ const Profile = ({ props }) => {
     const getAuthorById = useCallback(async (authorId) => {
         try {
             const response = await axios.get(
-                `${BACKEND_URL}/authors/${authorId}`
+                `/authors/${authorId}`
             );
             setAuthor(response.data);
             //follow up request

@@ -9,8 +9,6 @@ import GithubActivity from '../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 const RemoteAuthor = () => {
     let navigate = useNavigate();
     let location = useLocation();
@@ -39,7 +37,7 @@ const RemoteAuthor = () => {
         }
     };
     const getAuthorById = useCallback(async (node, authorId) => {
-        const requestUrl = `${BACKEND_URL}/remote/authors/${authorId}/`;
+        const requestUrl = `/remote/authors/${authorId}/`;
 
         try {
             const response = await axios.get(`${requestUrl}`, {

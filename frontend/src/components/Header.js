@@ -17,8 +17,6 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 const Header = (props) => {
     let navigate = useNavigate();
     Header.propTypes = {
@@ -49,7 +47,7 @@ const Header = (props) => {
     const handleLogOut = () => {
         setAnchorElUser(null);
         axios
-            .get(`${BACKEND_URL}/logout`, { withCredentials: true })
+            .get(`/logout`, { withCredentials: true })
             .catch((error) => {
                 if (error.response.status == 401) {
                     props.signOut();

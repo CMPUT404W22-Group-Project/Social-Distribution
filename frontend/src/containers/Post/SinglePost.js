@@ -3,8 +3,6 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import PostItem from '../../components/PostItem';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 const SinglePost = () => {
     let { authorId, postId } = useParams();
     const [post, setPost] = useState({});
@@ -15,7 +13,7 @@ const SinglePost = () => {
     
     const getPost = useCallback(() => {
         axios
-            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`, 
+            .get(`/authors/${authorId}/posts/${postId}`, 
             { withCredentials: true })
             .then((response) => {
                 response.status === 200 ? setPost({ ...response.data }) : null;

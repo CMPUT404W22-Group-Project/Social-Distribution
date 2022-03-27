@@ -4,7 +4,6 @@ import { getNodes } from '../actions/index';
 import Grid from '@mui/material/Grid';
 import RemoteProfile from './RemoteProfile';
 import axios from 'axios';
-const BACKEND_URL = 'http://localhost:8000';
 const RemoteAuthors = () => {
 
     useEffect(() => {
@@ -30,8 +29,8 @@ const RemoteAuthors = () => {
         //     },
         // };
         //
-        const remoteResponse = await axios.get(`${BACKEND_URL}/remote/authors`);
-        const localResponse = await axios.get(`${BACKEND_URL}/authors`);
+        const remoteResponse = await axios.get(`/remote/authors`);
+        const localResponse = await axios.get(`/authors`);
         let temp = [
             ...temp,
             ...remoteResponse.data.items,

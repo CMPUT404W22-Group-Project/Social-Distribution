@@ -33,8 +33,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import ProfilePictureCard from './ProfilePictureCard';
 import Comments from './Comments';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 const PostItem = ({ props }) => {
     let navigate = useNavigate();
     PostItem.propTypes = {
@@ -77,7 +75,7 @@ const PostItem = ({ props }) => {
     };
     const deletePost = async () => {
         const response = await axios.delete(
-            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`,
+            `/authors/${props.authorId}/posts/${postId}`,
             {
                 withCredentials: true,
             }
@@ -171,7 +169,7 @@ const PostItem = ({ props }) => {
     const likePost = (authorId, postId) => {
         axios
             .post(
-                `${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`,
+                `/authors/${authorId}/posts/${postId}/likes`,
                 {
                     authorId: authorId,
                     postId: postId,
@@ -188,7 +186,7 @@ const PostItem = ({ props }) => {
     const getAuthorLiked = useCallback((postId) => {
         axios
             .get(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}/likes`,
+                `/authors/${props.authorId}/posts/${postId}/likes`,
                 { withCredentials: true }
             )
             .then((response) => {

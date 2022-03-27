@@ -6,8 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import PostItem from '../../components/PostItem';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 const AuthorPost = ({ props }) => {
 
     useEffect(() => {
@@ -24,7 +22,7 @@ const AuthorPost = ({ props }) => {
     let navigate = useNavigate();
     const getAllPosts = useCallback(() => {
         axios
-            .get(`${BACKEND_URL}/authors/${authorId}/posts`,
+            .get(`/authors/${authorId}/posts`,
             { withCredentials: true })
             .then((response) => {
                 response.status === 200

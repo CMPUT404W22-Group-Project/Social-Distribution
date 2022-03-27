@@ -17,7 +17,6 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 function Copyright(props) {
     return (
         <Typography
@@ -27,7 +26,7 @@ function Copyright(props) {
             {...props}
         >
             {'Copyright © '}
-            <Link color="inherit" href="http://localhost:3000">
+            <Link color="inherit" href="/">
                 Social Distribution
             </Link>{' '}
             {new Date().getFullYear()}
@@ -65,7 +64,7 @@ const Login = (props) => {
     const logIn = (email, password) => {
         axios
             .post(
-                `${BACKEND_URL}/login`,
+                `/login`,
                 {
                     email: email,
                     password: password,

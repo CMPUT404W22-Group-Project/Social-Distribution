@@ -12,7 +12,6 @@ import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 const PostEdit = () => {
 
@@ -39,7 +38,7 @@ const PostEdit = () => {
     //get post
     const getPost = useCallback(() => {
         axios
-            .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`,
+            .get(`/authors/${authorId}/posts/${postId}`,
             { withCredentials: true })
             .then((response) => {
                 response.status === 200 ? setPost({ ...response.data }) : null;
@@ -103,7 +102,7 @@ const PostEdit = () => {
     const postRequestToId = async (authorId, post) => {
         try {
             const response = await axios.post(
-                `${BACKEND_URL}/authors/${authorId}/posts/${postId}`,
+                `/authors/${authorId}/posts/${postId}`,
                 post,
                 {
                     withCredentials: true,

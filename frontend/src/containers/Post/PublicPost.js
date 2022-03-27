@@ -3,8 +3,6 @@ import axios from 'axios';
 
 import PostItem from '../../components/PostItem';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 const PublicPost = () => {
   useEffect(() => {
     document.title = "Posts";
@@ -13,7 +11,7 @@ const PublicPost = () => {
 
   const getAllPublicPosts = () => {
     axios
-      .get(`${BACKEND_URL}/posts`,
+      .get(`/posts`,
       { withCredentials: true })
       .then((response) => {
         response.status === 200 ? setPosts([...response.data.items]) : null;
