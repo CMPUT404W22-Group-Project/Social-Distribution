@@ -25,8 +25,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv build ../backend/",
-    "build:windows": "react-scripts build && move build ../backend/",
+    "clean": "rm -rf ../backend/build",
+    "clean:windows": "if exist ..\\backend\\build rmdir /s /q ..\\backend\\build",
+    "build": "react-scripts build && npm run clean && mv build ../backend/",
+    "build:windows": "react-scripts build && npm run clean:windows && move build ../backend/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
