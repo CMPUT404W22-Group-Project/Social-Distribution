@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -11,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
 const ProfilePictureCard = ({ props }) => {
+    let navigate = useNavigate();
     ProfilePictureCard.propTypes = {
         props: PropTypes.object,
         displayName: PropTypes.string,
@@ -20,6 +22,8 @@ const ProfilePictureCard = ({ props }) => {
         type: PropTypes.string,
         url: PropTypes.string,
     };
+    const authorId = props ? props.id.split('/').at(-1) : null;
+    console.log(authorId);
     const [anchorEl, setAnchorEl] = useState(null);
     const [requestSent, setRequestSent] = useState(false);
     const handleClick = (event) => {
@@ -70,7 +74,12 @@ const ProfilePictureCard = ({ props }) => {
                     />
                     <CardActions disableSpacing>
                         <Stack spacing={2} direction="row">
-                            <Button variant="contained" href={props.url}>
+                            <Button
+                                variant="contained"
+                                onClick={() => {
+                                    navigate(`/authors/${authorId}`);
+                                }}
+                            >
                                 Profile
                             </Button>
                             <Button
