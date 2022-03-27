@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -36,7 +36,7 @@ const Comments = ({ props }) => {
     const [comments, setComments] = useState(props.comments);
     //use useEffect to fetch comments upon page change
 
-    const getComments = (page, size) => {
+    const getComments = useCallback((page, size) => {
         axios
             .get(
                 `${BACKEND_URL}/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
@@ -46,7 +46,7 @@ const Comments = ({ props }) => {
                     ? setComments(response.data.comments)
                     : null;
             });
-    };
+    }, [props.authorId, props.postId]);
     const postComment = (authorId, contentType, comment) => {
         axios
             .post(
@@ -69,7 +69,7 @@ const Comments = ({ props }) => {
     };
     useEffect(() => {
         getComments(page, size);
-    }, [page]);
+    }, [page, getComments, size]);
     const handlePageChange = (event, value) => {
         setPage(value);
     };

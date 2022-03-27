@@ -15,7 +15,7 @@ const RemoteFollowers = () => {
     };
     useEffect(() => {
         getFollowers(followerLink);
-    }, []);
+    }, [followerLink]);
 
     return (
         <Grid container spacing={2}>

@@ -7,6 +7,11 @@ import Stack from '@mui/material/Stack';
 
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const ProfileEdit = () => {
+
+    useEffect(() => {
+      document.title = "Edit Profile";
+    }, []);
+
     let { authorId } = useParams();
     let navigate = useNavigate();
     const [author, setAuthor] = useState({
@@ -44,7 +49,7 @@ const ProfileEdit = () => {
     };
     useEffect(() => {
         getAuthorById(authorId);
-    }, []);
+    }, [authorId]);
     const handleChange = (prop) => (event) => {
         setAuthor({ ...author, [prop]: event.target.value });
     };

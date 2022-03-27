@@ -14,6 +14,11 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const PostNew = () => {
+
+    useEffect(() => {
+      document.title = "New Post";
+    }, []);
+    
     let navigate = useNavigate();
     let { authorId } = useParams();
     // PostForm.propTypes = {
@@ -55,7 +60,7 @@ const PostNew = () => {
         ) {
             setPost({ ...post, content: '' });
         }
-    }, [post.contentType]);
+    }, [post, post.contentType]);
 
     const getBase64 = async (file, callback) => {
         let reader = new FileReader();

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -38,7 +38,7 @@ const RemoteAuthor = () => {
             console.error(err);
         }
     };
-    const getAuthorById = async (node, authorId) => {
+    const getAuthorById = useCallback(async (node, authorId) => {
         const requestUrl = `${BACKEND_URL}/remote/authors/${authorId}/`;
 
         try {
@@ -58,11 +58,11 @@ const RemoteAuthor = () => {
             // Handle Error Here
             console.error(err);
         }
-    };
+    }, []);
 
     useEffect(() => {
         getAuthorById(node, authorId);
-    }, []);
+    }, [authorId, getAuthorById, node]);
     return (
         <>
             <Stack

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -15,6 +15,11 @@ import Stack from '@mui/material/Stack';
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 const PostEdit = () => {
+
+    useEffect(() => {
+      document.title = "Edit Post";
+    }, []);
+
     let navigate = useNavigate();
     let { authorId, postId } = useParams();
     const [file, setFile] = useState('');
@@ -32,7 +37,7 @@ const PostEdit = () => {
         unlisted: false,
     });
     //get post
-    const getPost = () => {
+    const getPost = useCallback(() => {
         axios
             .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`,
             { withCredentials: true })
@@ -48,11 +53,11 @@ const PostEdit = () => {
             .catch((error) => {
                 console.log(error);
             });
-    };
+    }, [authorId, post, postId]);
     //get post
     useEffect(() => {
         getPost();
-    }, []);
+    }, [getPost]);
     //reset every time contentType is changed
     useEffect(() => {
         if (
@@ -61,7 +66,7 @@ const PostEdit = () => {
         ) {
             setPost({ ...post, content: '' });
         }
-    }, [post.contentType]);
+    }, [post, post.contentType]);
 
     const getBase64 = async (file, callback) => {
         let reader = new FileReader();

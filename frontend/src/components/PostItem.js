@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -185,7 +185,7 @@ const PostItem = ({ props }) => {
             });
     };
     const [disableLiked, setDisableLiked] = useState(false);
-    const getAuthorLiked = (postId) => {
+    const getAuthorLiked = useCallback((postId) => {
         axios
             .get(
                 `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}/likes`,
@@ -198,10 +198,10 @@ const PostItem = ({ props }) => {
                         : null;
                 });
             });
-    };
+    }, [props.auth.author.id, props.authorId]);
     useEffect(() => {
         getAuthorLiked(postId);
-    }, []);
+    }, [getAuthorLiked, postId]);
     return (
         <>
             <Card>

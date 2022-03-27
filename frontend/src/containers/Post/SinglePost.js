@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import PostItem from '../../components/PostItem';
@@ -8,7 +8,12 @@ const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const SinglePost = () => {
     let { authorId, postId } = useParams();
     const [post, setPost] = useState({});
-    const getPost = () => {
+
+    useEffect(() => {
+        document.title = post.title;
+    }, [post]);
+    
+    const getPost = useCallback(() => {
         axios
             .get(`${BACKEND_URL}/authors/${authorId}/posts/${postId}`, 
             { withCredentials: true })
@@ -18,10 +23,10 @@ const SinglePost = () => {
             .catch((error) => {
                 console.log(error);
             });
-    };
+    }, [authorId, postId]);
     useEffect(() => {
         getPost();
-    }, []);
+    }, [getPost]);
     return post ? <PostItem props={post} /> : null;
 };
 

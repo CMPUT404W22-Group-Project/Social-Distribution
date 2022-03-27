@@ -23,7 +23,7 @@ const RemotePosts = () => {
     };
     useEffect(() => {
         getPosts(postLink);
-    }, []);
+    }, [postLink]);
     return (
         <>
             {posts?.map((post, i) => {
