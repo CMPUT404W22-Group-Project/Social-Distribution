@@ -23,10 +23,7 @@ const RemoteProfile = ({ props }) => {
         url: PropTypes.string,
         node: PropTypes.any,
     };
-    console.log(props);
     const authorId = props ? props.id.split('/').at(-2) : null;
-    console.log(authorId);
-
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
