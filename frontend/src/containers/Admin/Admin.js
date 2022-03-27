@@ -19,6 +19,11 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 const BACKEND_URL = 'http://localhost:8000';
 const Admin = () => {
+    
+    useEffect(() => {
+      document.title = "Admin";
+    }, []);
+
     const [nodes, setNodes] = useState([]);
 
     //TODO: IMPLEMENT all manage Admin

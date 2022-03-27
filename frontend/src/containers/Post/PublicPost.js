@@ -6,6 +6,9 @@ import PostItem from '../../components/PostItem';
 const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 const PublicPost = () => {
+  useEffect(() => {
+    document.title = "Posts";
+  }, []);
   const [posts, setPosts] = useState([]);
 
   const getAllPublicPosts = () => {

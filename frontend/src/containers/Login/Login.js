@@ -37,6 +37,11 @@ function Copyright(props) {
 }
 
 const Login = (props) => {
+    
+    useEffect(() => {
+      document.title = "Login";
+    }, []);
+
     let navigate = useNavigate();
     Login.propTypes = {
         props: PropTypes.object,
@@ -47,7 +52,7 @@ const Login = (props) => {
 
     useEffect(() => {
         props.isSignedIn ? navigate('/public/posts') : null;
-    }, [props.isSignedIn]);
+    }, [props.isSignedIn, navigate]);
 
     //sumbit form
     const handleSubmit = (event) => {

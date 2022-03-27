@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -39,6 +39,11 @@ function Copyright(props) {
 const theme = createTheme();
 
 const SignUp = (props) => {
+
+    useEffect(() => {
+      document.title = "Sign Up";
+    }, []);
+
     let navigate = useNavigate();
     SignUp.propTypes = {
         props: PropTypes.object,
