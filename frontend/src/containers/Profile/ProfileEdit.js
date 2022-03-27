@@ -5,8 +5,12 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const ProfileEdit = () => {
+
+    useEffect(() => {
+      document.title = "Edit Profile";
+    }, []);
+
     let { authorId } = useParams();
     let navigate = useNavigate();
     const [author, setAuthor] = useState({
@@ -18,7 +22,7 @@ const ProfileEdit = () => {
     const getAuthorById = async (authorId) => {
         try {
             const response = await axios.get(
-                `${BACKEND_URL}/authors/${authorId}`
+                `/authors/${authorId}`
             );
             setAuthor(response.data);
         } catch (err) {
@@ -29,7 +33,7 @@ const ProfileEdit = () => {
     const postAuthor = async (authorId, author) => {
         try {
             const response = await axios.post(
-                `${BACKEND_URL}/authors/${authorId}`,
+                `/authors/${authorId}`,
                 author,
                 { withCredentials: true }
             );
@@ -44,7 +48,7 @@ const ProfileEdit = () => {
     };
     useEffect(() => {
         getAuthorById(authorId);
-    }, []);
+    }, [authorId]);
     const handleChange = (prop) => (event) => {
         setAuthor({ ...author, [prop]: event.target.value });
     };

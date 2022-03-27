@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -8,8 +8,6 @@ import List from '@mui/material/List';
 import GithubActivity from '../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 const RemoteAuthor = () => {
     let navigate = useNavigate();
@@ -38,8 +36,8 @@ const RemoteAuthor = () => {
             console.error(err);
         }
     };
-    const getAuthorById = async (node, authorId) => {
-        const requestUrl = `${BACKEND_URL}/remote/authors/${authorId}/`;
+    const getAuthorById = useCallback(async (node, authorId) => {
+        const requestUrl = `/remote/authors/${authorId}/`;
 
         try {
             const response = await axios.get(`${requestUrl}`, {
@@ -58,11 +56,11 @@ const RemoteAuthor = () => {
             // Handle Error Here
             console.error(err);
         }
-    };
+    }, []);
 
     useEffect(() => {
         getAuthorById(node, authorId);
-    }, []);
+    }, [authorId, getAuthorById, node]);
     return (
         <>
             <Stack

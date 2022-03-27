@@ -17,8 +17,12 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-const BACKEND_URL = 'http://localhost:8000';
 const Admin = () => {
+    
+    useEffect(() => {
+      document.title = "Admin";
+    }, []);
+
     const [nodes, setNodes] = useState([]);
 
     //TODO: IMPLEMENT all manage Admin
@@ -39,7 +43,7 @@ const Admin = () => {
     });
     useEffect(() => {
         axios
-            .get(`${BACKEND_URL}/nodes/all`, { withCredentials: true })
+            .get(`/nodes/all`, { withCredentials: true })
             .then((response) => {
                 response.status === 200 ? setNodes(response.data) : null;
             })
@@ -47,7 +51,7 @@ const Admin = () => {
                 alert(error.response.status);
             });
         axios
-            .get(`${BACKEND_URL}/authors`)
+            .get(`/authors`)
             .then((response) => {
                 response.status === 200
                     ? setAuthors(response.data.items)
@@ -62,7 +66,7 @@ const Admin = () => {
     const adminPutAuthor = (author) => {
         const authorId = author.id.split('/')[4];
         axios
-            .put(`${BACKEND_URL}/authors/${authorId}`, author, {
+            .put(`/authors/${authorId}`, author, {
                 withCredentials: true,
             })
             .then((response) => {
@@ -84,7 +88,7 @@ const Admin = () => {
         const authorId = id.split('/')[4];
 
         axios
-            .delete(`${BACKEND_URL}/authors/${authorId}`, {
+            .delete(`/authors/${authorId}`, {
                 withCredentials: true,
             })
             .then((response) => {
@@ -173,7 +177,7 @@ const Admin = () => {
 
     const postNode = (node) => {
         axios
-            .post(`${BACKEND_URL}/nodes`, node, { withCredentials: true })
+            .post(`/nodes`, node, { withCredentials: true })
             .then((response) => {
                 if (response.status === 201) {
                     setNodes([...nodes, response.data]);
@@ -191,7 +195,7 @@ const Admin = () => {
     };
     const deleteNode = (node) => {
         axios
-            .delete(`${BACKEND_URL}/nodes`, {
+            .delete(`/nodes`, {
                 data: { ...node },
                 withCredentials: true,
             })

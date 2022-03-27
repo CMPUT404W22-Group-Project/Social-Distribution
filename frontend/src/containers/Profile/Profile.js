@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -9,8 +9,12 @@ import List from '@mui/material/List';
 import GithubActivity from '../../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 const Profile = ({ props }) => {
+
+    useEffect(() => {
+      document.title = "Profile";
+    }, []);
+
     Profile.propTypes = {
         props: PropTypes.object,
         auth: PropTypes.object,
@@ -37,10 +41,10 @@ const Profile = ({ props }) => {
             console.error(err);
         }
     };
-    const getAuthorById = async (authorId) => {
+    const getAuthorById = useCallback(async (authorId) => {
         try {
             const response = await axios.get(
-                `${BACKEND_URL}/authors/${authorId}`
+                `/authors/${authorId}`
             );
             setAuthor(response.data);
             //follow up request
@@ -55,11 +59,11 @@ const Profile = ({ props }) => {
             // Handle Error Here
             console.error(err);
         }
-    };
+    }, []);
 
     useEffect(() => {
         getAuthorById(authorId);
-    }, []);
+    }, [authorId, getAuthorById]);
 
     const renderedButton = () => {
         return (

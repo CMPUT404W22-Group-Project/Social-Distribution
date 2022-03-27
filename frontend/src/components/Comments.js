@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -15,8 +15,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 import CommentItem from './CommentItem';
 const Comments = ({ props }) => {
@@ -36,21 +34,21 @@ const Comments = ({ props }) => {
     const [comments, setComments] = useState(props.comments);
     //use useEffect to fetch comments upon page change
 
-    const getComments = (page, size) => {
+    const getComments = useCallback((page, size) => {
         axios
             .get(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
+                `/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
             )
             .then((response) => {
                 response.status === 200
                     ? setComments(response.data.comments)
                     : null;
             });
-    };
+    }, [props.authorId, props.postId]);
     const postComment = (authorId, contentType, comment) => {
         axios
             .post(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${props.postId}/comments`,
+                `/authors/${props.authorId}/posts/${props.postId}/comments`,
                 {
                     authorId: authorId,
                     contentType: contentType,
@@ -69,7 +67,7 @@ const Comments = ({ props }) => {
     };
     useEffect(() => {
         getComments(page, size);
-    }, [page]);
+    }, [page, getComments, size]);
     const handlePageChange = (event, value) => {
         setPage(value);
     };

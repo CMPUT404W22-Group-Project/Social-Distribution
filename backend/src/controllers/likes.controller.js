@@ -13,7 +13,6 @@ import axios from 'axios';
  */
 export async function httpGetAllLikesOfPost(req, res) {
 	const host = `${req.protocol}://${req.get('host')}`;
-	console.log(req.params.postId);
 	const likes = await likeService.getLikes({
 		postId: parseInt(req.params.postid),
 	});

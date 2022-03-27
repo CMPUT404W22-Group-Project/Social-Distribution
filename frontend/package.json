@@ -25,7 +25,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "set BUILD_PATH=../backend/public && react-scripts build",
+    "clean": "rm -rf ../backend/build",
+    "clean:windows": "if exist ..\\backend\\build rmdir /s /q ..\\backend\\build",
+    "build": "react-scripts build && npm run clean && mv build ../backend/",
+    "build:windows": "react-scripts build && npm run clean:windows && move build ../backend/",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -51,6 +54,6 @@
     "eslint": "^8.9.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0"
-  }
-  
+  },
+  "homepage": "."
 }

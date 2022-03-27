@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -16,8 +16,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
-
 function Copyright(props) {
     return (
         <Typography
@@ -27,7 +25,7 @@ function Copyright(props) {
             {...props}
         >
             {'Copyright © '}
-            <Link color="inherit" href="http://localhost:3000">
+            <Link color="inherit" href="/">
                 Social Distribution
             </Link>{' '}
             {new Date().getFullYear()}
@@ -39,6 +37,11 @@ function Copyright(props) {
 const theme = createTheme();
 
 const SignUp = (props) => {
+
+    useEffect(() => {
+      document.title = "Sign Up";
+    }, []);
+
     let navigate = useNavigate();
     SignUp.propTypes = {
         props: PropTypes.object,
@@ -58,7 +61,7 @@ const SignUp = (props) => {
     //sign up
     const signUp = (email, password, displayName) => {
         axios
-            .post(`${BACKEND_URL}/register`, {
+            .post(`/register`, {
                 email: email,
                 password: password,
                 displayName: displayName,

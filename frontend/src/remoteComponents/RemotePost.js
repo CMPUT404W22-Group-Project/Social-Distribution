@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -142,7 +142,7 @@ const RemotePost = ({ props }) => {
             });
     };
     const [disableLiked, setDisableLiked] = useState(false);
-    const getAuthorLiked = () => {
+    const getAuthorLiked = useCallback(() => {
         axios.get(`${props.url}/likes`).then((response) => {
             response.data.items.map((data) => {
                 data.author.id = props.auth.author.url
@@ -151,10 +151,10 @@ const RemotePost = ({ props }) => {
             });
             props.likeCount = response.data.items.length;
         });
-    };
+    }, [props]);
     useEffect(() => {
         getAuthorLiked(postId);
-    }, []);
+    }, [getAuthorLiked, postId]);
     return (
         <>
             <Card>

@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { getNodes } from '../actions/index';
 import Grid from '@mui/material/Grid';
 import RemoteProfile from './RemoteProfile';
 import axios from 'axios';
-const BACKEND_URL = 'http://localhost:8000';
 const RemoteAuthors = () => {
+
+    useEffect(() => {
+      document.title = "Authors";
+    }, []);
+
     //placeholder, get nodes when admin is done
     // const nodes = [
     //     ,
     //     // 'https://project-socialdistribution.herokuapp.com/api',
     // ];
-    let temp = [];
     const [authors, setAuthors] = useState([]);
 
-    const getAuthors = async () => {
+    const getAuthors = useCallback( async () => {
         // const token = btoa(`${node.username}:${node.password}`);
         // const config = {
         //     headers: {
@@ -26,19 +29,19 @@ const RemoteAuthors = () => {
         //     },
         // };
         //
-        const remoteResponse = await axios.get(`${BACKEND_URL}/remote/authors`);
-        const localResponse = await axios.get(`${BACKEND_URL}/authors`);
-        temp = [
+        const remoteResponse = await axios.get(`/remote/authors`);
+        const localResponse = await axios.get(`/authors`);
+        let temp = [
             ...temp,
             ...remoteResponse.data.items,
             ...localResponse.data.items,
         ];
         setAuthors([...temp]);
-    };
+    }, []);
 
     useEffect(() => {
         getAuthors();
-    }, []);
+    }, [getAuthors]);
 
     return (
         <Grid container spacing={2}>

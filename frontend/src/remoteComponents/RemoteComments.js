@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Pagination from '@mui/material/Pagination';
@@ -17,16 +17,16 @@ const RemoteComments = ({ props }) => {
     const [comments, setComments] = useState([]);
     //use useEffect to fetch comments upon page change
 
-    const getComments = () => {
+    const getComments = useCallback(() => {
         axios.get(`${props}comments/`).then((response) => {
             response.status === 200
                 ? setComments(response.data.comments)
                 : null;
         });
-    };
+    }, [props]);
     useEffect(() => {
         getComments(page, size);
-    }, [page]);
+    }, [page, getComments]);
     const handlePageChange = (event, value) => {
         setPage(value);
     };

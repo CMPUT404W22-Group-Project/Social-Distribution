@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -32,8 +32,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import ProfilePictureCard from './ProfilePictureCard';
 import Comments from './Comments';
-
-const BACKEND_URL = 'http://localhost:8000'; //process.env.REACT_APP_BACKEND_URL
 
 const PostItem = ({ props }) => {
     let navigate = useNavigate();
@@ -77,7 +75,7 @@ const PostItem = ({ props }) => {
     };
     const deletePost = async () => {
         const response = await axios.delete(
-            `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}`,
+            `/authors/${props.authorId}/posts/${postId}`,
             {
                 withCredentials: true,
             }
@@ -171,7 +169,7 @@ const PostItem = ({ props }) => {
     const likePost = (authorId, postId) => {
         axios
             .post(
-                `${BACKEND_URL}/authors/${authorId}/posts/${postId}/likes`,
+                `/authors/${authorId}/posts/${postId}/likes`,
                 {
                     authorId: authorId,
                     postId: postId,
@@ -185,10 +183,10 @@ const PostItem = ({ props }) => {
             });
     };
     const [disableLiked, setDisableLiked] = useState(false);
-    const getAuthorLiked = (postId) => {
+    const getAuthorLiked = useCallback((postId) => {
         axios
             .get(
-                `${BACKEND_URL}/authors/${props.authorId}/posts/${postId}/likes`,
+                `/authors/${props.authorId}/posts/${postId}/likes`,
                 { withCredentials: true }
             )
             .then((response) => {
@@ -198,10 +196,10 @@ const PostItem = ({ props }) => {
                         : null;
                 });
             });
-    };
+    }, [props.auth.author.id, props.authorId]);
     useEffect(() => {
         getAuthorLiked(postId);
-    }, []);
+    }, [getAuthorLiked, postId]);
     return (
         <>
             <Card>
