@@ -53,7 +53,7 @@ const Header = (props) => {
             .catch((error) => {
                 if (error.response.status == 401) {
                     props.signOut();
-                    navigate('/post');
+                    navigate('/');
                 }
             });
     };
@@ -207,7 +207,7 @@ const Header = (props) => {
         <AppBar position="static">
             <Container maxWidth="false">
                 <Toolbar disableGutters>
-                    <NavLink to={'/authors'} style={{ textDecoration: 'none' }}>
+                    <NavLink to={'/'} style={{ textDecoration: 'none' }}>
                         <Typography
                             variant="h6"
                             noWrap
