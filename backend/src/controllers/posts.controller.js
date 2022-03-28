@@ -14,6 +14,17 @@ import { postToInbox } from '../services/inbox.service.js';
 
 const __dirname = path.resolve();
 
+async function httpGetPostById({ url, authorId, id }) {
+	const node = await nodesService.getNodeByUrl(url);
+	const response = await axios.get(
+		`${node.url}/authors/${authorId}/posts/${id}/`,
+		{
+			auth: { username: node.username, password: node.password },
+		}
+	);
+	return response.data;
+}
+
 async function httpGetAuthorById({ url, id }) {
 	const node = await nodesService.getNodeByUrl(url);
 
@@ -258,6 +269,21 @@ export async function getRemotePosts(req, res) {
 export async function getRemotePostById(req, res) {
 	if (!req.query.node) {
 		return res.status(400).json({ error: 'request do not contain node' });
+	}
+	try {
+		const post = await httpGetPostById({
+			url: req.query.node,
+			authorId: req.params.authorId,
+			id: req.params.id,
+		});
+		post.node = req.query.node;
+
+		if (post === 503) {
+			return res.status(503);
+		}
+		return res.status(200).json(post);
+	} catch (error) {
+		return res.status(503);
 	}
 }
 

@@ -353,5 +353,8 @@ router.post(
 	postController.addPostImage
 );
 router.get('/remote/authors/:authorId/posts', postController.getRemotePosts);
-
+router.get(
+	'/remote/authors/:authorId/posts/:id',
+	postController.getRemotePostById
+);
 export { router };
