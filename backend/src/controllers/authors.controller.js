@@ -48,12 +48,15 @@ async function httpGetAuthors(node) {
 }
 
 export async function getRemoteAuthorById(req, res) {
+	if (!req.query.node) {
+		return res.status(400).json({ error: 'request do not contain node' });
+	}
 	try {
 		const author = await httpGetAuthorById({
 			url: req.query.node,
 			id: req.params.id,
 		});
-
+		author.node = req.query.node;
 		if (author === 503) {
 			return res.status(503);
 		}

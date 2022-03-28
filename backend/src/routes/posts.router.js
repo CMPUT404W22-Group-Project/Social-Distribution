@@ -4,7 +4,6 @@ import { authenticateToken } from '../auth/index.js';
 
 const router = Router();
 
-
 /**
  * @swagger
  * components:
@@ -93,7 +92,7 @@ const router = Router();
  *         likeCount: 2
  *         Comment: []
  *         Likes: []
- * 
+ *
  *     Posts:
  *       type: object
  *       properties:
@@ -105,14 +104,12 @@ const router = Router();
  *         items: []
  */
 
- /**
-  * @swagger
-  * tags:
-  *   name: Authors
-  *   description: The author managing API
-  */
-
-
+/**
+ * @swagger
+ * tags:
+ *   name: Authors
+ *   description: The author managing API
+ */
 
 /**
  * @swagger
@@ -143,7 +140,6 @@ const router = Router();
  *                 $ref: '#/components/schemas/Posts'
  */
 router.get('/posts', postController.getAllPublicPosts);
-
 
 /**
  * @swagger
@@ -177,7 +173,6 @@ router.get('/posts', postController.getAllPublicPosts);
  */
 router.get('/authors/:authorId/posts/', postController.getAllPosts);
 
-
 /**
  * @swagger
  * /authors/{authorId}/posts/{postId}:
@@ -197,7 +192,6 @@ router.get('/authors/:authorId/posts/', postController.getAllPosts);
  */
 router.get('/authors/:authorId/posts/:id', postController.getOnePost);
 
-
 /**
  * @swagger
  * /authors/{authorId}/posts/{postId}/image:
@@ -215,7 +209,6 @@ router.get('/authors/:authorId/posts/:id', postController.getOnePost);
  *         description: no image found
  */
 router.get('/authors/:authorId/posts/:id/image', postController.getImage);
-
 
 /**
  * @swagger
@@ -272,7 +265,6 @@ router.delete(
 	postController.deletePost
 );
 
-
 /**
  * @swagger
  * /authors/{authorId}/posts/{postId}:
@@ -304,7 +296,6 @@ router.post(
 	authenticateToken,
 	postController.updatePost
 );
-
 
 /**
  * @swagger
@@ -338,7 +329,6 @@ router.post(
 	postController.newPost
 );
 
-
 /**
  * @swagger
  * /authors/{authorId}/posts/{postId}/image:
@@ -362,4 +352,6 @@ router.post(
 	authenticateToken,
 	postController.addPostImage
 );
+router.get('/remote/authors/:authorId/posts', postController.getRemotePosts);
+
 export { router };

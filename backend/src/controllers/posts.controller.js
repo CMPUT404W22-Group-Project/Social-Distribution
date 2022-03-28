@@ -3,6 +3,7 @@ import {
 	authorService,
 	commentService,
 	likeService,
+	nodesService,
 } from '../services/index.service.js';
 import { getFollowersJSON } from './followers.controller.js';
 
@@ -12,6 +13,17 @@ import axios from 'axios';
 import { postToInbox } from '../services/inbox.service.js';
 
 const __dirname = path.resolve();
+
+async function httpGetPostsByAuthor({ url, id }) {
+	const node = await nodesService.getNodeByUrl(url);
+
+	const response = await axios.get(`${node.url}/authors/${id}/posts/`, {
+		auth: { username: node.username, password: node.password },
+	});
+
+	return response.data.items;
+}
+
 /**
  * Get all posts that are public
  * @param {Express.Request} req
@@ -186,6 +198,28 @@ export async function getOnePost(req, res) {
 	};
 
 	return res.status(200).json(response);
+}
+//TODO
+export async function getRemotePosts(req, res) {
+	if (!req.query.node) {
+		return res.status(400).json({ error: 'request do not contain node' });
+	}
+	try {
+		const posts = await httpGetPostsByAuthor({
+			url: req.query.node,
+			id: req.params.authorId,
+		});
+		posts.forEach((post) => {
+			post.node = req.query.node;
+		});
+
+		if (posts === 503) {
+			return res.status(503);
+		}
+		return res.status(200).json({ type: 'posts', items: posts });
+	} catch (error) {
+		return res.status(503);
+	}
 }
 
 /**
