@@ -325,6 +325,15 @@ const Admin = () => {
             >
                 Authors
             </Typography>
+            <Typography
+                sx={{ ml: 10 }}
+                variant="h4"
+                gutterBottom
+                component="div"
+            >
+                Delete Not Recommended,Change their status to Not Active in
+                instead
+            </Typography>
             <List sx={{ mx: 10 }}>
                 {authors.map((author, index) => {
                     if (!author.admin) {
