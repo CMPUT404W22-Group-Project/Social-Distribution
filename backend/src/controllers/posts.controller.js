@@ -93,11 +93,12 @@ export async function getAllPosts(req, res) {
 	const host = `${req.protocol}://${req.get('host')}`;
 	const author = await authorService.getAuthors({ id: req.params.authorId });
 	//remove author email & password
-	delete author.email;
-	delete author.password;
+
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
+	delete author.email;
+	delete author.password;
 	author.id = `${host}/authors/${author.id}/`;
 	for (const post of posts) {
 		//author
@@ -157,12 +158,13 @@ export async function getOnePost(req, res) {
 	}
 
 	const author = await authorService.getAuthors({ id: post.authorId });
-	delete author.email;
-	delete author.password;
+
 	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
+	delete author.email;
+	delete author.password;
 	//like
 	const likeCount = await likeService.getTotal(req.params.id);
 	post.likeCount = likeCount['_count'];

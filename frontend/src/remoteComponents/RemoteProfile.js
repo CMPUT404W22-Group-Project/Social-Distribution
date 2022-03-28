@@ -88,13 +88,15 @@ const RemoteProfile = ({ props }) => {
                                 variant="contained"
                                 onClick={() => {
                                     props.node
-                                        ? navigate(`/authors/${authorId}/posts`)
-                                        : navigate('/posts', {
+                                        ? navigate('/posts', {
                                               state: {
                                                   node: props.node,
                                                   authorId: authorId,
                                               },
-                                          });
+                                          })
+                                        : navigate(
+                                              `/authors/${authorId}/posts`
+                                          );
                                 }}
                             >
                                 Posts
