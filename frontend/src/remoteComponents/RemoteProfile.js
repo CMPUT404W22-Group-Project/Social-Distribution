@@ -106,9 +106,7 @@ const RemoteProfile = ({ props }) => {
                 </Card>
             </Popover>
         </div>
-    ) : (
-        <div>loading</div>
-    );
+    ) : null;
 };
 
 export default RemoteProfile;

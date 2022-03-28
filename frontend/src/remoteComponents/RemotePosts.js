@@ -7,13 +7,17 @@ import RemotePost from './RemotePost';
 const RemotePosts = () => {
     const [posts, setPosts] = useState([]);
     let location = useLocation();
-    const node = location.state.postLink;
+    const node = location.state.node;
     const authorId = location.state.authorId;
     const getPosts = useCallback(async (node, authorId) => {
         try {
-            const response = axios.get(`/remote/authors/${authorId}`, {
-                params: { node: node },
-            });
+            const response = await axios.get(
+                `/remote/authors/${authorId}/posts`,
+                {
+                    params: { node: node },
+                }
+            );
+            console.log(response);
             setPosts(response.data.items);
         } catch (error) {
             console.error(error);

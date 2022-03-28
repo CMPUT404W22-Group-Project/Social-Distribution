@@ -14,9 +14,39 @@ import { postToInbox } from '../services/inbox.service.js';
 
 const __dirname = path.resolve();
 
-async function httpGetPostsByAuthor({ url, id }) {
+async function httpGetAuthorById({ url, id }) {
 	const node = await nodesService.getNodeByUrl(url);
 
+	const response = await axios.get(`${node.url}/authors/${id}`, {
+		auth: { username: node.username, password: node.password },
+	});
+
+	return response.data;
+}
+
+async function httpGetPostsByAuthor({ url, id }) {
+	const node = await nodesService.getNodeByUrl(url);
+	//adapter
+	if (node.url === 'http://cmput404-project-t12.herokuapp.com/service') {
+		const responseT12 = await axios.get(`${node.url}/authors/${id}/posts`, {
+			auth: { username: node.username, password: node.password },
+		});
+		const posts = responseT12.data;
+		for (const post of posts) {
+			post.id = `http://cmput404-project-t12.herokuapp.com/service/authors/${id}/posts`;
+			post.contentType = 'text/plain';
+			post.categories = [];
+			post.likeCount = post.like_count;
+
+			const author = await httpGetAuthorById({ id, url });
+			author.url = `${node.url}/authors/${id}/`;
+			author.id = author.url;
+			author.type = 'author';
+			author.profileImage = `http://cmput404-project-t12.herokuapp.com${author.profileImage}`;
+			post.author = author;
+		}
+		return posts;
+	}
 	const response = await axios.get(`${node.url}/authors/${id}/posts/`, {
 		auth: { username: node.username, password: node.password },
 	});
@@ -201,7 +231,7 @@ export async function getOnePost(req, res) {
 
 	return res.status(200).json(response);
 }
-//TODO
+
 export async function getRemotePosts(req, res) {
 	if (!req.query.node) {
 		return res.status(400).json({ error: 'request do not contain node' });
@@ -221,6 +251,13 @@ export async function getRemotePosts(req, res) {
 		return res.status(200).json({ type: 'posts', items: posts });
 	} catch (error) {
 		return res.status(503);
+	}
+}
+//TODO
+
+export async function getRemotePostById(req, res) {
+	if (!req.query.node) {
+		return res.status(400).json({ error: 'request do not contain node' });
 	}
 }
 

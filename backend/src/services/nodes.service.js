@@ -41,7 +41,6 @@ export async function getNode() {
 }
 
 export async function getNodeByUrl(url) {
-	console.log(url);
 	return await prisma.nodes.findUnique({
 		where: {
 			type_url: {
