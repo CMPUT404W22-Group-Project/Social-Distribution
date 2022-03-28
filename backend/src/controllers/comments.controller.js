@@ -3,9 +3,45 @@ import {
 	commentService,
 	inboxService,
 	postService,
+	nodesService,
 } from '../services/index.service.js';
 import cuid from 'cuid';
+import axios from 'axios';
 
+async function httpGetComments({ url, authorId, postId }) {
+	const node = await nodesService.getNodeByUrl(url);
+	const response = await axios.get(
+		`${node.url}/authors/${authorId}/posts/${postId}/comments/`,
+		{
+			auth: { username: node.username, password: node.password },
+		}
+	);
+	return response.data.comments;
+}
+
+export async function getRemoteComments(req, res) {
+	if (!req.query.node) {
+		return res.status(400).json({ error: 'request do not contain node' });
+	}
+	try {
+		const comments = await httpGetComments({
+			url: req.query.node,
+			authorId: req.params.authorId,
+			id: req.params.id,
+		});
+
+		for (const comment of comments) {
+			comment.author.node = req.query.node;
+		}
+
+		if (comments === 503) {
+			return res.status(503);
+		}
+		return res.status(200).json({ type: 'comments', comments: comments });
+	} catch (error) {
+		return res.status(503);
+	}
+}
 /**
  * Get all comments from a post
  * @param {Express.Request} req
@@ -107,7 +143,7 @@ export async function newComment(req, res) {
 		src: newComment.id,
 		owner: post.authorId,
 	});
-	
+
 	return res.status(201).json(newComment);
 }
 
