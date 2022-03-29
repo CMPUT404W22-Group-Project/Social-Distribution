@@ -3,7 +3,6 @@ import * as likeController from '../controllers/likes.controller.js';
 
 const router = Router();
 
-
 /**
  * @swagger
  * components:
@@ -50,19 +49,18 @@ const router = Router();
  *         items: []
  */
 
-
- /**
-  * @swagger
-  * tags:
-  *   name: Likes
-  *   description: The author managing API
-  */
-
+/**
+ * @swagger
+ * tags:
+ *   name: Likes
+ *   description: The author managing API
+ */
 
 // FIXME: Post route should be inbox, not like
-router.post('/authors/:authorId/posts/:postId/likes', likeController.httpPostNewLikeToPost);
-
-
+router.post(
+	'/authors/:authorId/posts/:postId/likes',
+	likeController.httpPostNewLikeToPost
+);
 
 /**
  * @swagger
@@ -80,10 +78,9 @@ router.post('/authors/:authorId/posts/:postId/likes', likeController.httpPostNew
  *                 $ref: '#/components/schemas/Likes'
  */
 router.get(
-	'/authors/:authorId/posts/:postId/likes/',
-	likeController.httpGetAllLikesOfPost
+	'/authors/:authorId/posts/:postId/likes',
+	likeController.getAllLikesOfPost
 );
-
 
 /**
  * @swagger
@@ -102,8 +99,18 @@ router.get(
  */
 router.get(
 	'/authors/:authorId/posts/:postId/comments/:commentId/likes',
-	likeController.httpGetAllLikesOfComment
+	likeController.getAllLikesOfComment
 );
 router.get('/authors/:authorId/liked', likeController.httpGetLiked);
+
+router.get(
+	'/remote/authors/:authorId/posts/:postId/likes',
+	likeController.getRemoteLikesOfPost
+);
+
+router.get(
+	'remote/authors/:authorId/posts/:postId/comments/:commentId/likes',
+	likeController.getRemoteLikesOfComment
+);
 
 export { router };

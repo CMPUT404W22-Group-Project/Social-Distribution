@@ -51,6 +51,15 @@ export async function getNodeByUrl(url) {
 	});
 }
 
+export async function getNodeByUserPass({ username, password }) {
+	return await prisma.nodes.findUnique({
+		where: {
+			username: username,
+			password: password,
+		},
+	});
+}
+
 export async function getAllNodes() {
 	const nodes = await prisma.nodes.findMany();
 	return nodes;
