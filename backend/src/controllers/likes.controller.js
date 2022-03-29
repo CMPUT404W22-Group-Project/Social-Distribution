@@ -153,7 +153,7 @@ export async function httpPostNewLikeToPost(req, res) {
 	return res.status(201).json(newLike);
 }
 
-export async function httpGetLiked(req, res) {
+export async function getLikedByAuthor(req, res) {
 	const host = `${req.protocol}://${req.get('host')}`;
 	if (!req.params.authorId) {
 		return res.status(400).json({
@@ -162,15 +162,19 @@ export async function httpGetLiked(req, res) {
 	}
 	const liked = await likeService.getLiked(req.params.authorId);
 	const author = await authorService.getAuthors({ id: req.params.authorId });
+	author.host = host;
+	author.id = `${host}/authors/${req.params.authorId}`;
+	author.url = `${host}/authors/${req.params.authorId}`;
+	delete author.email;
+	delete author.password;
 	liked.forEach((like) => {
-		const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
-		like.summary = `${author.displayName} Likes Your Post`;
+		// const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
 		like.type = 'Like';
-		like.object = object;
+		like['@context'] = like.context;
 		like.author = author;
 	});
 
-	return res.status(200).json(liked);
+	return res.status(200).json({ type: 'liked', items: liked });
 }
 
 export async function getRemoteLikesOfPost(req, res) {

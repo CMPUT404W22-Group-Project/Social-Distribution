@@ -61,7 +61,7 @@ model Comment {
 // Store likes. Primary key is a combined author id and object
 model Likes {
     object  String
-    authorId String  // just id if local , url vs node populated if remote
+    authorId String  // who liked this object,just id if local , url vs node populated if remote
     receiver String  //where is this posted to( i.e inbox reference)
     summary String
     context String
