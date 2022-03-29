@@ -61,8 +61,11 @@ async function httpGetPostsByAuthor({ url, id }) {
 	const response = await axios.get(`${node.url}/authors/${id}/posts/`, {
 		auth: { username: node.username, password: node.password },
 	});
-
-	return response.data.items;
+	const posts = response.data.items;
+	for (const post of posts) {
+		post.author.node = node.url;
+	}
+	return posts;
 }
 
 /**
@@ -89,9 +92,6 @@ export async function getAllPublicPosts(req, res) {
 			...author,
 		};
 
-		//like
-		const likeCount = await likeService.getTotal(post.id);
-		post.likeCount = likeCount['_count'];
 		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments/`;
 		//comments
 		const page = 1;
@@ -110,6 +110,9 @@ export async function getAllPublicPosts(req, res) {
 			comments: comments,
 		};
 		post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
+		//like
+		const likeCount = await likeService.getTotal(post.id);
+		post.likeCount = likeCount['_count'];
 	}
 	const response = {
 		type: 'posts',
@@ -152,9 +155,6 @@ export async function getAllPosts(req, res) {
 			host: `${host}/`,
 			...author,
 		};
-		//like
-		const likeCount = await likeService.getTotal(post.id);
-		post.likeCount = likeCount['_count'];
 
 		post.comments = `${host}/authors/${post.authorId}/posts/${post.id}/comments`;
 		//comments
@@ -174,6 +174,9 @@ export async function getAllPosts(req, res) {
 			comments: comments,
 		};
 		post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
+		//like
+		const likeCount = await likeService.getTotal(post.id);
+		post.likeCount = likeCount['_count'];
 	}
 
 	const response = {
@@ -200,15 +203,12 @@ export async function getOnePost(req, res) {
 
 	const author = await authorService.getAuthors({ id: post.authorId });
 
-	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
 	if (!author) {
 		return res.status(404).json({ error: 'Author Not Found' });
 	}
 	delete author.email;
 	delete author.password;
-	//like
-	const likeCount = await likeService.getTotal(req.params.id);
-	post.likeCount = likeCount['_count'];
+
 	//comments
 	const page = 1;
 	const size = 5;
@@ -226,6 +226,10 @@ export async function getOnePost(req, res) {
 		comments: comments,
 	};
 	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
+	//like
+	const likeCount = await likeService.getTotal(req.params.id);
+	post.likeCount = likeCount['_count'];
+
 	author.id = `${host}/authors/${post.authorId}/`;
 	post.author = {
 		type: 'author',

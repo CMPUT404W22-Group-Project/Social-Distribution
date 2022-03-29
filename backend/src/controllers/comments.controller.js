@@ -4,6 +4,7 @@ import {
 	inboxService,
 	postService,
 	nodesService,
+	likeService,
 } from '../services/index.service.js';
 import cuid from 'cuid';
 import axios from 'axios';
@@ -31,7 +32,8 @@ export async function getRemoteComments(req, res) {
 		});
 
 		for (const comment of comments) {
-			comment.author.node = req.query.node;
+			const node = comment.author.id.split('/authors/')[0];
+			comment.author.node = node;
 		}
 
 		if (comments === 503) {
@@ -55,10 +57,13 @@ export async function getAllComments(req, res) {
 		size: parseInt(req.query.size),
 	});
 	const host = `${req.protocol}://${req.get('host')}`;
-
-	comments.forEach((comment) => {
+	//TODO make this hanlde remote user
+	for (const comment of comments) {
 		comment.type = 'comment';
 		comment.id = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${comment.id}/`;
+		const likeCount = await likeService.getTotal(comment.id);
+		comment.likeCount = likeCount['_count'];
+		//local
 		comment.author = {
 			type: 'author',
 			url: `${host}/authors/${comment.authorId}/`,
@@ -66,7 +71,7 @@ export async function getAllComments(req, res) {
 			host: `${host}/`,
 			...comment.author,
 		};
-	});
+	}
 
 	const response = {
 		type: 'comments',

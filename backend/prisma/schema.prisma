@@ -21,7 +21,6 @@ model Author {
     profileImage  String?
     Post          Post[]
     Comment       Comment[]
-    Likes         Likes[]
     Inbox         Inbox[]
     FriendRequest FriendRequest[]
     Friends       Friends[]
@@ -45,7 +44,6 @@ model Post {
     unlisted    Boolean
     likeCount   Int       @default(0)
     Comment     Comment[]
-    Likes       Likes[]
 }
 
 // Store comments. Each comment has a primary key, and references a foreign keys author id and post id
@@ -60,14 +58,15 @@ model Comment {
     published   DateTime
 }
 
-// Store likes. Primary key is a combined author id and post id foreign key
+// Store likes. Primary key is a combined author id and object
 model Likes {
-    postId   String
-    authorId String
-    post     Post   @relation(fields: [postId], references: [id])
-    author   Author @relation(fields: [authorId], references: [id])
-
-    @@id([postId, authorId])
+    object  String
+    authorId String  // just id if local , url vs node populated if remote
+    receiver String  //where is this posted to( i.e inbox reference)
+    summary String
+    context String
+    node String? //have node if remote author
+    @@id([object, authorId])
 }
 
 // Store inbox.  Primary key is a combined post id and author id

@@ -6,26 +6,12 @@ import prisma from '../../prisma/client.js';
  * @param {*} options
  * @returns
  */
-export async function getLikes(options) {
-	const { postId, commentId } = options;
-
-	if (postId) {
-		return await prisma.likes.findMany({
-			where: {
-				postId: postId,
-			},
-		});
-	}
-
-	if (commentId) {
-		return await prisma.likes.findMany({
-			where: {
-				commentId: commentId,
-			},
-		});
-	}
-
-	return await prisma.likes.findMany();
+export async function getLikes(object) {
+	return await prisma.likes.findMany({
+		where: {
+			object: object,
+		},
+	});
 }
 
 /**
@@ -33,17 +19,22 @@ export async function getLikes(options) {
  * @param {*} like
  * @returns
  */
+//have node if remote author
+
 export async function postLike(like) {
 	return await prisma.likes.create({
 		data: {
-			postId: like.postId,
+			object: like.object,
 			authorId: like.authorId,
+			receiver: like.receiver,
+			summary: like.summary,
+			context: like.context,
+			node: like.node != null ? like.node : undefined,
 		},
 	});
 }
 
 export async function getLiked(authorId) {
-
 	if (authorId) {
 		return await prisma.likes.findMany({
 			where: {
@@ -58,10 +49,10 @@ export async function getLiked(authorId) {
  * @param {*} postId
  * @returns
  */
-export async function getTotal(postId) {
+export async function getTotal(object) {
 	return await prisma.likes.aggregate({
 		where: {
-			postId: postId,
+			object: object,
 		},
 		_count: true,
 	});

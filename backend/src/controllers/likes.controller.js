@@ -2,8 +2,44 @@ import {
 	authorService,
 	inboxService,
 	likeService,
+	nodesService,
 } from '../services/index.service.js';
 import axios from 'axios';
+async function httpGetRemoteCommentLikes({ url, authorId, postId, commentId }) {
+	const node = await nodesService.getNodeByUrl(url);
+
+	const response = await axios.get(
+		`${node.url}/authors/${authorId}/posts/${postId}/comments/${commentId}`,
+		{
+			auth: { username: node.username, password: node.password },
+		}
+	);
+
+	return response.data;
+}
+
+async function httpGetRemotePostLikes({ url, authorId, postId }) {
+	const node = await nodesService.getNodeByUrl(url);
+
+	const response = await axios.get(
+		`${node.url}/authors/${authorId}/posts/${postId}`,
+		{
+			auth: { username: node.username, password: node.password },
+		}
+	);
+
+	return response.data;
+}
+
+async function httpGetAuthorById({ url, id }) {
+	const node = await nodesService.getNodeByUrl(url);
+
+	const response = await axios.get(`${node.url}/authors/${id}`, {
+		auth: { username: node.username, password: node.password },
+	});
+
+	return response.data;
+}
 
 /**
  * get all like of post, given a post id
@@ -11,18 +47,23 @@ import axios from 'axios';
  * @param {*} res
  * @returns
  */
-export async function httpGetAllLikesOfPost(req, res) {
+export async function getAllLikesOfPost(req, res) {
 	const host = `${req.protocol}://${req.get('host')}`;
-	const likes = await likeService.getLikes({
-		postId: parseInt(req.params.postid),
-	});
+	const object = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/`;
+	const likes = await likeService.getLikes(object);
 	for (const like of likes) {
-		const author = await authorService.getAuthors({ id: like.authorId });
-		const object = `${host}/authors/${like.authorId}/posts/${like.postId}/likes`;
-		like.summary = `${author.displayName} Likes Your Post`;
+		let author;
+		if (like.node) {
+			//author id
+			const id = like.authorId.split('/author/')[0].split('/')[0];
+			author = await httpGetAuthorById({ like: like.node, id: id });
+		} else {
+			author = await authorService.getAuthors({ id: like.authorId });
+		}
 		like.author = author;
 		like.type = 'Like';
-		like.object = object;
+		like['@context'] = like.context;
+		delete like.receiver;
 	}
 	const response = {
 		type: 'likes',
@@ -37,11 +78,26 @@ export async function httpGetAllLikesOfPost(req, res) {
  * @param {*} res
  * @returns
  */
-export async function httpGetAllLikesOfComment(req, res) {
-	console.log(req.params.commentId);
-	const likes = await likeService.getLikes({
-		commentId: parseInt(req.params.commentid),
-	});
+export async function getAllLikesOfComment(req, res) {
+	const host = `${req.protocol}://${req.get('host')}`;
+	const object = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${req.params.commentId}/`;
+
+	const likes = await likeService.getLikes(object);
+
+	for (const like of likes) {
+		let author;
+		if (like.node) {
+			//author id
+			const id = like.authorId.split('/author/')[0].split('/')[0];
+			author = await httpGetAuthorById({ like: like.node, id: id });
+		} else {
+			author = await authorService.getAuthors({ id: like.authorId });
+		}
+		like.author = author;
+		like.type = 'Like';
+		like['@context'] = like.context;
+		delete like.receiver;
+	}
 	const response = {
 		type: 'likes',
 		items: likes,
@@ -115,4 +171,45 @@ export async function httpGetLiked(req, res) {
 	});
 
 	return res.status(200).json(liked);
+}
+
+export async function getRemoteLikesOfPost(req, res) {
+	if (!req.query.node) {
+		return res.status(400).json({ error: 'request do not contain node' });
+	}
+	try {
+		const likes = await httpGetRemotePostLikes({
+			url: req.query.node,
+			authorId: req.params.authorId,
+			postId: req.params.postId,
+		});
+
+		if (likes === 503) {
+			return res.status(503);
+		}
+		return res.status(200).json({ type: 'likes', items: likes });
+	} catch (error) {
+		return res.status(503);
+	}
+}
+
+export async function getRemoteLikesOfComment(req, res) {
+	if (!req.query.node) {
+		return res.status(400).json({ error: 'request do not contain node' });
+	}
+	try {
+		const likes = await httpGetRemoteCommentLikes({
+			url: req.query.node,
+			authorId: req.params.authorId,
+			postId: req.params.postId,
+			commentId: req.params.commentId,
+		});
+
+		if (likes === 503) {
+			return res.status(503);
+		}
+		return res.status(200).json({ type: 'likes', items: likes });
+	} catch (error) {
+		return res.status(503);
+	}
 }

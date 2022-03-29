@@ -46,7 +46,11 @@ export async function authenticateToken(req, res, next) {
 		if (
 			await authService.authenticateNode(req.get('origin'), username, password)
 		) {
-			req.user = await authService.authenticateAuthors(req.get('origin'), username, password)
+			req.user = await authService.authenticateAuthors(
+				req.get('origin'),
+				username,
+				password
+			);
 			return next();
 		} else {
 			return res.sendStatus(401);

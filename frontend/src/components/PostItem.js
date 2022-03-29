@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -58,7 +58,7 @@ const PostItem = ({ props }) => {
 
     //get postId
     const isOwnPost = props.auth.author.id === props.authorId;
-    const postId = props.id?.split('/')[6];
+    const postId = props.id?.split('/').at(-1);
 
     //for post menu
     const [dialog, setDialog] = useState(false);
@@ -166,40 +166,43 @@ const PostItem = ({ props }) => {
     };
 
     //like post
-    const likePost = (authorId, postId) => {
+    const likePost = (authorId) => {
+        const likeObject = {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            type: 'Like',
+            author: props.auth.author,
+            object: props.id,
+            summary: `${props.auth.author.displayName} Likes your post`,
+        };
         axios
-            .post(
-                `/authors/${authorId}/posts/${postId}/likes`,
-                {
-                    authorId: authorId,
-                    postId: postId,
-                },
-                { withCredentials: true }
-            )
+            .post(`/authors/${authorId}/inbox`, likeObject, {
+                withCredentials: true,
+            })
             .then((response) => {
+                setDisableLiked(true);
                 response.status === 201
-                    ? window.location.reload()
-                    : alert('You like to this is unsucessful');
+                    ? (props.likeCount = props.likeCount + 1)
+                    : null;
             });
     };
     const [disableLiked, setDisableLiked] = useState(false);
-    const getAuthorLiked = useCallback((postId) => {
-        axios
-            .get(
-                `/authors/${props.authorId}/posts/${postId}/likes`,
-                { withCredentials: true }
-            )
-            .then((response) => {
-                response.data.items.map((data) => {
-                    data.authorId = props.auth.author.id
-                        ? setDisableLiked(true)
-                        : null;
-                });
-            });
-    }, [props.auth.author.id, props.authorId]);
-    useEffect(() => {
-        getAuthorLiked(postId);
-    }, [getAuthorLiked, postId]);
+    // const getAuthorLiked = useCallback((postId) => {
+    //     axios
+    //         .get(
+    //             `/authors/${props.authorId}/posts/${postId}/likes`,
+    //             { withCredentials: true }
+    //         )
+    //         .then((response) => {
+    //             response.data.items.map((data) => {
+    //                 data.authorId = props.auth.author.id
+    //                     ? setDisableLiked(true)
+    //                     : null;
+    //             });
+    //         });
+    // }, [props.auth.author.id, props.authorId]);
+    // useEffect(() => {
+    //     getAuthorLiked(postId);
+    // }, [getAuthorLiked, postId]);
     return (
         <>
             <Card>
