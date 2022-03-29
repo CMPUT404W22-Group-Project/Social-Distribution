@@ -1,4 +1,4 @@
-import { commentService, inboxService } from '../services/index.service.js';
+import { inboxService } from '../services/index.service.js';
 import axios from 'axios';
 
 /**
@@ -26,7 +26,6 @@ export async function getInbox(req, res) {
 export async function postToInbox(req, res) {
 	// TODO: MAYBE: If remote, add copy of post to posts table
 
-	// TODO: If type is comment, then put comment in comment db
 	// NOTE: Author primary key clash
 	// if (req.body.type === 'comment') {
 	// 	const remoteComment = (await axios.get(req.body.src)).data;
@@ -37,6 +36,7 @@ export async function postToInbox(req, res) {
 	// 	};
 	// 	commentService.newComment(comment);
 	// }
+	console.log(req.body);
 	const post = await inboxService.postToInbox({
 		type: req.body.type,
 		src: req.body.src,
