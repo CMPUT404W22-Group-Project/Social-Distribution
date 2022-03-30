@@ -9,7 +9,7 @@ async function httpGetRemoteCommentLikes({ url, authorId, postId, commentId }) {
 	const node = await nodesService.getNodeByUrl(url);
 
 	const response = await axios.get(
-		`${node.url}/authors/${authorId}/posts/${postId}/comments/${commentId}`,
+		`${node.url}/authors/${authorId}/posts/${postId}/comments/${commentId}/likes`,
 		{
 			auth: { username: node.username, password: node.password },
 		}
@@ -22,7 +22,7 @@ async function httpGetRemotePostLikes({ url, authorId, postId }) {
 	const node = await nodesService.getNodeByUrl(url);
 
 	const response = await axios.get(
-		`${node.url}/authors/${authorId}/posts/${postId}`,
+		`${node.url}/authors/${authorId}/posts/${postId}/likes`,
 		{
 			auth: { username: node.username, password: node.password },
 		}
@@ -59,6 +59,8 @@ export async function getAllLikesOfPost(req, res) {
 			author = await httpGetAuthorById({ like: like.node, id: id });
 		} else {
 			author = await authorService.getAuthors({ id: like.authorId });
+			delete author.email;
+			delete author.password;
 		}
 		like.author = author;
 		like.type = 'Like';
@@ -92,6 +94,8 @@ export async function getAllLikesOfComment(req, res) {
 			author = await httpGetAuthorById({ like: like.node, id: id });
 		} else {
 			author = await authorService.getAuthors({ id: like.authorId });
+			delete author.email;
+			delete author.password;
 		}
 		like.author = author;
 		like.type = 'Like';
