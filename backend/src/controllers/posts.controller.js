@@ -379,7 +379,7 @@ export async function newPost(req, res) {
 	post.authorId = req.user.id;
 	post.id = cuid();
 	post.published = new Date();
-	post.origin = `${host}/authors/${req.user.id}/posts`;
+	post.origin = `${host}/authors/${req.user.id}/posts/`;
 
 	if (!validPost(post))
 		return res.status(400).json({ error: 'Missing required property' });

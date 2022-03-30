@@ -101,7 +101,7 @@ router.get(
 	'/authors/:authorId/posts/:postId/comments/:commentId/likes',
 	likeController.getAllLikesOfComment
 );
-router.get('/authors/:authorId/liked', likeController.httpGetLiked);
+router.get('/authors/:authorId/liked', likeController.getLikedByAuthor);
 
 router.get(
 	'/remote/authors/:authorId/posts/:postId/likes',
