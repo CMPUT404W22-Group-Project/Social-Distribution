@@ -29,12 +29,14 @@ export async function getInbox(req, res) {
 
 export async function postToInbox(req, res) {
 	//check if remote
-
-	const auth = req.headers.authorization.split(' ');
-	const credentials = new Buffer.from(auth[1], 'base64').toString();
-	const username = credentials.split(':')[0];
-	const password = credentials.split(':')[1];
-	const node = await nodesService.getNodeByUserPass(username, password);
+	let node;
+	if (req.headers.authorization) {
+		const auth = req.headers.authorization.split(' ');
+		const credentials = new Buffer.from(auth[1], 'base64').toString();
+		const username = credentials.split(':')[0];
+		const password = credentials.split(':')[1];
+		node = await nodesService.getNodeByUserPass(username, password);
+	}
 
 	// TODO: MAYBE: If remote, add copy of post to posts table
 
