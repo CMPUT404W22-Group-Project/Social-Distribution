@@ -18,15 +18,6 @@ export async function getComments(options) {
 			},
 			skip: size * (page - 1),
 			take: size,
-			include: {
-				author: {
-					select: {
-						displayName: true,
-						github: true,
-						profileImage: true,
-					},
-				},
-			},
 			orderBy: {
 				published: 'desc',
 			},
@@ -36,15 +27,6 @@ export async function getComments(options) {
 	return await prisma.comment.findMany({
 		where: {
 			postId: postId,
-		},
-		include: {
-			author: {
-				select: {
-					displayName: true,
-					github: true,
-					profileImage: true,
-				},
-			},
 		},
 		orderBy: {
 			published: 'desc',
