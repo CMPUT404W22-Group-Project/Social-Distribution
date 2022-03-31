@@ -19,6 +19,7 @@ import Admin from './containers/Admin/Admin';
 import RemoteAuthors from './remoteComponents/RemoteAuthors';
 import RemoteAuthor from './remoteComponents/RemoteAuthor';
 import RemotePosts from './remoteComponents/RemotePosts';
+import RemoteLikes from './remoteComponents/RemoteLikes';
 
 const mockAuthor = {
     type: 'author',
@@ -114,6 +115,7 @@ function App() {
                 <Route path="/author" element={<RemoteAuthor />} />
                 <Route path="/posts" element={<RemotePosts />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/likes" element={<RemoteLikes />} />
             </Routes>
         </>
     );

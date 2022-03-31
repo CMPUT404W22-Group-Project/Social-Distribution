@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -26,6 +27,7 @@ import RemoteProfile from './RemoteProfile';
 import RemoteComments from './RemoteComments';
 
 const RemotePost = ({ props }) => {
+    let navigate = useNavigate();
     RemotePost.propTypes = {
         props: PropTypes.object,
         id: PropTypes.string,
@@ -46,9 +48,13 @@ const RemotePost = ({ props }) => {
         comments: PropTypes.string,
         commentsSrc: PropTypes.object,
         auth: PropTypes.object,
+        node: PropTypes.any,
     };
-    //verify isOwnPost?
-    const postId = props.url?.split('/').pop();
+    const url = props.origin.endsWith('/') ? props.origin : `${props.origin}/`;
+    //likeCount
+    const [likeCount, setLikeCount] = useState(
+        props.likeCount ? props.likeCount : 0
+    );
     //for post menu
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -129,32 +135,37 @@ const RemotePost = ({ props }) => {
     };
 
     //like post
-    const likePost = (author) => {
+    const likePost = (inbox, author) => {
+        author.id = author.url;
+        const authorId = inbox.split('/authors/')[1].split('/')[0];
+        const node = node.split('/authors/')[0];
         axios
-            .post(`${props.url}/likes`, {
+            .post(`remote/author/${authorId}/inbox`, {
+                node: node,
+                type: 'Like',
                 author: author,
-                object: props.url,
+                object: url,
+                '@context': 'https://www.w3.org/ns/activitystreams',
+                summary: `${author.displayName} Likes Your Post`,
             })
             .then((response) => {
-                response.status === 201
-                    ? window.location.reload()
-                    : alert('You like to this is unsucessful');
+                response.status === 201 ? setLikeCount(likeCount + 1) : null;
             });
     };
     const [disableLiked, setDisableLiked] = useState(false);
-    const getAuthorLiked = useCallback(() => {
-        axios.get(`${props.url}/likes`).then((response) => {
-            response.data.items.map((data) => {
-                data.author.id = props.auth.author.url
-                    ? setDisableLiked(true)
-                    : null;
-            });
-            props.likeCount = response.data.items.length;
-        });
-    }, [props]);
-    useEffect(() => {
-        getAuthorLiked(postId);
-    }, [getAuthorLiked, postId]);
+    // const getAuthorLiked = useCallback(() => {
+    //     axios.get(`${props.url}/likes`).then((response) => {
+    //         response.data.items.map((data) => {
+    //             data.author.id = props.auth.author.url
+    //                 ? setDisableLiked(true)
+    //                 : null;
+    //         });
+    //         props.likeCount = response.data.items.length;
+    //     });
+    // }, [props]);
+    // useEffect(() => {
+    //     getAuthorLiked(postId);
+    // }, [getAuthorLiked, postId]);
     return (
         <>
             <Card>
@@ -231,13 +242,25 @@ const RemotePost = ({ props }) => {
                             setDisableLiked(true);
                             const author = props.auth.author;
                             author.id = props.auth.author.url;
-                            likePost(author);
+                            const inbox = url.split('/posts/')[0];
+                            likePost(inbox, author);
                         }}
                         disabled={disableLiked ? true : null}
                     >
                         <FavoriteIcon />
                     </IconButton>
-                    <Typography>{props.likeCount}</Typography>
+                    <Typography
+                        onClick={() => {
+                            navigate('/likes', {
+                                state: {
+                                    node: props.node,
+                                    object: url,
+                                },
+                            });
+                        }}
+                    >
+                        {likeCount}
+                    </Typography>
                     <IconButton aria-label="share">
                         <ShareIcon />
                     </IconButton>
@@ -254,7 +277,9 @@ const RemotePost = ({ props }) => {
                 </CardActions>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                        <RemoteComments props={props.id} />
+                        <RemoteComments
+                            props={{ post: props.id, node: props.node }}
+                        />
                     </CardContent>
                 </Collapse>
             </Card>

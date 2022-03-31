@@ -21,7 +21,7 @@ const LikeItem = ({ props }) => {
                 <ProfilePictureCard props={props.author} />
             </ListItemAvatar>
             <ListItemText
-                primary={props.summary}
+                primary={props.author.displayName}
                 secondary={
                     <>
                         <Typography
@@ -30,9 +30,8 @@ const LikeItem = ({ props }) => {
                             variant="body2"
                             color="text.primary"
                         >
-                            {`${props.author.displayName} likes `}
                             <Link href={props.object} underline="hover">
-                                {props.commentId ? 'This Comment' : 'This Post'}
+                                {props.summary}
                             </Link>
                         </Typography>
                     </>

@@ -34,23 +34,27 @@ const Comments = ({ props }) => {
     const [comments, setComments] = useState(props.comments);
     //use useEffect to fetch comments upon page change
 
-    const getComments = useCallback((page, size) => {
-        axios
-            .get(
-                `/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
-            )
-            .then((response) => {
-                response.status === 200
-                    ? setComments(response.data.comments)
-                    : null;
-            });
-    }, [props.authorId, props.postId]);
-    const postComment = (authorId, contentType, comment) => {
+    const getComments = useCallback(
+        (page, size) => {
+            axios
+                .get(
+                    `/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
+                )
+                .then((response) => {
+                    response.status === 200
+                        ? setComments(response.data.comments)
+                        : null;
+                });
+        },
+        [props.authorId, props.postId]
+    );
+    const postComment = (author, contentType, comment) => {
         axios
             .post(
-                `/authors/${props.authorId}/posts/${props.postId}/comments`,
+                `/authors/${props.authorId}/inbox`,
                 {
-                    authorId: authorId,
+                    type: 'comment',
+                    author: author,
                     contentType: contentType,
                     comment: comment,
                 },
@@ -86,7 +90,7 @@ const Comments = ({ props }) => {
     //handle postComment
     const handlePostComment = () => {
         handleClose();
-        postComment(props.auth.author.id, contentType, comment);
+        postComment();
     };
     return (
         <div>
@@ -140,7 +144,11 @@ const Comments = ({ props }) => {
                 <DialogActions>
                     <Button
                         onClick={() => {
-                            handlePostComment();
+                            handlePostComment(
+                                props.auth.author,
+                                comment,
+                                contentType
+                            );
                         }}
                     >
                         Ok
