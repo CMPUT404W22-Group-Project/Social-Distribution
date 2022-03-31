@@ -58,9 +58,11 @@ export async function newComment(comment) {
 			id: comment.id,
 			authorId: comment.authorId,
 			postId: comment.postId,
+			receiver: comment.receiver,
 			contentType: comment.contentType,
 			comment: comment.comment,
 			published: new Date(comment.published),
+			node: comment.node != null ? comment.node : undefined,
 		},
 	});
 }

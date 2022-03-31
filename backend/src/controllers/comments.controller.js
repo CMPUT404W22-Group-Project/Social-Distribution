@@ -9,6 +9,16 @@ import {
 import cuid from 'cuid';
 import axios from 'axios';
 
+async function httpGetAuthorById({ url, id }) {
+	const node = await nodesService.getNodeByUrl(url);
+
+	const response = await axios.get(`${node.url}/authors/${id}`, {
+		auth: { username: node.username, password: node.password },
+	});
+
+	return response.data;
+}
+
 async function httpGetComments({ url, authorId, postId }) {
 	const node = await nodesService.getNodeByUrl(url);
 	const response = await axios.get(
@@ -63,14 +73,27 @@ export async function getAllComments(req, res) {
 		comment.id = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${comment.id}/`;
 		const likeCount = await likeService.getTotal(comment.id);
 		comment.likeCount = likeCount['_count'];
-		//local
-		comment.author = {
-			type: 'author',
-			url: `${host}/authors/${comment.authorId}/`,
-			id: `${host}/authors/${comment.authorId}/`,
-			host: `${host}/`,
-			...comment.author,
-		};
+
+		let author;
+		if (comment.node) {
+			//author id
+			const id = comment.authorId.split('/authors/')[0].split('/')[0];
+			author = await httpGetAuthorById({ url: comment.node, id: id });
+		} else {
+			author = await authorService.getAuthors({ id: comment.authorId });
+			if (author) {
+				author.type = 'author';
+				author.url = `${host}/authors/${comment.authorId}/`;
+				author.id = `${host}/authors/${comment.authorId}/`;
+				author.host = `${host}/`;
+				delete author.email;
+				delete author.password;
+			} else {
+				res.status(404).json({ error: 'Author Not Found' });
+			}
+		}
+
+		comment.author = author;
 	}
 
 	const response = {

@@ -56,16 +56,19 @@ export async function getAllLikesOfPost(req, res) {
 		if (like.node) {
 			//author id
 			const id = like.authorId.split('/author/')[0].split('/')[0];
-			author = await httpGetAuthorById({ like: like.node, id: id });
+			author = await httpGetAuthorById({ url: like.node, id: id });
 		} else {
 			author = await authorService.getAuthors({ id: like.authorId });
+			author.type = 'author';
+			author.url = `${host}/authors/${like.authorId}/`;
+			author.id = `${host}/authors/${like.authorId}/`;
+			author.host = `${host}/`;
 			delete author.email;
 			delete author.password;
 		}
 		like.author = author;
 		like.type = 'Like';
 		like['@context'] = like.context;
-		delete like.receiver;
 	}
 	const response = {
 		type: 'likes',
@@ -90,7 +93,7 @@ export async function getAllLikesOfComment(req, res) {
 		let author;
 		if (like.node) {
 			//author id
-			const id = like.authorId.split('/author/')[0].split('/')[0];
+			const id = like.authorId.split('/authors/')[0].split('/')[0];
 			author = await httpGetAuthorById({ like: like.node, id: id });
 		} else {
 			author = await authorService.getAuthors({ id: like.authorId });
@@ -100,7 +103,6 @@ export async function getAllLikesOfComment(req, res) {
 		like.author = author;
 		like.type = 'Like';
 		like['@context'] = like.context;
-		delete like.receiver;
 	}
 	const response = {
 		type: 'likes',

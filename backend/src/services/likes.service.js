@@ -57,3 +57,14 @@ export async function getTotal(object) {
 		_count: true,
 	});
 }
+
+export async function checkLikeExist({ object, authorId }) {
+	return await prisma.likes.findUnique({
+		where: {
+			object_authorId: {
+				object: object,
+				authorId: authorId,
+			},
+		},
+	});
+}
