@@ -69,7 +69,6 @@ export async function getAllLikesOfPost(req, res) {
 		like.author = author;
 		like.type = 'Like';
 		like['@context'] = like.context;
-		delete like.receiver;
 	}
 	const response = {
 		type: 'likes',
@@ -104,7 +103,6 @@ export async function getAllLikesOfComment(req, res) {
 		like.author = author;
 		like.type = 'Like';
 		like['@context'] = like.context;
-		delete like.receiver;
 	}
 	const response = {
 		type: 'likes',

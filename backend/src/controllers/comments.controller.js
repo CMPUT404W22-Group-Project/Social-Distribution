@@ -94,7 +94,6 @@ export async function getAllComments(req, res) {
 		}
 
 		comment.author = author;
-		delete comment.receiver;
 	}
 
 	const response = {

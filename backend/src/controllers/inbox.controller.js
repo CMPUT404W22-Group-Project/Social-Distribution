@@ -69,10 +69,18 @@ export async function postToInbox(req, res) {
 		) {
 			return res.status(400).json({ error: 'Missing required property' });
 		}
+		const exist = await likeService.checkLikeExist({
+			object: req.body.object,
+			authorId: req.body.author.id,
+		});
+		if (exist) {
+			return res
+				.status(409)
+				.json({ error: 'Author Already Liked this object' });
+		}
 		const like = {
 			object: req.body.object,
 			authorId: req.body.author.id,
-			receiver: req.params.id,
 			summary: req.body.summary,
 			context: req.body['@context'],
 			node: node ? node : null,
@@ -98,7 +106,6 @@ export async function postToInbox(req, res) {
 		const comment = {
 			id: cuid(),
 			postId: postId,
-			receiver: req.params.id,
 			authorId: req.body.author.id,
 			comment: req.body.comment,
 			contentType: req.body.contentType,
