@@ -41,7 +41,7 @@ model Post {
     published   DateTime
     visibility  String // [public, friends]
     unlisted    Boolean
-    Comment Comment[]
+    Comment     Comment[]
     likeCount   Int       @default(0)
 }
 
