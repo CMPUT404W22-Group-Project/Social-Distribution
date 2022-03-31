@@ -20,7 +20,6 @@ model Author {
     github        String?
     profileImage  String?
     Post          Post[]
-    Comment       Comment[]
     Inbox         Inbox[]
     FriendRequest FriendRequest[]
     Friends       Friends[]
@@ -42,8 +41,8 @@ model Post {
     published   DateTime
     visibility  String // [public, friends]
     unlisted    Boolean
+    Comment Comment[]
     likeCount   Int       @default(0)
-    Comment     Comment[]
 }
 
 // Store comments. Each comment has a primary key, and references a foreign keys author id and post id
@@ -51,6 +50,7 @@ model Comment {
     id          String   @id @default(cuid())
     authorId    String
     postId      String
+    post        Post     @relation(fields: [postId], references: [id])
     receiver    String
     contentType String // [text/plain, text/markdown, application/base64, image/png;base64, image/jpeg;base64]
     comment     String
