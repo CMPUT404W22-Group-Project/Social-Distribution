@@ -77,7 +77,7 @@ export async function getAllComments(req, res) {
 		let author;
 		if (comment.node) {
 			//author id
-			const id = comment.authorId.split('/author/')[0].split('/')[0];
+			const id = comment.authorId.split('/authors/')[0].split('/')[0];
 			author = await httpGetAuthorById({ url: comment.node, id: id });
 		} else {
 			author = await authorService.getAuthors({ id: comment.authorId });

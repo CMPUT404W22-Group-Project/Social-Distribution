@@ -94,7 +94,7 @@ export async function getAllLikesOfComment(req, res) {
 		let author;
 		if (like.node) {
 			//author id
-			const id = like.authorId.split('/author/')[0].split('/')[0];
+			const id = like.authorId.split('/authors/')[0].split('/')[0];
 			author = await httpGetAuthorById({ like: like.node, id: id });
 		} else {
 			author = await authorService.getAuthors({ id: like.authorId });
