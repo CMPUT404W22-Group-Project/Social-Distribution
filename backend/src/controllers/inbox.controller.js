@@ -96,12 +96,12 @@ export async function postToInbox(req, res) {
 			!req.body.author.id ||
 			!req.body.comment ||
 			!req.body.contentType ||
-			!req.body.postId
+			!req.body.post
 		) {
 			return res.status(400).json({ error: 'Missing required property' });
 		}
 
-		const postId = req.body.postId.split('/posts/')[1].split('/')[0];
+		const postId = req.body.post.split('/posts/')[1].split('/')[0];
 
 		const comment = {
 			id: cuid(),
