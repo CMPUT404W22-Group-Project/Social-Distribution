@@ -49,13 +49,13 @@ model Post {
 // Store comments. Each comment has a primary key, and references a foreign keys author id and post id
 model Comment {
     id          String   @id @default(cuid())
-    author      Author   @relation(fields: [authorId], references: [id])
     authorId    String
-    post        Post     @relation(fields: [postId], references: [id])
     postId      String
+    receiver    String
     contentType String // [text/plain, text/markdown, application/base64, image/png;base64, image/jpeg;base64]
     comment     String
     published   DateTime
+    node String? //have node if remote author
 }
 
 // Store likes. Primary key is a combined author id and object

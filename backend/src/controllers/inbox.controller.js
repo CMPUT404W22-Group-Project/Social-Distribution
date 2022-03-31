@@ -2,9 +2,10 @@ import {
 	inboxService,
 	likeService,
 	nodesService,
+	commentService,
 } from '../services/index.service.js';
 import axios from 'axios';
-
+import cuid from 'cuid';
 /**
  * Get an author's inbox
  * @param {Express.Request} req
@@ -61,6 +62,7 @@ export async function postToInbox(req, res) {
 		//valid like
 		if (
 			!req.body.author ||
+			!req.body.author.id ||
 			!req.body.summary ||
 			!req.body['@context'] ||
 			!req.body.object
@@ -76,6 +78,34 @@ export async function postToInbox(req, res) {
 			node: node ? node : null,
 		};
 		const result = await likeService.postLike(like);
+		if (!result) {
+			return res.status(400).json({ error: 'Bad Request' });
+		}
+		return res.status(201).json(req.body);
+	} else if (type === 'comment') {
+		if (
+			!req.body.author ||
+			!req.body.author.id ||
+			!req.body.comment ||
+			!req.body.contentType ||
+			!req.body.postId
+		) {
+			return res.status(400).json({ error: 'Missing required property' });
+		}
+
+		const postId = req.body.postId.split('/posts/')[1].split('/')[0];
+
+		const comment = {
+			id: cuid(),
+			postId: postId,
+			receiver: req.params.id,
+			authorId: req.body.author.id,
+			comment: req.body.comment,
+			contentType: req.body.contentType,
+			published: new Date(),
+			node: node ? node : null,
+		};
+		const result = await commentService.newComment(comment);
 		if (!result) {
 			return res.status(400).json({ error: 'Bad Request' });
 		}
