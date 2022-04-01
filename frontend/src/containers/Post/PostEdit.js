@@ -52,7 +52,7 @@ const PostEdit = () => {
             .catch((error) => {
                 console.log(error);
             });
-    }, [authorId, post, postId]);
+    }, [authorId, postId]);
     //get post
     useEffect(() => {
         getPost();
@@ -110,7 +110,7 @@ const PostEdit = () => {
             );
             // upload file with the post id from response object
             response.status === 200
-                ? navigate(`/authors/${authorId}/posts`)
+                ? navigate(`/authors/${authorId}/posts/${postId}`)
                 : alert('Edit Post unsucessful');
         } catch (error) {
             // Handle Error Here

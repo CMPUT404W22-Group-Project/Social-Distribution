@@ -26,7 +26,7 @@ const SinglePost = () => {
     useEffect(() => {
         getPost(authorId, postId);
     }, [getPost, authorId, postId]);
-    return post.id ? <PostItem props={post} /> : null;
+    return post ? <PostItem props={post} /> : null;
 };
 
 export default SinglePost;

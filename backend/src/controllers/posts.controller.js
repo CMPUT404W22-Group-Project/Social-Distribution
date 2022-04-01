@@ -196,6 +196,7 @@ export async function getAllPosts(req, res) {
  */
 export async function getOnePost(req, res) {
 	const post = await postService.getPosts({ id: req.params.id });
+
 	const host = `${req.protocol}://${req.get('host')}`;
 	if (!post) {
 		return res.status(404).json({ error: 'Post Not Found' });
@@ -225,7 +226,7 @@ export async function getOnePost(req, res) {
 		total: total['_count'],
 		comments: comments,
 	};
-	post.id = `${host}/authors/${post.authorId}/posts/${post.id}/`;
+	post.id = `${host}/authors/${post.authorId}/posts/${req.params.id}/`;
 	//like
 	const likeCount = await likeService.getTotal(req.params.id);
 	post.likeCount = likeCount['_count'];
@@ -241,7 +242,6 @@ export async function getOnePost(req, res) {
 	const response = {
 		type: 'post',
 		...post,
-		...author,
 	};
 
 	return res.status(200).json(response);
