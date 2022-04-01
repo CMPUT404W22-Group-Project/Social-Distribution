@@ -11,20 +11,17 @@ const router = Router();
  *     Post:
  *       type: object
  *       required:
- *         - id
- *         - author
- *         - authorId
+ *         - type
  *         - title
+ *         - id
  *         - source
  *         - origin
  *         - description
  *         - contentType
- *         - categories
- *         - count
- *         - published
+ *         - content
+ *         - authorId
  *         - visibility
  *         - unlisted
- *         - likeCount
  *       properties:
  *         id:
  *           type: string
@@ -75,23 +72,33 @@ const router = Router();
  *           type: Like
  *           description: the list of likes of the post
  *       example:
- *         id: d5fE_asz
- *         author: {}
- *         authorId: d5fsE_asz
- *         title: Jack'life
- *         source: d5fE_asz.com
- *         origin: ad5fE_asz.com
- *         description: this post is about jack
+ *         type: post
+ *         id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *         authorId: cl1g0f07x0000w4u8054w8pnp
+ *         title: test
+ *         source: test source
+ *         origin: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/
+ *         description: this is a test 3
  *         contentType: text/plain
- *         content: i am jack
- *         categories: [daily, habbit]
- *         count: 20
- *         published: 2022-02-01
- *         visibility: friend
- *         unlisted: True
- *         likeCount: 2
- *         Comment: []
- *         Likes: []
+ *         content: test
+ *         categories: []
+ *         count: 0
+ *         published: 2022-04-01T06:33:11.150Z
+ *         visibility: PUBLIC
+ *         unlisted: false
+ *         likeCount: 0
+ *         commentsSrc: 
+ *           page: 1
+ *           size: 1
+ *           total: 1
+ *           comments: 
+ *             id: cl1gmmxit0006l8u84tlgb4xp
+ *             authorId: cl1g0f07x0000w4u8054w8pnp
+ *             postId: cl1g1uj1p00003wu80hsl5d8b
+ *             contentType: text/plain
+ *             comment: 135
+ *             published: 2022-04-01T16:15:08.598Z
+ *             node: null
  *
  *     Posts:
  *       type: object
@@ -100,8 +107,34 @@ const router = Router();
  *           type: Post
  *           description: The list of posts
  *       example:
- *         type: Post
- *         items: []
+ *         type: post
+ *         item: 
+ *           id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *           authorId: cl1g0f07x0000w4u8054w8pnp
+ *           title: test
+ *           source: test source
+ *           origin: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/
+ *           description: this is a test 3
+ *           contentType: text/plain
+ *           content: test
+ *           categories: []
+ *           count: 0
+ *           published: 2022-04-01T06:33:11.150Z
+ *           visibility: PUBLIC
+ *           unlisted: false
+ *           likeCount: 0
+ *           commentsSrc: 
+ *             page: 1
+ *             size: 1
+ *             total: 1
+ *             comments: 
+ *               id: cl1gmmxit0006l8u84tlgb4xp
+ *               authorId: cl1g0f07x0000w4u8054w8pnp
+ *               postId: cl1g1uj1p00003wu80hsl5d8b
+ *               contentType: text/plain
+ *               comment: 135
+ *               published: 2022-04-01T16:15:08.598Z
+ *               node: null
  */
 
 /**
