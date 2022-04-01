@@ -19,10 +19,11 @@ const LikeItem = ({ props }) => {
     return (
         <ListItem alignItems="flex-start">
             <ListItemAvatar>
-                props.author.node ? (
-                <RemoteProfile props={props.author} />
+                {props.author.node ? (
+                    <RemoteProfile props={props.author} />
                 ) : (
-                <ProfilePictureCard props={props.author} />)
+                    <ProfilePictureCard props={props.author} />
+                )}
             </ListItemAvatar>
             <ListItemText
                 primary={props.author.displayName}
