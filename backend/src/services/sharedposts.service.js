@@ -32,7 +32,7 @@ export async function createSharedPost(post) {
 			categories: post.categories,
 			published: post.published,
 			visibility: post.visibility,
-			unlisted: post.unlisted,
+			unlisted: false,
 			likeCount: post.likeCount,
 			receiver: post.receiver,
 			node: post.node != null ? post.node : undefined,
