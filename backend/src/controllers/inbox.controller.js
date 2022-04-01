@@ -161,16 +161,9 @@ export async function postToInbox(req, res) {
 			post.node = post.id.split('/authors/')[0];
 		}
 		const sharedPost = await sharedpostsService.createSharedPost(post);
+		const postOwner = await sharedpostsService.upsertPostOwner(post.author);
 
-		const ownerExists = sharedpostsService.checkOwnerExists(post.author.id);
-		if (!ownerExists) {
-			const postOwner = await sharedpostsService.createPostOwner(post.author);
-			if (!postOwner) {
-				return res.status(400).json({ error: 'Unable to Store Post Owner' });
-			}
-		}
-
-		if (!sharedPost) {
+		if (!sharedPost && !postOwner) {
 			return res.status(400).json({ error: 'Unable to share Post' });
 		}
 	}

@@ -40,23 +40,25 @@ export async function createSharedPost(post) {
 	});
 }
 
-export async function createPostOwner(author) {
-	return await prisma.postowner.create({
-		data: {
+export async function upsertPostOwner(author) {
+	return await prisma.postowner.upsert({
+		where: {
 			id: author.id,
+		},
+		update: {
 			displayName: author.displayName,
 			github: author.github,
 			profileImage: author.profileImage,
 			host: author.host,
 			url: author.url,
 		},
-	});
-}
-
-export async function checkOwnerExists(id) {
-	return await prisma.postowner.findUnique({
-		where: {
-			id: id,
+		create: {
+			id: author.id,
+			displayName: author.displayName,
+			github: author.github,
+			profileImage: author.profileImage,
+			host: author.host,
+			url: author.url,
 		},
 	});
 }
