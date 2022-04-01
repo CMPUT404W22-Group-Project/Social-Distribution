@@ -22,7 +22,9 @@ const ProfilePictureCard = ({ props }) => {
         type: PropTypes.string,
         url: PropTypes.string,
     };
-    const authorId = props ? props.id.split('/').at(-1) : null;
+    const authorId = props
+        ? props.id.split('/authors/')[1].split('/')[0]
+        : null;
     console.log(authorId);
     const [anchorEl, setAnchorEl] = useState(null);
     const [requestSent, setRequestSent] = useState(false);

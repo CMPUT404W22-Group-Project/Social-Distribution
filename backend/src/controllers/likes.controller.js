@@ -57,6 +57,7 @@ export async function getAllLikesOfPost(req, res) {
 			//author id
 			const id = like.authorId.split('/author/')[0].split('/')[0];
 			author = await httpGetAuthorById({ url: like.node, id: id });
+			author.node = like.node;
 		} else {
 			author = await authorService.getAuthors({ id: like.authorId });
 			author.type = 'author';
@@ -95,8 +96,13 @@ export async function getAllLikesOfComment(req, res) {
 			//author id
 			const id = like.authorId.split('/authors/')[0].split('/')[0];
 			author = await httpGetAuthorById({ like: like.node, id: id });
+			author.node = like.node;
 		} else {
 			author = await authorService.getAuthors({ id: like.authorId });
+			author.type = 'author';
+			author.url = `${host}/authors/${like.authorId}/`;
+			author.id = `${host}/authors/${like.authorId}/`;
+			author.host = `${host}/`;
 			delete author.email;
 			delete author.password;
 		}

@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import ProfilePictureCard from './ProfilePictureCard';
-
+import RemoteProfile from '../remoteComponents/RemoteProfile';
 const CommentItem = ({ props }) => {
     let navigate = useNavigate();
     CommentItem.propTypes = {
@@ -71,7 +71,13 @@ const CommentItem = ({ props }) => {
         <ListItem>
             <Card>
                 <CardHeader
-                    avatar={<ProfilePictureCard props={props.author} />}
+                    avatar={
+                        props.author.node ? (
+                            <RemoteProfile props={props.author} />
+                        ) : (
+                            <ProfilePictureCard props={props.author} />
+                        )
+                    }
                     title={renderContent()}
                     subheader={`Published:${publishedDate}`}
                 />
