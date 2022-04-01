@@ -13,6 +13,7 @@ import ProfileEdit from './containers/Profile/ProfileEdit';
 import Login from './containers/Login/Login';
 import Signup from './containers/Login/Signup';
 import PostLikes from './containers/Like/PostLikes';
+import CommentLikes from './containers/Like/CommentLikes';
 import Admin from './containers/Admin/Admin';
 
 //remote compatibility
@@ -106,6 +107,10 @@ function App() {
                 <Route
                     path="/authors/:authorId/posts/:postId/likes"
                     element={<PostLikes />}
+                />
+                <Route
+                    path="/authors/:authorId/posts/:postId/comments/:commentId/likes"
+                    element={<CommentLikes />}
                 />
                 <Route
                     path="/authors/:authorId/post/new"
