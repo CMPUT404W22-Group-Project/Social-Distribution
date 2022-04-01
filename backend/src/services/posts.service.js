@@ -141,7 +141,7 @@ export async function updatePost(post) {
  * @returns
  */
 export async function deletePost(id) {
-	return await prisma.post.delete({
+	return await prisma.post.deleteMany({
 		where: {
 			id: id,
 		},
