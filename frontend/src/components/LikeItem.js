@@ -6,6 +6,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import ProfilePictureCard from './ProfilePictureCard';
+import RemoteProfile from '../remoteComponents/RemoteProfile';
 const LikeItem = ({ props }) => {
     LikeItem.propTypes = {
         props: PropTypes.object,
@@ -18,7 +19,11 @@ const LikeItem = ({ props }) => {
     return (
         <ListItem alignItems="flex-start">
             <ListItemAvatar>
-                <ProfilePictureCard props={props.author} />
+                {props.author.node ? (
+                    <RemoteProfile props={props.author} />
+                ) : (
+                    <ProfilePictureCard props={props.author} />
+                )}
             </ListItemAvatar>
             <ListItemText
                 primary={props.author.displayName}
