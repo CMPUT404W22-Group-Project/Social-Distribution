@@ -43,6 +43,7 @@ export async function getRemoteComments(req, res) {
 
 		for (const comment of comments) {
 			const node = comment.author.id.split('/authors/')[0];
+			comment.node = node;
 			comment.author.node = node;
 		}
 
@@ -80,6 +81,7 @@ export async function getAllComments(req, res) {
 			//author id
 			const id = comment.authorId.split('/authors/')[0].split('/')[0];
 			author = await httpGetAuthorById({ url: comment.node, id: id });
+			author.node = comment.node;
 		} else {
 			author = await authorService.getAuthors({ id: comment.authorId });
 			if (author) {
