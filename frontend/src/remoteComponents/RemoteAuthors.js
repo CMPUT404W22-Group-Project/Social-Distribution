@@ -5,9 +5,8 @@ import Grid from '@mui/material/Grid';
 import RemoteProfile from './RemoteProfile';
 import axios from 'axios';
 const RemoteAuthors = () => {
-
     useEffect(() => {
-      document.title = "Authors";
+        document.title = 'Authors';
     }, []);
 
     //placeholder, get nodes when admin is done
@@ -17,7 +16,7 @@ const RemoteAuthors = () => {
     // ];
     const [authors, setAuthors] = useState([]);
 
-    const getAuthors = useCallback( async () => {
+    const getAuthors = useCallback(async () => {
         // const token = btoa(`${node.username}:${node.password}`);
         // const config = {
         //     headers: {
@@ -45,12 +44,12 @@ const RemoteAuthors = () => {
 
     return (
         <Grid container spacing={2}>
-            {authors.map((author, index) => {
-                return (
+            {authors?.map((author, index) => {
+                return author ? (
                     <Grid key={index} item xs={1} sx={{ mx: 1, my: 1 }}>
                         <RemoteProfile props={author} />
                     </Grid>
-                );
+                ) : null;
             })}
         </Grid>
     );

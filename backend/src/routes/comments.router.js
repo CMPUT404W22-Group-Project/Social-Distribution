@@ -53,7 +53,7 @@ const router = Router();
  *         contentType: text
  *         comment: i like it
  *         published: 2022-03-21
- * 
+ *
  *     Comments:
  *       type: object
  *       properties:
@@ -65,12 +65,12 @@ const router = Router();
  *         items: []
  */
 
- /**
-  * @swagger
-  * tags:
-  *   name: Comments
-  *   description: The comment managing API
-  */
+/**
+ * @swagger
+ * tags:
+ *   name: Comments
+ *   description: The comment managing API
+ */
 
 /**
  * @swagger
@@ -105,7 +105,7 @@ router.get(
 	commentController.getOneComment
 );
 router.get(
-	'/authors/:authorId/posts/:postId/comments/',
+	'/authors/:authorId/posts/:postId/comments',
 	commentController.getAllComments
 );
 

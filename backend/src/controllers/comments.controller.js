@@ -61,19 +61,20 @@ export async function getRemoteComments(req, res) {
  * @returns List of comments
  */
 export async function getAllComments(req, res) {
+	const host = `${req.protocol}://${req.get('host')}`;
 	const comments = await commentService.getComments({
 		postId: req.params.postId,
 		page: parseInt(req.query.page),
 		size: parseInt(req.query.size),
 	});
-	const host = `${req.protocol}://${req.get('host')}`;
+
 	//TODO make this hanlde remote user
 	for (const comment of comments) {
+		const commentId = comment.id;
 		comment.type = 'comment';
-		comment.id = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${comment.id}/`;
+		comment.id = `${host}/authors/${req.params.authorId}/posts/${req.params.postId}/comments/${commentId}/`;
 		const likeCount = await likeService.getTotal(comment.id);
 		comment.likeCount = likeCount['_count'];
-
 		let author;
 		if (comment.node) {
 			//author id
@@ -92,7 +93,6 @@ export async function getAllComments(req, res) {
 				res.status(404).json({ error: 'Author Not Found' });
 			}
 		}
-
 		comment.author = author;
 	}
 

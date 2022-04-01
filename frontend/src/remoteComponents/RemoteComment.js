@@ -47,7 +47,7 @@ const RemoteComment = ({ props }) => {
                 author: author,
                 object: url,
                 '@context': 'https://www.w3.org/ns/activitystreams',
-                summary: `${author.displayName} Likes Your Post`,
+                summary: `${author.displayName} Likes Your Comment`,
             })
             .then((response) => {
                 response.status === 201 ? setLikeCount(likeCount + 1) : null;

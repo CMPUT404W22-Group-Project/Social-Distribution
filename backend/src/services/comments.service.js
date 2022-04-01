@@ -11,7 +11,7 @@ export async function getComments(options) {
 		});
 	}
 
-	if (page && size) {
+	if (page && size && postId) {
 		return await prisma.comment.findMany({
 			where: {
 				postId: postId,

@@ -37,7 +37,7 @@ const PostItem = ({ props }) => {
     let navigate = useNavigate();
     PostItem.propTypes = {
         props: PropTypes.object,
-        id: PropTypes.string,
+        id: PropTypes.string.isRequired,
         authorId: PropTypes.string,
         source: PropTypes.string,
         origin: PropTypes.string,
@@ -59,7 +59,7 @@ const PostItem = ({ props }) => {
 
     //get postId
     const isOwnPost = props.auth.author.id === props.authorId;
-    const postId = props.id?.split('/').at(-1);
+    const postId = props ? props.id.split('/posts/')[1].split('/')[0] : null;
 
     //for post menu
     const [dialog, setDialog] = useState(false);
@@ -319,7 +319,7 @@ const PostItem = ({ props }) => {
                         aria-label="like-this-post"
                         onClick={() => {
                             setDisableLiked(true);
-                            likePost(props.auth.author.id, postId);
+                            likePost(props.authorId);
                         }}
                         disabled={disableLiked ? true : null}
                     >
@@ -385,8 +385,11 @@ const PostItem = ({ props }) => {
                     <CardContent>
                         <Comments
                             props={{
-                                postId,
-                                authorId: props.authorId,
+                                ...{
+                                    id: props.id,
+                                    postId: postId,
+                                    authorId: props.authorId,
+                                },
                                 ...props.commentsSrc,
                             }}
                         />

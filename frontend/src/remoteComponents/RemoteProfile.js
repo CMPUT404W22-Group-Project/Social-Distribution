@@ -23,7 +23,9 @@ const RemoteProfile = ({ props }) => {
         url: PropTypes.string,
         node: PropTypes.any,
     };
-    const authorId = props ? props.id.split('/').at(-2) : null;
+    const authorId = props
+        ? props.id.split('/authors/')[1].split('/')[0]
+        : null;
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
