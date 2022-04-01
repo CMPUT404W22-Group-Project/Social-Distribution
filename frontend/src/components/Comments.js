@@ -20,10 +20,10 @@ import CommentItem from './CommentItem';
 const Comments = ({ props }) => {
     Comments.propTypes = {
         props: PropTypes.object,
+        id: PropTypes.string,
         total: PropTypes.number,
         size: PropTypes.number,
         page: PropTypes.number,
-        comments: PropTypes.arrayOf(PropTypes.object),
         authorId: PropTypes.string,
         postId: PropTypes.string,
         auth: PropTypes.object,
@@ -31,14 +31,20 @@ const Comments = ({ props }) => {
     const total = props.total;
     const size = props.size;
     const [page, setPage] = useState(props.page || 1);
-    const [comments, setComments] = useState(props.comments);
+    const [comments, setComments] = useState([]);
     //use useEffect to fetch comments upon page change
 
     const getComments = useCallback(
         (page, size) => {
             axios
                 .get(
-                    `/authors/${props.authorId}/posts/${props.postId}/comments?page=${page}&size=${size}`
+                    `/authors/${props.authorId}/posts/${props.postId}/comments`,
+                    {
+                        params: {
+                            page: page,
+                            size: size,
+                        },
+                    }
                 )
                 .then((response) => {
                     response.status === 200
@@ -48,6 +54,10 @@ const Comments = ({ props }) => {
         },
         [props.authorId, props.postId]
     );
+
+    useEffect(() => {
+        getComments(page, size);
+    }, [page, getComments, size]);
     const postComment = (author, contentType, comment) => {
         axios
             .post(
@@ -57,13 +67,13 @@ const Comments = ({ props }) => {
                     author: author,
                     contentType: contentType,
                     comment: comment,
+                    post: props.id,
                 },
                 {
                     withCredentials: true,
                 }
             )
             .then((response) => {
-                console.log(response.data);
                 response.status === 201
                     ? setComments([...comments, response.data])
                     : null;
@@ -90,7 +100,7 @@ const Comments = ({ props }) => {
     //handle postComment
     const handlePostComment = () => {
         handleClose();
-        postComment();
+        postComment(props.auth.author, contentType, comment);
     };
     return (
         <div>
@@ -144,11 +154,7 @@ const Comments = ({ props }) => {
                 <DialogActions>
                     <Button
                         onClick={() => {
-                            handlePostComment(
-                                props.auth.author,
-                                comment,
-                                contentType
-                            );
+                            handlePostComment();
                         }}
                     >
                         Ok
