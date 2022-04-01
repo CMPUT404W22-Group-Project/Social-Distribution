@@ -3,6 +3,7 @@ import {
 	likeService,
 	nodesService,
 	commentService,
+	sharedpostsService,
 } from '../services/index.service.js';
 import axios from 'axios';
 import cuid from 'cuid';
@@ -30,6 +31,7 @@ export async function getInbox(req, res) {
 
 export async function postToInbox(req, res) {
 	//check if remote
+	const host = `${req.protocol}://${req.get('host')}`;
 	let node;
 	if (req.headers.authorization) {
 		const auth = req.headers.authorization.split(' ');
@@ -117,6 +119,60 @@ export async function postToInbox(req, res) {
 			return res.status(400).json({ error: 'Bad Request' });
 		}
 		return res.status(201).json(req.body);
+	} else if (type === 'post') {
+		if (
+			!req.body.author ||
+			!req.body.author.id ||
+			!req.body.author.displayName ||
+			!req.body.author.github ||
+			!req.body.author.profileImage ||
+			!req.body.author.host ||
+			!req.body.author.url ||
+			!req.body.id ||
+			!req.body.title ||
+			!req.body.origin ||
+			!req.body.source ||
+			!req.body.description ||
+			!req.body.content ||
+			!req.body.categories ||
+			!req.body.published ||
+			!req.body.contentType ||
+			!req.body.visibility ||
+			!req.body.likeCount ||
+			!req.body.post
+		) {
+			return res.status(400).json({ error: 'Missing required property' });
+		}
+		const postExist = await sharedpostsService.checkExistsSharedPosts({
+			id: req.body.id,
+			receiver: req.params.id,
+		});
+		if (postExist) {
+			return res
+				.status(409)
+				.json({ error: 'Author Already have this post in their inbox' });
+		}
+		const post = req.body;
+		post.receiver = req.params.id;
+		if (!post.author.id.includes(host)) {
+			post.author.node = post.author.id.split('/authors/')[0];
+		}
+		if (!post.id.includes(host)) {
+			post.node = post.id.split('/authors/')[0];
+		}
+		const sharedPost = await sharedpostsService.createSharedPost(post);
+
+		const ownerExists = sharedpostsService.checkOwnerExists(post.author.id);
+		if (!ownerExists) {
+			const postOwner = await sharedpostsService.createPostOwner(post.author);
+			if (!postOwner) {
+				return res.status(400).json({ error: 'Unable to Store Post Owner' });
+			}
+		}
+
+		if (!sharedPost) {
+			return res.status(400).json({ error: 'Unable to share Post' });
+		}
 	}
 	switch (req.body.type) {
 		case 'Like':

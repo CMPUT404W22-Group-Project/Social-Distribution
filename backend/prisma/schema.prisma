@@ -118,3 +118,35 @@ model Nodes {
 
     @@id([type, url])
 }
+
+
+model SharedPost {
+    id          String    
+    owner      PostOwner    @relation(fields: [authorId], references: [id])
+    authorId    String
+    title       String
+    source      String
+    origin      String
+    description String
+    contentType String // [text/plain, text/markdown, application/base64, image/png;base64, image/jpeg;base64]
+    content     String?
+    categories  String[]
+    published   DateTime
+    visibility  String // [public, friends]
+    unlisted    Boolean
+    likeCount   Int       @default(0)
+    receiver    String  // Who received this posts
+    node       String?
+    @@id([id, receiver])
+}
+
+model PostOwner {
+    id            String        @id @default(cuid())
+    displayName   String
+    github        String
+    profileImage  String
+    host          String
+    url           String
+    Post          SharedPost[]
+    node          String?
+}
