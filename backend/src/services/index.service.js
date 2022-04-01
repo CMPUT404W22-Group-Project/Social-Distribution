@@ -6,3 +6,4 @@ export * as likeService from './likes.service.js';
 export * as inboxService from './inbox.service.js';
 export * as followersService from './followers.service.js';
 export * as nodesService from './nodes.service.js';
+export * as sharedpostsService from './sharedposts.service.js';

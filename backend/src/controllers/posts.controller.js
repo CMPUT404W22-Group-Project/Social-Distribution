@@ -329,13 +329,13 @@ export async function deletePost(req, res) {
 		return res.status(400).json({ error: 'Missing required property' });
 	}
 
-	 //Check if the user is allowed to delete the post
-	 if (authorId !== req.user.id) {
-	 	return res.status(403).json({ error: 'Not allowed' });
-	 }
+	//Check if the user is allowed to delete the post
+	if (authorId !== req.user.id) {
+		return res.status(403).json({ error: 'Not allowed' });
+	}
 
 	await postService.deletePost(id);
-	return res.status(204).json("deleted");
+	return res.status(204).json('deleted');
 }
 
 /**
