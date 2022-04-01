@@ -54,12 +54,13 @@ const PostItem = ({ props }) => {
         commentsSrc: PropTypes.object,
         auth: PropTypes.object,
     };
+    console.log(props);
     //likeCount
     const [likeCount, setLikeCount] = useState(props.likeCount);
 
     //get postId
     const isOwnPost = props.auth.author.id === props.authorId;
-    const postId = props ? props.id.split('/posts/')[1].split('/')[0] : null;
+    const postId = props.id ? props.id.split('/posts/')[1].split('/')[0] : null;
 
     //for post menu
     const [dialog, setDialog] = useState(false);
