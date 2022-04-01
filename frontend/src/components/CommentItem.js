@@ -88,7 +88,10 @@ const CommentItem = ({ props }) => {
                     </IconButton>
                     <Typography
                         onClick={() => {
-                            navigate(`${props.id}likes`);
+                            const url = props
+                                ? props.id.split('/authors/')[1]
+                                : null;
+                            navigate(`/authors/${url}likes`);
                         }}
                     >
                         {props.likeCount}

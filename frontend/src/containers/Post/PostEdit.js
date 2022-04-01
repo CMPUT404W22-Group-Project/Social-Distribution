@@ -14,9 +14,8 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 const PostEdit = () => {
-
     useEffect(() => {
-      document.title = "Edit Post";
+        document.title = 'Edit Post';
     }, []);
 
     let navigate = useNavigate();
@@ -38,8 +37,9 @@ const PostEdit = () => {
     //get post
     const getPost = useCallback(() => {
         axios
-            .get(`/authors/${authorId}/posts/${postId}`,
-            { withCredentials: true })
+            .get(`/authors/${authorId}/posts/${postId}`, {
+                withCredentials: true,
+            })
             .then((response) => {
                 response.status === 200 ? setPost({ ...response.data }) : null;
                 if (
@@ -110,7 +110,7 @@ const PostEdit = () => {
             );
             // upload file with the post id from response object
             response.status === 200
-                ? navigate(`/authors/${authorId}/posts/${postId}`)
+                ? navigate(`/authors/${authorId}/posts`)
                 : alert('Edit Post unsucessful');
         } catch (error) {
             // Handle Error Here

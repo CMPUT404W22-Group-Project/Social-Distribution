@@ -10,22 +10,23 @@ const SinglePost = () => {
     useEffect(() => {
         document.title = post.title;
     }, [post]);
-    
-    const getPost = useCallback(() => {
+
+    const getPost = useCallback((authorId, postId) => {
         axios
-            .get(`/authors/${authorId}/posts/${postId}`, 
-            { withCredentials: true })
+            .get(`/authors/${authorId}/posts/${postId}`, {
+                withCredentials: true,
+            })
             .then((response) => {
-                response.status === 200 ? setPost({ ...response.data }) : null;
+                response.status === 200 ? setPost(response.data) : null;
             })
             .catch((error) => {
                 console.log(error);
             });
-    }, [authorId, postId]);
+    }, []);
     useEffect(() => {
-        getPost();
-    }, [getPost]);
-    return post ? <PostItem props={post} /> : null;
+        getPost(authorId, postId);
+    }, [getPost, authorId, postId]);
+    return post.id ? <PostItem props={post} /> : null;
 };
 
 export default SinglePost;
