@@ -54,7 +54,8 @@ const PostItem = ({ props }) => {
         commentsSrc: PropTypes.object,
         auth: PropTypes.object,
     };
-    //verify isOwnPost?
+    //likeCount
+    const [likeCount, setLikeCount] = useState(props.likeCount);
 
     //get postId
     const isOwnPost = props.auth.author.id === props.authorId;
@@ -180,9 +181,7 @@ const PostItem = ({ props }) => {
             })
             .then((response) => {
                 setDisableLiked(true);
-                response.status === 201
-                    ? (props.likeCount = props.likeCount + 1)
-                    : null;
+                response.status === 201 ? setLikeCount(likeCount + 1) : null;
             });
     };
     const [disableLiked, setDisableLiked] = useState(false);
@@ -329,7 +328,7 @@ const PostItem = ({ props }) => {
                     <NavLink
                         to={`/authors/${props.authorId}/posts/${postId}/likes`}
                     >
-                        {props.likeCount}
+                        {likeCount}
                     </NavLink>
                     <Typography variant="body1">{}</Typography>
                     <IconButton aria-label="share">
