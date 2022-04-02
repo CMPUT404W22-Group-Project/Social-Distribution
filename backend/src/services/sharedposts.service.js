@@ -1,7 +1,7 @@
 import prisma from '../../prisma/client.js';
 
 export async function getSharedPosts(receiver) {
-	return await prisma.sharedpost.findMany({
+	return await prisma.SharedPost.findMany({
 		where: {
 			receiver: receiver,
 		},
@@ -9,7 +9,7 @@ export async function getSharedPosts(receiver) {
 }
 
 export async function checkExistsSharedPosts({ id, receiver }) {
-	return await prisma.sharedpost.findUnique({
+	return await prisma.SharedPost.findFirst({
 		where: {
 			id_receiver: {
 				id: id,
@@ -19,7 +19,7 @@ export async function checkExistsSharedPosts({ id, receiver }) {
 	});
 }
 export async function createSharedPost(post) {
-	return await prisma.sharedpost.create({
+	return await prisma.SharedPost.create({
 		data: {
 			id: post.id,
 			authorId: post.author.id,
@@ -41,7 +41,7 @@ export async function createSharedPost(post) {
 }
 
 export async function upsertPostOwner(author) {
-	return await prisma.postowner.upsert({
+	return await prisma.PostOwner.upsert({
 		where: {
 			id: author.id,
 		},
