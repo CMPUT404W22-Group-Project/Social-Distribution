@@ -160,12 +160,13 @@ export async function postToInbox(req, res) {
 		if (!post.id.includes(host)) {
 			post.node = post.id.split('/authors/')[0];
 		}
-		const sharedPost = await sharedpostsService.createSharedPost(post);
 		const postOwner = await sharedpostsService.upsertPostOwner(post.author);
+		const sharedPost = await sharedpostsService.createSharedPost(post);
 
 		if (!sharedPost && !postOwner) {
 			return res.status(400).json({ error: 'Unable to share Post' });
 		}
+		return res.status(201).json(req.body);
 	}
 	switch (req.body.type) {
 		case 'Like':
