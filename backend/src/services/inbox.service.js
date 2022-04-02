@@ -14,10 +14,20 @@ export async function getInbox(options) {
 	if (id && page && size) {
 		return await prisma.inbox.findMany({
 			where: {
-				authorId: id,
+				owner: id,
 			},
 			skip: size * (page - 1),
 			take: size,
+			orderBy: {
+				dateTime: 'desc',
+			},
+		});
+	}
+	if (id) {
+		return await prisma.inbox.findMany({
+			where: {
+				owner: id,
+			},
 			orderBy: {
 				dateTime: 'desc',
 			},
@@ -33,7 +43,7 @@ export async function getInbox(options) {
 export async function clearInbox(id) {
 	return await prisma.inbox.deleteMany({
 		where: {
-			authorId: id,
+			owner: id,
 		},
 	});
 }

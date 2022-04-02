@@ -17,17 +17,22 @@ import cuid from 'cuid';
 export async function getInbox(req, res) {
 	const items = await inboxService.getInbox({
 		id: req.params.id,
-		page: parseInt(req.query.page),
-		size: parseInt(req.query.size),
 	});
+
+	for (const item of items) {
+		if (item.type === 'Follow') {
+			const request = await followersService.get(item.owner);
+			item.request = request;
+		}
+	}
+
 	const host = `${req.protocol}://${req.get('host')}`;
 	const inbox = {
 		type: 'inbox',
 		author: `${host}/authors/${req.params.id}`,
 		items: items,
 	};
-
-	return res.status(200).json({ inbox });
+	return res.status(200).json(inbox);
 }
 
 export async function postToInbox(req, res) {
@@ -59,7 +64,9 @@ export async function postToInbox(req, res) {
 	if (!req.body.type) {
 		return res.status(400).json({ error: 'Missing required property' });
 	}
-	console.log(req.body['@context']);
+	if (!req.body.type) {
+		return res.status(400).json({ error: 'Missing required property' });
+	}
 	const type = req.body.type;
 	if (type === 'Like') {
 		//valid like
@@ -242,4 +249,63 @@ export async function postToInbox(req, res) {
 export async function deleteInbox(req, res) {
 	await inboxService.clearInbox(req.params.id);
 	return res.sendStatus(204);
+}
+
+async function httpPostToInbox({ url, id, item }) {
+	const node = await nodesService.getNodeByUrl(url);
+	const response = await axios.post(`${node.url}/authors/${id}/inbox`, item, {
+		auth: { username: node.username, password: node.password },
+	});
+
+	return response.status;
+}
+
+export async function postRemoteInbox(req, res) {
+	if (!req.body.type || !req.body.node) {
+		return res.status(400).json({ error: 'Missing required property' });
+	}
+
+	if (req.body.type === 'Like') {
+		if (
+			!req.body.author ||
+			!req.body.author.id ||
+			!req.body.summary ||
+			!req.body['@context'] ||
+			!req.body.object
+		) {
+			return res.status(400).json({ error: 'Missing required property' });
+		}
+		const authorId = req.body.author.id.split('/authors/')[1].split('/')[0];
+		const exist = await likeService.checkLikeExist({
+			object: req.body.object,
+			authorId: authorId,
+		});
+		if (exist) {
+			return res
+				.status(409)
+				.json({ error: 'Author Already Liked this object' });
+		}
+		const like = {
+			object: req.body.object,
+			authorId: req.body.author.id,
+			summary: req.body.summary,
+			context: req.body['@context'],
+			node: null,
+		};
+		const result = await likeService.postLike(like);
+		if (!result) {
+			return res.status(400).json({ error: 'Error while creating like' });
+		}
+	}
+
+	const status = await httpPostToInbox({
+		url: req.body.node,
+		id: req.params.id,
+		item: req.body,
+	});
+	if (status === 201) {
+		return res.status(201).json(req.body);
+	} else {
+		return res.status(503).json({ error: 'Error while post to remote inbox' });
+	}
 }

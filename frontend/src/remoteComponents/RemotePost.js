@@ -50,7 +50,7 @@ const RemotePost = ({ props }) => {
         auth: PropTypes.object,
         node: PropTypes.any,
     };
-    const url = props.origin.endsWith('/') ? props.origin : `${props.origin}/`;
+    const url = props.id.endsWith('/') ? props.id : `${props.id}/`;
     //likeCount
     const [likeCount, setLikeCount] = useState(
         props.likeCount ? props.likeCount : 0
