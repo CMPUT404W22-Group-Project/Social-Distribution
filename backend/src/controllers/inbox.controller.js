@@ -120,28 +120,29 @@ export async function postToInbox(req, res) {
 		}
 		return res.status(201).json(req.body);
 	} else if (type === 'post') {
+		console.log(req.body);
 		if (
 			!req.body.author ||
 			!req.body.author.id ||
-			!req.body.author.displayName ||
-			!req.body.author.github ||
-			!req.body.author.profileImage ||
-			!req.body.author.host ||
-			!req.body.author.url ||
+			req.body.author.displayName == undefined ||
+			req.body.author.github == undefined ||
+			req.body.author.profileImage == undefined ||
+			req.body.author.host == undefined ||
+			req.body.author.url == undefined  ||
 			!req.body.id ||
 			!req.body.title ||
 			!req.body.origin ||
 			!req.body.source ||
 			!req.body.description ||
 			!req.body.content ||
-			!req.body.categories ||
+			req.body.categories == undefined||
 			!req.body.published ||
 			!req.body.contentType ||
 			!req.body.visibility ||
 			!req.body.likeCount ||
-			!req.body.post
+			req.body.unlisted == undefined
 		) {
-			return res.status(400).json({ error: 'Missing required property' });
+			return res.status(400).json({ error: 'Post Missing required property' });
 		}
 		const postExist = await sharedpostsService.checkExistsSharedPosts({
 			id: req.body.id,
