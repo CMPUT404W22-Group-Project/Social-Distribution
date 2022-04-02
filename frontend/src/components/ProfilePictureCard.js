@@ -27,17 +27,12 @@ const ProfilePictureCard = ({ props }) => {
         : null;
     console.log(authorId);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [requestSent, setRequestSent] = useState(false);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
     const handleClose = () => {
         setAnchorEl(null);
-    };
-
-    const handleFollow = () => {
-        setRequestSent(true);
     };
 
     const open = Boolean(anchorEl);
@@ -86,10 +81,11 @@ const ProfilePictureCard = ({ props }) => {
                             </Button>
                             <Button
                                 variant="contained"
-                                disabled={requestSent}
-                                onClick={handleFollow}
+                                onClick={() => {
+                                    navigate(`/authors/${authorId}/posts`);
+                                }}
                             >
-                                Follow
+                                Posts
                             </Button>
                         </Stack>
                     </CardActions>

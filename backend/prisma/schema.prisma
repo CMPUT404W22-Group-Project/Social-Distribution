@@ -69,13 +69,13 @@ model Likes {
 
 // Store inbox.  Primary key is a combined post id and author id
 model Inbox {
+    id          Int      @id @default(autoincrement()) //cant use unique id based on fields 
     type        String // "post", "follow", "like", or "comment"
     src         String // If post, then post id.  If following, then following author id.  If like, then liked post id.  If comment, then comment id.  (URL if remote)
-    likedAuthor String? // Contains the author id that liked the post.  This field is only populated if the type is "like"
+    message     String
     owner       String
     dateTime    DateTime? // Timestamp the event
     author      Author    @relation(fields: [owner], references: [id])
-    @@id([src, owner])
 }
 
 // Store followers.  AuthorId follows FollowingId
@@ -100,9 +100,11 @@ model Friends {
 model FriendRequest {
     authorId    String // Requester.  Can be either remote host or CUID:  Eg. http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471 (different host) or cl0h7864c0001rsv835tr1dxf (local)
     friendReqId String // Requested.  Must be local CUID
+    accept      Boolean // Status of the request? accepted or not yet
+    node        String?
     friend      Author @relation(fields: [friendReqId], references: [id])
-
-    @@id([authorId, friendReqId])
+   
+    @@id([authorId, friendReqId,accept])
 }
 
 // If you follow and friend, then you can see their public and friend posts
