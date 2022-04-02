@@ -20,7 +20,6 @@ model Author {
     github        String?
     profileImage  String?
     Post          Post[]
-    Inbox         Inbox[]
     FriendRequest FriendRequest[]
     Friends       Friends[]
 }
@@ -75,7 +74,6 @@ model Inbox {
     message     String
     owner       String
     dateTime    DateTime? // Timestamp the event
-    author      Author    @relation(fields: [owner], references: [id])
 }
 
 // Store followers.  AuthorId follows FollowingId

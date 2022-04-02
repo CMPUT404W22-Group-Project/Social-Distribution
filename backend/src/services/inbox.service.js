@@ -45,24 +45,13 @@ export async function clearInbox(id) {
  */
 export async function postToInbox(options) {
 	const { type, src, owner, message } = options;
-	if (type === 'Like') {
-		return await prisma.inbox.create({
-			data: {
-				type: type,
-				src: src,
-				owner: owner,
-				dateTime: new Date(),
-				message: message,
-			},
-		});
-	} else {
-		return await prisma.inbox.create({
-			data: {
-				type: type,
-				src: src,
-				owner: owner,
-				dateTime: new Date(),
-			},
-		});
-	}
+	return await prisma.inbox.create({
+		data: {
+			type: type,
+			src: src,
+			owner: owner,
+			message: message,
+			dateTime: new Date(),
+		},
+	});
 }
