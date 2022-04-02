@@ -4,6 +4,7 @@ import {
 	nodesService,
 	commentService,
 	sharedpostsService,
+	followersService,
 } from '../services/index.service.js';
 import axios from 'axios';
 import cuid from 'cuid';
@@ -91,6 +92,15 @@ export async function postToInbox(req, res) {
 		if (!result) {
 			return res.status(400).json({ error: 'Bad Request' });
 		}
+		const inbox = await inboxService.postToInbox({
+			type: req.body.type,
+			src: `${req.body.object}/likes/`,
+			owner: req.params.id,
+			message: req.body.summary,
+		});
+		if (!inbox) {
+			return res.status(400).json({ error: 'Error Posting to Inbox' });
+		}
 		return res.status(201).json(req.body);
 	} else if (type === 'comment') {
 		if (
@@ -116,11 +126,19 @@ export async function postToInbox(req, res) {
 		};
 		const result = await commentService.newComment(comment);
 		if (!result) {
-			return res.status(400).json({ error: 'Bad Request' });
+			return res.status(400).json({ error: 'Error on creating comment' });
+		}
+		const inbox = await inboxService.postToInbox({
+			type: req.body.type,
+			src: `${req.body.object}comments/${result.id}/`,
+			owner: req.params.id,
+			message: 'Your Post Received a New Comment',
+		});
+		if (!inbox) {
+			return res.status(400).json({ error: 'Error Posting to Inbox' });
 		}
 		return res.status(201).json(req.body);
 	} else if (type === 'post') {
-		console.log(req.body);
 		if (
 			!req.body.author ||
 			!req.body.author.id ||
@@ -128,14 +146,14 @@ export async function postToInbox(req, res) {
 			req.body.author.github == undefined ||
 			req.body.author.profileImage == undefined ||
 			req.body.author.host == undefined ||
-			req.body.author.url == undefined  ||
+			req.body.author.url == undefined ||
 			!req.body.id ||
 			!req.body.title ||
 			!req.body.origin ||
 			!req.body.source ||
 			!req.body.description ||
 			!req.body.content ||
-			req.body.categories == undefined||
+			req.body.categories == undefined ||
 			!req.body.published ||
 			!req.body.contentType ||
 			!req.body.visibility ||
@@ -167,24 +185,52 @@ export async function postToInbox(req, res) {
 		if (!sharedPost && !postOwner) {
 			return res.status(400).json({ error: 'Unable to share Post' });
 		}
+		const inbox = await inboxService.postToInbox({
+			type: req.body.type,
+			src: req.body.id,
+			owner: req.params.id,
+			message: 'A New post is shared to You',
+		});
+		if (!inbox) {
+			return res.status(400).json({ error: 'Error Posting to Inbox' });
+		}
+		return res.status(201).json(req.body);
+	} else if (type === 'Follow') {
+		if (!req.body.summary || !req.body.actor || !req.body.actor.id) {
+			return res.status(400).json({ error: 'Missing required property' });
+		}
+		const friendReqId = req.params.id;
+
+		const exist = await followersService.checkFollowRequestExist({
+			authorId: req.body.actor.id,
+			friendReqId: friendReqId,
+		});
+		if (exist) {
+			return res.status(409).json({
+				error: 'Your follow request is already pending approval or approved',
+			});
+		}
+
+		const followRequest = {
+			authorId: req.body.actor.id,
+			friendReqId: friendReqId,
+			node: node ? node : null,
+		};
+		const result = await followersService.createFollowRequest(followRequest);
+		if (!result) {
+			return res.status(400).json({ error: 'Bad Request' });
+		}
+		const inbox = await inboxService.postToInbox({
+			type: req.body.type,
+			src: req.body.actor.id,
+			owner: req.params.id,
+			message: 'Follow Request',
+		});
+		if (!inbox) {
+			return res.status(400).json({ error: 'Error Posting to Inbox' });
+		}
 		return res.status(201).json(req.body);
 	}
-	switch (req.body.type) {
-		case 'Like':
-
-		case 'Follow':
-
-		case 'post':
-
-		case 'comment':
-	}
-	const post = await inboxService.postToInbox({
-		type: req.body.type,
-		src: req.body.src,
-		owner: req.body.owner,
-		likedAuthor: req.body.likedAuthor,
-	});
-	return res.status(201).json(post);
 }
 
 /**

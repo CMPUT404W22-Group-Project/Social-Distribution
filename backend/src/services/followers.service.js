@@ -70,3 +70,23 @@ export async function checkIsFollower(authorId, followingId) {
 		},
 	});
 }
+
+export async function createFollowRequest(followRequest) {
+	return await prisma.FriendRequest.create({
+		data: {
+			authorId: followRequest.authorId,
+			friendReqId: followRequest.friendReqId,
+			accept: false,
+			node: followRequest.node != null ? followRequest.node : undefined,
+		},
+	});
+}
+
+export async function checkFollowRequestExist({ authorId, friendReqId }) {
+	return await prisma.FriendRequest.findFirst({
+		where: {
+			authorId: authorId,
+			friendReqId: friendReqId,
+		},
+	});
+}
