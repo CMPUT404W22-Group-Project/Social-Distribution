@@ -44,7 +44,7 @@ export async function clearInbox(id) {
  * @returns New inbox object
  */
 export async function postToInbox(options) {
-	const { type, src, owner, likedAuthor } = options;
+	const { type, src, owner, message } = options;
 	if (type === 'Like') {
 		return await prisma.inbox.create({
 			data: {
@@ -52,7 +52,7 @@ export async function postToInbox(options) {
 				src: src,
 				owner: owner,
 				dateTime: new Date(),
-				likedAuthor: likedAuthor,
+				message: message,
 			},
 		});
 	} else {
