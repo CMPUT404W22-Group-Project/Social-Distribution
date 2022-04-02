@@ -61,7 +61,7 @@ const router = Router();
  /**
   * @swagger
   * tags:
-  *   name: Likes
+  *   name: Inbox
   *   description: The inbox managing API
   */
 
@@ -99,20 +99,27 @@ router.get('/authors/:id/inbox', authenticateToken, inboxController.getInbox);
  *     summary: Returns the inbox
  *     tags: [Inbox]
  *     parameters:
- *       - in: path
- *         name: id
+ *       - in: body
+ *         name: body
  *         schema:
- *           type: int
- *         required: true
- *         description: id of the author
+ *           oneOf:
+ *             - $ref: '#/components/schemas/Comment'
+ *             - $ref: '#/components/schemas/Post'
+ *             - $ref: '#/components/schemas/Like'
  *     responses:
  *       201:
- *         description: the element posted
+ *         description: the element listed emelents in inbox
  *         content:
  *           application/json:
  *             schema:
- *               items:
- *                 $ref: '#/components/schemas/Inbox'
+ *               oneOf:
+ *                 - $ref: '#/components/schemas/Comment'
+ *                 - $ref: '#/components/schemas/Post'
+ *                 - $ref: '#/components/schemas/Like'
+ *       400:
+ *         description: Missing required property
+ *       409:
+ *         description: Author Already Liked this object
  */
 router.post('/authors/:id/inbox', authenticateToken, inboxController.postToInbox);
 
@@ -123,13 +130,6 @@ router.post('/authors/:id/inbox', authenticateToken, inboxController.postToInbox
  *   delete:
  *     summary: Returns the inbox
  *     tags: [Inbox]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the author
  *     responses:
  *       204:
  *         description: the element deleted

@@ -14,23 +14,42 @@ const router = Router();
  *     Follower:
  *       type: object
  *       required:
- *         - authorId
- *         - followingId
- *         - id
+ *         - type
+ *         - summary
+ *         - actor
+ *         - object
  *       properties:
- *         id:
- *           type: object
- *           description: The combined id of authorId and followingId
- *         authorId:
+ *         type:
  *           type: string
- *           description: The author id of relative author
- *         followingId:
+ *           description: type "Follow"
+ *         summary:
  *           type: string
- *           description: The author id of the one being followed
+ *           description: the summary of this following
+ *         actor:
+ *           type: author
+ *           description: the user who follow other
+ *         object:
+ *           type: author
+ *           description: the user who get followed
  *       example:
- *         id: dfsE_asz
- *         authorId: dfssE_asz
- *         followingId: [dfsE_asz,dfssE_asz]
+ *         type: Follow
+ *         summary: GregwantstofollowLara
+ *         actor: 
+ *           type: author
+ *           id:http: //127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471
+ *           url:http: //127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471
+ *           host:http: //127.0.0.1:5454/
+ *           displayName: GregJohnson
+ *           github:http: //github.com/gjohnson
+ *           profileImage: https://i.imgur.com/k7XVwpB.jpeg
+ *         object: 
+ *           type: author
+ *           id:http: //127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e
+ *           host:http: //127.0.0.1:5454/
+ *           displayName: LaraCroft
+ *           url:http: //127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e
+ *           github:http: //github.com/laracroft
+ *           profileImage: https://i.imgur.com/k7XVwpB.jpeg
  *     Followers:
  *       type: object
  *       properties:
@@ -38,8 +57,26 @@ const router = Router();
  *           type: Object
  *           description: The list of followers
  *       example:
- *         type: Object
- *         items: []
+ *         type: followers
+ *         item: 
+ *           type: Follow
+ *           summary: GregwantstofollowLara
+ *           actor: 
+ *             type: author
+ *             id:http: //127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471
+ *             url:http: //127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471
+ *             host:http: //127.0.0.1:5454/
+ *             displayName: GregJohnson
+ *             github:http: //github.com/gjohnson
+ *             profileImage: https://i.imgur.com/k7XVwpB.jpeg
+ *           object: 
+ *             type: author
+ *             id:http: //127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e
+ *             host:http: //127.0.0.1:5454/
+ *             displayName: LaraCroft
+ *             url:http: //127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e
+ *             github:http: //github.com/laracroft
+ *             profileImage: https://i.imgur.com/k7XVwpB.jpeg
  */
 
 
@@ -56,13 +93,6 @@ const router = Router();
  *   get:
  *     summary: get all followers
  *     tags: [Followers]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the author
  *     responses:
  *       200:
  *         description: the followers found
@@ -81,19 +111,6 @@ router.get('/authors/:authorId/followers', followersController.getFollowers);
  *   delete:
  *     summary: get all followers
  *     tags: [Followers]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the author
- *       - in: path
- *         name: foreignAuthorId
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the foreign author
  *     responses:
  *       204:
  *         description: the followers deleted
@@ -109,19 +126,6 @@ router.delete(
  *   put:
  *     summary: add a foreign followers
  *     tags: [Followers]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the author
- *       - in: path
- *         name: foreignAuthorId
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the foreign author
  *     responses:
  *       201:
  *         description: the followers added
@@ -144,19 +148,6 @@ router.put(
  *   get:
  *     summary: get a foreign followers
  *     tags: [Followers]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the author
- *       - in: path
- *         name: foreignAuthorId
- *         schema:
- *           type: int
- *         required: true
- *         description: id of the foreign author
  *     responses:
  *       200:
  *         description: the followers get

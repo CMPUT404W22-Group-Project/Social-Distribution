@@ -120,7 +120,6 @@ export async function postToInbox(req, res) {
 		}
 		return res.status(201).json(req.body);
 	} else if (type === 'post') {
-		console.log(req.body);
 		if (
 			!req.body.author ||
 			!req.body.author.id ||

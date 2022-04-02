@@ -10,34 +10,45 @@ const router = Router();
  *     Like:
  *       type: object
  *       required:
- *         - id
- *         - postId
- *         - authorId
- *         - post
+ *         - context
+ *         - summary
+ *         - type
  *         - author
+ *         - object
  *       properties:
- *         id:
+ *         context:
  *           type: object
- *           description: The combination of post id and author id
- *         postId:
+ *           description: the context of the id
+ *         summary:
  *           type: string
- *           description: the post id of relative post
- *         authorId:
+ *           description: the summary of the like
+ *         type:
  *           type: string
- *           description: The author id of relative author
- *         post:
- *           type: Post
- *           description: the relative Post
+ *           description: type "like"
  *         author:
  *           type: Author
- *           description: The relative author
+ *           description: the object of author contains only authour ID
+ *         object:
+ *           type: string
+ *           description: the url of corresponding post or comment
 
  *       example:
- *         id: [dfsE_asz,d5fsE_asz]
- *         postId: dfsE_asz
- *         authorId: d5fsE_asz
- *         post: {}
- *         author: {}
+ *         object: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/cl1g1uj1p00003wu80hsl5d8b/
+ *         authorId: cl1g0f07x0000w4u8054w8pnp
+ *         summary: ZezhouLikesyourpost
+ *         context: https://www.w3.org/ns/activitystreams
+ *         node: null
+ *         type: Like
+ *         author: 
+ *            admin: null
+ *            id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *            displayName: Zezhou
+ *            github: asdasdasd
+ *            profileImage: adasdasfdas
+ *            type: author
+ *            url: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *            host: http://localhost:8000/
+ * 
  *     Likes:
  *       type: object
  *       properties:
@@ -45,8 +56,23 @@ const router = Router();
  *           type: Like
  *           description: The list of likes
  *       example:
- *         type: Like
- *         items: []
+ *         items: 
+ *           object: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/cl1g1uj1p00003wu80hsl5d8b/
+ *           authorId: cl1g0f07x0000w4u8054w8pnp
+ *           summary: ZezhouLikesyourpost
+ *           context: https://www.w3.org/ns/activitystreams
+ *           node: null
+ *           author: 
+ *             admin: null
+ *             id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *             displayName: Zezhou
+ *             github: 
+ *             profileImage: 
+ *             type: author
+ *             url: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *             host: http://localhost:8000/
+ *         
+ *           type: Like
  */
 
 /**

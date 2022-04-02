@@ -11,10 +11,11 @@ const router = Router();
  *     Comment:
  *       type: object
  *       required:
+ *         - type
+ *         - likeCount
  *         - id
  *         - author
  *         - authorId
- *         - post
  *         - postId
  *         - contentType
  *         - comment
@@ -29,9 +30,6 @@ const router = Router();
  *         authorId:
  *           type: string
  *           description: The author's id of relative author
- *         post:
- *           type: Post
- *           description: The relative post of the comment
  *         postId:
  *           type: string
  *           description: The post's id of relative post
@@ -44,15 +42,34 @@ const router = Router();
  *         published:
  *           type: DateTime
  *           description: the time of this comment published
+ *         node:
+ *           type: string
+ *           description: the node relates to remote
+ *         type:
+ *           type: string
+ *           description: type "comment"
+ *         likeCount:
+ *           type: int
+ *           description: the number of likes received
  *       example:
- *         id: d4fE_asz
- *         Author: {}
- *         authorId: ds4fE_asz
- *         Post: {}
- *         postId: d4fsE_asz
- *         contentType: text
- *         comment: i like it
- *         published: 2022-03-21
+ *         id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/cl1g1uj1p00003wu80hsl5d8b/comments/cl1h0ua1p00015su81bja5cum/
+ *         authorId: cl1g0f07x0000w4u8054w8pnp
+ *         postId: cl1g1uj1p00003wu80hsl5d8b
+ *         contentType: text/markdown
+ *         comment: SickOldeEnglish
+ *         published: 2022-04-01T22:52:46.045Z
+ *         node: null
+ *         type: comment
+ *         likeCount: 0
+ *         author: 
+ *           admin: null
+ *           id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *           displayName: Zezhou
+ *           github: asdasdasdasd
+ *           profileImage: dasdasdasdasd
+ *           type: author
+ *           url: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *           host: http://localhost:8000/
  *
  *     Comments:
  *       type: object
@@ -62,7 +79,27 @@ const router = Router();
  *           description: The list of comment
  *       example:
  *         type: comments
- *         items: []
+ *         post: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/cl1g1uj1p00003wu80hsl5d8b/
+ *         id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/cl1g1uj1p00003wu80hsl5d8b/comments/
+ *         comments: 
+ *           id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/posts/cl1g1uj1p00003wu80hsl5d8b/comments/cl1h0ua1p00015su81bja5cum/
+ *           authorId: cl1g0f07x0000w4u8054w8pnp
+ *           postId: cl1g1uj1p00003wu80hsl5d8b
+ *           contentType: text/markdown
+ *           comment: SickOldeEnglish
+ *           published: 2022-04-01T22:52:46.045Z
+ *           node: null
+ *           type: comment
+ *           likeCount: 0
+ *           author: 
+ *             admin: null
+ *             id: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *             displayName: Zezhou
+ *             github: asdasdasdasd
+ *             profileImage: dasdasdasdasd
+ *             type: author
+ *             url: http://localhost:8000/authors/cl1g0f07x0000w4u8054w8pnp/
+ *             host: http://localhost:8000/
  */
 
 /**
