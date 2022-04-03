@@ -14,12 +14,13 @@ const FriendRequestItem = ({ props }) => {
         type: PropTypes.string,
         message: PropTypes.string,
         owner: PropTypes.string,
+        request: PropTypes.object,
         accept: PropTypes.bool,
         node: PropTypes.string,
         dateTime: PropTypes.string,
     };
     console.log(props);
-    const [disableAccept, setDisableAccept] = useState(props.accept);
+    const [disableAccept, setDisableAccept] = useState(props.request.accept);
     const receiveDate = moment(props.dateTime).format(
         'MMMM Do YYYY, h:mm:ss a'
     );
@@ -36,6 +37,7 @@ const FriendRequestItem = ({ props }) => {
             }
         );
     };
+    console.log(disableAccept);
     return (
         <ListItem
             sx={{ my: 1, ml: 1 }}
