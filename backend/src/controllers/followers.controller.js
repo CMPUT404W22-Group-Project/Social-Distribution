@@ -1,4 +1,4 @@
-import { followersService } from '../services/index.service.js';
+import { followersService, nodesService } from '../services/index.service.js';
 import axios from 'axios';
 
 export async function getFollowers(req, res) {
@@ -28,7 +28,15 @@ export async function getFollowersJSON(options) {
 	for (const follower of remoteFollowers) {
 		try {
 			// TODO: Check nodes table for node and use basic auth
-			followerList.push((await axios.get(follower.authorId)).data);
+			const node = await nodesService.getNodeByUrl(follower.node);
+
+			followerList.push(
+				(
+					await axios.get(`${node.url}/authors/follower.authorId`, {
+						auth: { username: node.username, password: node.password },
+					})
+				).data
+			);
 		} catch (err) {
 			console.error(`${err.message} on ${follower.authorId}`);
 		}
@@ -43,26 +51,30 @@ export async function getFollowersJSON(options) {
 }
 
 export async function deleteFollower(req, res) {
-	await followersService.deleteFollower(
-		req.params.foreignAuthorId,
-		req.params.authorId
-	);
+	await followersService.deleteFollower({
+		authorId: req.params.foreignAuthorId,
+		followingId: req.params.authorId,
+	});
 	return res.sendStatus(204);
 }
 
 export async function addFollower(req, res) {
-	if (req.user.id !== req.params.foreignAuthorId) {
+	const node = req.body.node ? req.body.node : null;
+	if (req.user.id !== req.params.authorId) {
 		return res.sendStatus(401);
 	}
 
-	await followersService.addFollower(
-		req.params.foreignAuthorId,
-		req.params.authorId
-	);
-
+	const result = await followersService.addFollower({
+		authorId: req.params.foreignAuthorId,
+		followingId: req.params.authorId,
+		node: node,
+	});
+	if (!result) {
+		return res.status(400).json({ error: 'failed to add follower' });
+	}
 	// TODO: Add follower to inbox
 
-	return res.sendStatus(204);
+	return res.sendStatus(201);
 }
 
 export async function checkIsFollower(req, res) {
