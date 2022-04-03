@@ -15,7 +15,8 @@ export async function getFollowers(authorId, host) {
 			// If local http URL
 			follower.authorId.startsWith(host) ||
 			// Or if CUID
-			follower.authorId.startsWith('c')
+			follower.authorId.startsWith('c') ||
+			!follower.node
 		) {
 			localFollowersList.push(
 				follower.authorId.split('/').filter(String).slice(-1)[0]
@@ -36,7 +37,7 @@ export async function getFollowers(authorId, host) {
 	return { localFollowers, remoteFollowers };
 }
 
-export async function deleteFollower(authorId, followingId) {
+export async function deleteFollower({ authorId, followingId }) {
 	return await prisma.followers.delete({
 		where: {
 			authorId_followingId: {
@@ -47,11 +48,12 @@ export async function deleteFollower(authorId, followingId) {
 	});
 }
 
-export async function addFollower(authorId, followingId) {
+export async function addFollower({ authorId, followingId, node }) {
 	return await prisma.followers.create({
 		data: {
 			authorId: authorId,
 			followingId: followingId,
+			node: node != null ? node : undefined,
 		},
 	});
 }

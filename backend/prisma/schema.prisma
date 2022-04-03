@@ -81,7 +81,7 @@ model Followers {
     authorId    String // Author id
     followingId String // The author id of the one being followed.  
     // No relation is enforced because they can be on a different host
-
+    node        String?  
     @@id([authorId, followingId])
 }
 

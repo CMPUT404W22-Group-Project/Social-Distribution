@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import * as inboxController from "../controllers/inbox.controller.js";
+import * as inboxController from '../controllers/inbox.controller.js';
 import { authenticateToken } from '../auth/index.js';
 
 const router = Router();
-
 
 /**
  * @swagger
@@ -57,14 +56,12 @@ const router = Router();
  *         items: []
  */
 
-
- /**
-  * @swagger
-  * tags:
-  *   name: Inbox
-  *   description: The inbox managing API
-  */
-
+/**
+ * @swagger
+ * tags:
+ *   name: Inbox
+ *   description: The inbox managing API
+ */
 
 /**
  * @swagger
@@ -90,7 +87,6 @@ const router = Router();
  */
 router.get('/authors/:id/inbox', authenticateToken, inboxController.getInbox);
 // TODO: Basic auth
-
 
 /**
  * @swagger
@@ -121,8 +117,16 @@ router.get('/authors/:id/inbox', authenticateToken, inboxController.getInbox);
  *       409:
  *         description: Author Already Liked this object
  */
-router.post('/authors/:id/inbox', authenticateToken, inboxController.postToInbox);
-
+router.post(
+	'/authors/:id/inbox',
+	authenticateToken,
+	inboxController.postToInbox
+);
+router.post(
+	'remote/authors/:id/inbox',
+	authenticateToken,
+	inboxController.postRemoteInbox
+);
 
 /**
  * @swagger
@@ -134,6 +138,10 @@ router.post('/authors/:id/inbox', authenticateToken, inboxController.postToInbox
  *       204:
  *         description: the element deleted
  */
-router.delete('/authors/:id/inbox', authenticateToken, inboxController.deleteInbox);
+router.delete(
+	'/authors/:id/inbox',
+	authenticateToken,
+	inboxController.deleteInbox
+);
 
 export { router };
