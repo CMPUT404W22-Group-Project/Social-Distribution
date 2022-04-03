@@ -1,5 +1,6 @@
 import { followersService, nodesService } from '../services/index.service.js';
 import axios from 'axios';
+import { checkFollowRequestExist } from '../services/followers.service.js';
 
 export async function getFollowers(req, res) {
 	const followers = await getFollowersJSON({
@@ -64,6 +65,32 @@ export async function addFollower(req, res) {
 		return res.sendStatus(401);
 	}
 
+	const authorId = node
+		? `${node}/authors/${req.params.foreignAuthorId}/`
+		: req.params.foreignAuthorId;
+	const requestExist = checkFollowRequestExist({
+		authorId: authorId,
+		followingId: req.params.authorId,
+	});
+	if (requestExist) {
+		const changeAccept = await followersService.acceptFollowRequest({
+			authorId: authorId,
+			friendReqId: req.params.authorId,
+		});
+		if (!changeAccept) {
+			return res.status(400).json({ error: 'Fail to update follow request' });
+		}
+	}
+
+	const isFollower = await followersService.checkIsFollower({
+		authorId: req.params.foreignAuthorId,
+		followingId: req.params.authorId,
+	});
+	if (isFollower) {
+		return res
+			.status(409)
+			.json({ error: 'The Author is alredy your follower' });
+	}
 	const result = await followersService.addFollower({
 		authorId: req.params.foreignAuthorId,
 		followingId: req.params.authorId,

@@ -11,9 +11,10 @@ export async function getSharedPosts(receiver) {
 export async function checkExistsSharedPosts({ id, receiver }) {
 	return await prisma.SharedPost.findFirst({
 		where: {
-			id: id,
-			receiver: receiver,
-
+			id_receiver: {
+				id: id,
+				receiver: receiver,
+			},
 		},
 	});
 }

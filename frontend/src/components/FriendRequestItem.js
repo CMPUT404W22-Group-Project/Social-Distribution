@@ -18,6 +18,7 @@ const FriendRequestItem = ({ props }) => {
         node: PropTypes.string,
         dateTime: PropTypes.string,
     };
+    console.log(props);
     const [disableAccept, setDisableAccept] = useState(props.accept);
     const receiveDate = moment(props.dateTime).format(
         'MMMM Do YYYY, h:mm:ss a'
@@ -26,6 +27,7 @@ const FriendRequestItem = ({ props }) => {
         const foreignAuthorId = src.includes('/')
             ? src.split('/authors/')[1].split('/')[0]
             : src;
+        console.log(foreignAuthorId);
         axios.put(
             `/authors/${props.auth.author.id}/followers/${foreignAuthorId}`,
             { node: node },
@@ -40,7 +42,7 @@ const FriendRequestItem = ({ props }) => {
             secondaryAction={
                 <Button
                     variant="contained"
-                    disabled={disableAccept ? disableAccept : null}
+                    disabled={disableAccept}
                     onClick={() => {
                         setDisableAccept(true);
                         const node = props.node ? props.node : null;
