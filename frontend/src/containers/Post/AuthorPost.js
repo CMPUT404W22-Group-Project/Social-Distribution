@@ -4,14 +4,14 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import PostItem from '../../components/PostItem';
 
 const AuthorPost = ({ props }) => {
-
     useEffect(() => {
-      document.title = "Posts";
+        document.title = 'Posts';
     }, []);
-    
+
     AuthorPost.propTypes = {
         props: PropTypes.object,
         auth: PropTypes.object,
@@ -22,8 +22,7 @@ const AuthorPost = ({ props }) => {
     let navigate = useNavigate();
     const getAllPosts = useCallback(() => {
         axios
-            .get(`/authors/${authorId}/posts`,
-            { withCredentials: true })
+            .get(`/authors/${authorId}/posts`, { withCredentials: true })
             .then((response) => {
                 response.status === 200
                     ? setPosts([...response.data.items])
@@ -59,6 +58,7 @@ const AuthorPost = ({ props }) => {
                     <PostItem key={i} props={post} />
                 ) : null;
             })}
+            <Typography variant="h6">Shared With Me</Typography>
         </>
     );
 };

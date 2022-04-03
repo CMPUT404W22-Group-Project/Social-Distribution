@@ -54,7 +54,6 @@ const PostItem = ({ props }) => {
         commentsSrc: PropTypes.object,
         auth: PropTypes.object,
     };
-    console.log(props);
     //likeCount
     const [likeCount, setLikeCount] = useState(props.likeCount);
 

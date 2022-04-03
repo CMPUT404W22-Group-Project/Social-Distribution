@@ -10,9 +10,8 @@ import GithubActivity from '../../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 const Profile = ({ props }) => {
-
     useEffect(() => {
-      document.title = "Profile";
+        document.title = 'Profile';
     }, []);
 
     Profile.propTypes = {
@@ -43,9 +42,7 @@ const Profile = ({ props }) => {
     };
     const getAuthorById = useCallback(async (authorId) => {
         try {
-            const response = await axios.get(
-                `/authors/${authorId}`
-            );
+            const response = await axios.get(`/authors/${authorId}`);
             setAuthor(response.data);
             //follow up request
             let ghUserName;
@@ -64,6 +61,18 @@ const Profile = ({ props }) => {
     useEffect(() => {
         getAuthorById(authorId);
     }, [authorId, getAuthorById]);
+
+    const handleFollow = async (authorId) => {
+        const actor = props.auth.author;
+        const follow = {
+            type: 'Follow',
+            actor: actor,
+            summary: `${actor.displayName} wants to follow you`,
+        };
+        await axios.post(`/authors/${authorId}/inbox`, follow, {
+            withCredentials: true,
+        });
+    };
 
     const renderedButton = () => {
         return (
@@ -99,7 +108,14 @@ const Profile = ({ props }) => {
                     </Button>
                 ) : null}
                 {isOwnProfile ? null : (
-                    <Button variant="contained">Follow</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            handleFollow(authorId);
+                        }}
+                    >
+                        Follow
+                    </Button>
                 )}
                 <Button
                     variant="contained"
@@ -108,6 +124,14 @@ const Profile = ({ props }) => {
                     }}
                 >
                     Followers
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        navigate(`/authors/${authorId}/liked`);
+                    }}
+                >
+                    Liked
                 </Button>
             </Stack>
         );

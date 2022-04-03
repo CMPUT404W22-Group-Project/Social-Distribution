@@ -46,14 +46,12 @@ const Header = (props) => {
     //handle logout
     const handleLogOut = () => {
         setAnchorElUser(null);
-        axios
-            .get(`/logout`, { withCredentials: true })
-            .catch((error) => {
-                if (error.response.status == 401) {
-                    props.signOut();
-                    navigate('/');
-                }
-            });
+        axios.get(`/logout`, { withCredentials: true }).catch((error) => {
+            if (error.response.status == 401) {
+                props.signOut();
+                navigate('/');
+            }
+        });
     };
     //user menu
     const renderUserMenu = () => {
@@ -135,6 +133,11 @@ const Header = (props) => {
                     display: { xs: 'block', md: 'none' },
                 }}
             >
+                <MenuItem key="all-authors-page" onClick={handleCloseNavMenu}>
+                    <NavLink to={`authors`} style={{ textDecoration: 'none' }}>
+                        <Typography textAlign="center">Authors</Typography>
+                    </NavLink>
+                </MenuItem>
                 <MenuItem key="my-posts-page" onClick={handleCloseNavMenu}>
                     <NavLink
                         to={`authors/${author_id}/posts`}
@@ -152,10 +155,7 @@ const Header = (props) => {
                     </NavLink>
                 </MenuItem>
                 <MenuItem key="Inbox" onClick={handleCloseNavMenu}>
-                    <NavLink
-                        to={`authors/${author_id}/inbox`}
-                        style={{ textDecoration: 'none' }}
-                    >
+                    <NavLink to={`inbox`} style={{ textDecoration: 'none' }}>
                         <Typography textAlign="center">Inbox</Typography>
                     </NavLink>
                 </MenuItem>
@@ -174,6 +174,14 @@ const Header = (props) => {
                     <>
                         <Button
                             onClick={() => {
+                                onButtonClick(`authors`);
+                            }}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                        >
+                            Authors
+                        </Button>
+                        <Button
+                            onClick={() => {
                                 onButtonClick(`authors/${author_id}/posts`);
                             }}
                             sx={{ my: 2, color: 'white', display: 'block' }}
@@ -190,7 +198,7 @@ const Header = (props) => {
                         </Button>
                         <Button
                             onClick={() => {
-                                onButtonClick(`authors/${author_id}/inbox`);
+                                onButtonClick(`inbox`);
                             }}
                             sx={{ my: 2, color: 'white', display: 'block' }}
                         >

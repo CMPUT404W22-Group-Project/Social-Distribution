@@ -22,10 +22,6 @@ const ProfilePictureCard = ({ props }) => {
         type: PropTypes.string,
         url: PropTypes.string,
     };
-    const authorId = props
-        ? props.id.split('/authors/')[1].split('/')[0]
-        : null;
-    console.log(authorId);
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -74,6 +70,11 @@ const ProfilePictureCard = ({ props }) => {
                             <Button
                                 variant="contained"
                                 onClick={() => {
+                                    const authorId = props
+                                        ? props.id
+                                              .split('/authors/')[1]
+                                              .split('/')[0]
+                                        : null;
                                     navigate(`/authors/${authorId}`);
                                 }}
                             >
@@ -82,6 +83,11 @@ const ProfilePictureCard = ({ props }) => {
                             <Button
                                 variant="contained"
                                 onClick={() => {
+                                    const authorId = props
+                                        ? props.id
+                                              .split('/authors/')[1]
+                                              .split('/')[0]
+                                        : null;
                                     navigate(`/authors/${authorId}/posts`);
                                 }}
                             >
