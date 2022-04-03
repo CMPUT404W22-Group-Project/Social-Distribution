@@ -58,25 +58,28 @@ export async function addFollower({ authorId, followingId, node }) {
 	});
 }
 
-export async function checkIsFollower(authorId, followingId) {
-	return await prisma.followers.findFirst({
+export async function checkIsFollower({ authorId, followingId }) {
+	return await prisma.followers.findUnique({
+		where: {
+			authorId_followingId: {
+				authorId,
+				followingId,
+			},
+		},
+	});
+}
+
+export async function getFollowRequest({ authorId, friendReqId }) {
+	return await prisma.friendRequest.findFirst({
 		where: {
 			AND: [
 				{
 					authorId: authorId,
 				},
 				{
-					followingId: followingId,
+					friendReqId: friendReqId,
 				},
 			],
-		},
-	});
-}
-
-export async function getFollowRequest(friendReqId) {
-	return await prisma.friendRequest.findMany({
-		where: {
-			friendReqId: friendReqId,
 		},
 	});
 }
@@ -95,8 +98,28 @@ export async function createFollowRequest(followRequest) {
 export async function checkFollowRequestExist({ authorId, friendReqId }) {
 	return await prisma.FriendRequest.findFirst({
 		where: {
-			authorId: authorId,
-			friendReqId: friendReqId,
+			AND: [
+				{
+					authorId: authorId,
+				},
+				{
+					friendReqId: friendReqId,
+				},
+			],
+		},
+	});
+}
+
+export async function acceptFollowRequest({ authorId, friendReqId }) {
+	return await prisma.FriendRequest.update({
+		where: {
+			authorId_friendReqId: {
+				authorId: authorId,
+				friendReqId: friendReqId,
+			},
+		},
+		data: {
+			accept: true,
 		},
 	});
 }

@@ -102,7 +102,7 @@ model FriendRequest {
     node        String?
     friend      Author @relation(fields: [friendReqId], references: [id])
    
-    @@id([authorId, friendReqId,accept])
+    @@id([authorId, friendReqId])
 }
 
 // If you follow and friend, then you can see their public and friend posts

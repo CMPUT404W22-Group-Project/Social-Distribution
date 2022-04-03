@@ -21,8 +21,11 @@ export async function getInbox(req, res) {
 
 	for (const item of items) {
 		if (item.type === 'Follow') {
-			const request = await followersService.get(item.owner);
-			item.request = request;
+			const request = await followersService.getFollowRequest({
+				authorId: item.src,
+				friendReqId: item.owner,
+			});
+			item.accept = request.accept;
 		}
 	}
 
@@ -231,7 +234,7 @@ export async function postToInbox(req, res) {
 			type: req.body.type,
 			src: req.body.actor.id,
 			owner: req.params.id,
-			message: 'Follow Request',
+			message: req.body.summary,
 		});
 		if (!inbox) {
 			return res.status(400).json({ error: 'Error Posting to Inbox' });
