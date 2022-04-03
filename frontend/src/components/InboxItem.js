@@ -48,7 +48,8 @@ const InboxItem = ({ props }) => {
                     disabled={disableAccept ? disableAccept : null}
                     onClick={() => {
                         setDisableAccept(true);
-                        handleAccept(props.src, props.node);
+                        const node = props.node ? props.node : null;
+                        handleAccept(props.src, node);
                     }}
                 >
                     Accept
