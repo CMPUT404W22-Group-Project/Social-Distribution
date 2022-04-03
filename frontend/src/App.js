@@ -15,6 +15,9 @@ import Signup from './containers/Login/Signup';
 import PostLikes from './containers/Like/PostLikes';
 import CommentLikes from './containers/Like/CommentLikes';
 import Admin from './containers/Admin/Admin';
+import Inbox from './containers/Inbox/Inbox';
+import Followers from './containers/Followers/Followers';
+import AuthorLiked from './containers/Like/AuthorLiked';
 
 //remote compatibility
 import RemoteAuthors from './remoteComponents/RemoteAuthors';
@@ -115,6 +118,15 @@ function App() {
                 <Route
                     path="/authors/:authorId/post/new"
                     element={<PostNew />}
+                />
+                <Route path="/inbox" element={<Inbox />} />
+                <Route
+                    path="/authors/:authorId/followers"
+                    element={<Followers />}
+                />
+                <Route
+                    path="/authors/:authorId/liked"
+                    element={<AuthorLiked />}
                 />
                 <Route path="/authors" element={<RemoteAuthors />} />
                 <Route path="/author" element={<RemoteAuthor />} />

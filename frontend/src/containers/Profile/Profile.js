@@ -10,9 +10,8 @@ import GithubActivity from '../../components/GithubActivity';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 const Profile = ({ props }) => {
-
     useEffect(() => {
-      document.title = "Profile";
+        document.title = 'Profile';
     }, []);
 
     Profile.propTypes = {
@@ -43,9 +42,7 @@ const Profile = ({ props }) => {
     };
     const getAuthorById = useCallback(async (authorId) => {
         try {
-            const response = await axios.get(
-                `/authors/${authorId}`
-            );
+            const response = await axios.get(`/authors/${authorId}`);
             setAuthor(response.data);
             //follow up request
             let ghUserName;
@@ -108,6 +105,14 @@ const Profile = ({ props }) => {
                     }}
                 >
                     Followers
+                </Button>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        navigate(`/authors/${authorId}/liked`);
+                    }}
+                >
+                    Liked
                 </Button>
             </Stack>
         );
