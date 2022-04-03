@@ -113,10 +113,14 @@ export async function checkFollowRequestExist({ authorId, friendReqId }) {
 export async function acceptFollowRequest({ authorId, friendReqId }) {
 	return await prisma.FriendRequest.update({
 		where: {
-			authorId_friendReqId: {
-				authorId: authorId,
-				friendReqId: friendReqId,
-			},
+			AND: [
+				{
+					authorId: authorId,
+				},
+				{
+					friendReqId: friendReqId,
+				},
+			],
 		},
 		data: {
 			accept: true,
