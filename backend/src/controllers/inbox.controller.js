@@ -21,8 +21,11 @@ export async function getInbox(req, res) {
 
 	for (const item of items) {
 		if (item.type === 'Follow') {
-			const request = await followersService.getFollowRequest(item.owner);
-			item.request = request;
+			const request = await followersService.getFollowRequest({
+				authorId: item.src,
+				friendReqId: item.owner,
+			});
+			item.accept = request.accept;
 		}
 	}
 

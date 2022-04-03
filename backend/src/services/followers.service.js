@@ -69,10 +69,17 @@ export async function checkIsFollower({ authorId, followingId }) {
 	});
 }
 
-export async function getFollowRequest(friendReqId) {
+export async function getFollowRequest({ authorId, friendReqId }) {
 	return await prisma.friendRequest.findMany({
 		where: {
-			friendReqId: friendReqId,
+			AND: [
+				{
+					authorId: authorId,
+				},
+				{
+					friendReqId: friendReqId,
+				},
+			],
 		},
 	});
 }
