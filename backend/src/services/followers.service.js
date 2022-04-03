@@ -70,7 +70,7 @@ export async function checkIsFollower({ authorId, followingId }) {
 }
 
 export async function getFollowRequest({ authorId, friendReqId }) {
-	return await prisma.friendRequest.findMany({
+	return await prisma.friendRequest.findFirst({
 		where: {
 			AND: [
 				{
