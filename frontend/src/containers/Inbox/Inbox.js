@@ -32,7 +32,7 @@ const Inbox = ({ props }) => {
             <Button
                 sx={{
                     minWidth: 100,
-                    my: 5,
+                    mt: 3,
                     left: '80%',
                     position: 'relative',
                 }}
@@ -46,7 +46,7 @@ const Inbox = ({ props }) => {
             <List
                 sx={{
                     maxWidth: 4 / 5,
-                    mt: 10,
+                    mt: 5,
                 }}
             >
                 {inbox?.map((item, i) => {

@@ -29,10 +29,7 @@ const CommentItem = ({ props }) => {
     };
     //likeCount
     const [likeCount, setLikeCount] = useState(props.likeCount);
-    console.log(props);
-    const authorId = props
-        ? props.id.split('/authors/')[1].split('/')[0]
-        : null;
+
     const publishedDate = moment(props.published).format(
         'MMMM Do YYYY, h:mm:ss a'
     );
@@ -86,6 +83,9 @@ const CommentItem = ({ props }) => {
                         aria-label="like this post"
                         onClick={() => {
                             setDisableLiked(true);
+                            const authorId = props
+                                ? props.id.split('/authors/')[1].split('/')[0]
+                                : null;
                             likeComment(authorId);
                         }}
                         disabled={disableLiked ? true : null}

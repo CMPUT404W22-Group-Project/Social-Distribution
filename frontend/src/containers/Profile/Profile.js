@@ -62,6 +62,18 @@ const Profile = ({ props }) => {
         getAuthorById(authorId);
     }, [authorId, getAuthorById]);
 
+    const handleFollow = async (authorId) => {
+        const actor = props.auth.author;
+        const follow = {
+            type: 'Follow',
+            actor: actor,
+            summary: `${actor.displayName} wants to follow you`,
+        };
+        await axios.post(`/authors/${authorId}/inbox`, follow, {
+            withCredentials: true,
+        });
+    };
+
     const renderedButton = () => {
         return (
             <Stack
@@ -96,7 +108,14 @@ const Profile = ({ props }) => {
                     </Button>
                 ) : null}
                 {isOwnProfile ? null : (
-                    <Button variant="contained">Follow</Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            handleFollow(authorId);
+                        }}
+                    >
+                        Follow
+                    </Button>
                 )}
                 <Button
                     variant="contained"
