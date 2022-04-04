@@ -415,7 +415,7 @@ export async function newPost(req, res) {
 				type: 'post',
 				src: post.id,
 				owner: receiverId,
-				message: `You got a new post: ${post.title}`,
+				message: `You got a new post: ${post.title}, viewable here: ${host}/#/authors/${req.user.id}/posts/${post.id}`,
 			});
 		} else {
 			// TODO: Use basic auth
