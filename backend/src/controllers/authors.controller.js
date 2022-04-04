@@ -245,6 +245,9 @@ export async function login(req, res) {
 		return res.status(409).json({ error: 'User does not exist' });
 	} else {
 		user.id = userExists.id;
+		if (!userExists.activate) {
+			return res.status(401).json({ error: 'Sign up not yet approved admin' });
+		}
 	}
 
 	// Check if the user password matches

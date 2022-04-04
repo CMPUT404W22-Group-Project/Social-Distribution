@@ -14,6 +14,7 @@ if (command === 1) {
 		},
 		data: {
 			admin: true,
+			activate: true,
 		},
 	});
 	console.log(`> Admin ${email} added`);

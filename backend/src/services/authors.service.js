@@ -55,6 +55,7 @@ export async function updateAuthor(author) {
 			displayName: author.displayName != null ? author.displayName : '',
 			github: author.github != null ? author.github : '',
 			profileImage: author.profileImage != null ? author.profileImage : '',
+			activate: author.activate != null ? author.activate : false,
 		},
 	});
 }
@@ -77,6 +78,7 @@ export async function checkUserExists(email) {
 			github: true,
 			profileImage: true,
 			admin: true,
+			activate: true,
 		},
 	});
 }
