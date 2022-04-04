@@ -406,7 +406,7 @@ export async function newPost(req, res) {
 		host: req.get('host'),
 	});
 
-	for (const follower of followers) {
+	for (const follower of followers.items) {
 		const receiverId = follower.id.includes('/')
 			? follower.id.split('/authors/')[1].split('/')[0]
 			: follower.id;
