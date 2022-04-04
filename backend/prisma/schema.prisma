@@ -19,6 +19,7 @@ model Author {
     displayName   String
     github        String?
     profileImage  String?
+    activate      Boolean          @default(false)
     Post          Post[]
     FriendRequest FriendRequest[]
     Friends       Friends[]

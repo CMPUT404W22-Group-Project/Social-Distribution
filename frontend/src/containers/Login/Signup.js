@@ -37,9 +37,8 @@ function Copyright(props) {
 const theme = createTheme();
 
 const SignUp = (props) => {
-
     useEffect(() => {
-      document.title = "Sign Up";
+        document.title = 'Sign Up';
     }, []);
 
     let navigate = useNavigate();
@@ -61,17 +60,20 @@ const SignUp = (props) => {
     //sign up
     const signUp = (email, password, displayName) => {
         axios
-            .post(`/register`, {
-                email: email,
-                password: password,
-                displayName: displayName,
-            }, {withCredentials: true})
+            .post(
+                `/register`,
+                {
+                    email: email,
+                    password: password,
+                    displayName: displayName,
+                },
+                { withCredentials: true }
+            )
             .then((response) => {
                 console.log(response);
                 if (response.status === 201) {
-                    props.signIn(response.data);
                     //to profile
-                    navigate(`/authors/${response.data.id}`);
+                    navigate(`/`);
                 }
             })
             .catch((error) => {

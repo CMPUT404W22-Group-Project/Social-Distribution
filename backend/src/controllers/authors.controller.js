@@ -225,8 +225,9 @@ export async function newAuthor(req, res) {
 	newUser.url = `${host}/authors/${newUser.id}/`;
 	newUser.host = `${host}/`;
 	// Create new JWT token and set it as a cookie
-	const token = await newAccessToken(user.email, user.id);
-	res.cookie('TOKEN', token, { maxAge: 604800000, sameSite: 'strict' }); // 7 days
+	// const token = await newAccessToken(user.email, user.id);
+	// res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
+
 	return res.status(201).json({ type: 'author', ...newUser });
 }
 
@@ -245,6 +246,9 @@ export async function login(req, res) {
 		return res.status(409).json({ error: 'User does not exist' });
 	} else {
 		user.id = userExists.id;
+		if (!userExists.activate) {
+			return res.status(401).json({ error: 'Sign up not yet approved admin' });
+		}
 	}
 
 	// Check if the user password matches
