@@ -127,3 +127,18 @@ export async function acceptFollowRequest({ authorId, friendReqId }) {
 		},
 	});
 }
+
+export async function deleteFollowRequest({ authorId, friendReqId }) {
+	return await prisma.delete({
+		where: {
+			AND: [
+				{
+					authorId: authorId,
+				},
+				{
+					friendReqId: friendReqId,
+				},
+			],
+		},
+	});
+}

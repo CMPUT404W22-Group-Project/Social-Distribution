@@ -40,6 +40,10 @@ async function httpGetAuthors(node) {
 				remoteAuthor.id = remoteAuthor.url;
 				remoteAuthor.type = 'author';
 				remoteAuthor.profileImage = `http://cmput404-project-t12.herokuapp.com${remoteAuthor.profileImage}`;
+			} else if (
+				node.url === 'http://socialdistribution-t13.herokuapp.com/api/v1'
+			) {
+				remoteAuthor.id = remoteAuthor.url;
 			}
 			remoteAuthor.node = node.url;
 			authors = [...authors, remoteAuthor];
