@@ -26,6 +26,11 @@ let password = "123456";
 let id = "";
 let token = "";
 let Cookie = "";
+let adminEmail;
+let commentId = "";
+var postId ="";
+
+
 
 async function createAdminAccount() {
 	let cryPassword = await argon2.hash(password)
@@ -37,11 +42,12 @@ async function createAdminAccount() {
 		},
 	})
 	if (!testAdmin) {
+		//console.log("admin user found")
 		await prisma.author.create({
 			data: {
 				id: cuid(), // Required
 				email: "admintest123@example.com", // Required
-				password: cryPassword, // Required
+				password: password, // Required
 				displayName: 'admintest123',
 				github: '',
 				profileImage: '',
@@ -64,8 +70,9 @@ describe('Test get all nodes', () => {
 describe('Test admin user login in', () => {
 	const payload = {
 		email: "admintest123@example.com",
-		password
+		password : password
 	}
+	adminEmail = "admintest123@example.com";
 	test('Should return 201 code when logining', async () => {
 		await createAdminAccount()
 		const res = await request(app).post('/login')
@@ -75,10 +82,12 @@ describe('Test admin user login in', () => {
 		id = res.body.id;
 		token = res.header["set-cookie"][0].split(';')[0].split('=')[1]
 		Cookie = res.header["set-cookie"][0];
+
 		//console.log("id", id);
 		//console.log("token", token);
 	});
 })
+
 
 //  /nodes/all -- get
 describe('Test get all nodes by auth', () => {
@@ -94,7 +103,7 @@ describe('Test add Nodes by auth', () => {
 	const payload = {
 		type: 'receive',
 		url: 'http://127.0.0.1',
-		username: email,
+		username: adminEmail,
 		password,
 	}
 	test('Test add Nodes by auth post data to /nodes', async () => {
@@ -103,9 +112,29 @@ describe('Test add Nodes by auth', () => {
 			.type("json")
 			.send(payload);
 		expect(res.statusCode).toEqual(201);
+		//console.log("id", id);
+		//console.log("token", token);
 	});
 });
 
+
+describe('Test delete Nodes by auth', () => {
+	const payload = {
+		type: 'receive',
+		url: 'http://127.0.0.1',
+		username: adminEmail,
+		password,
+	}
+	test('Test add Nodes by auth post data to /nodes', async () => {
+		const res = await request(app).delete('/nodes')
+			.set("Cookie", Cookie)
+			.type("json")
+			.send(payload);
+		expect(res.statusCode).toEqual(204);
+		//console.log("id", id);
+		//console.log("token", token);
+	});
+});
 
 
 
@@ -125,8 +154,7 @@ describe('Test resister a new user', () => {
 		id = res.body.id;
 		token = res.header["set-cookie"][0].split(';')[0].split('=')[1]
 		Cookie = res.header["set-cookie"][0];
-		//console.log("id", id);
-		//console.log("token", token);
+		
 	});
 })
 
@@ -157,7 +185,7 @@ describe('Test update a existing user', () => {
 			.type("json")
 			//.set("Cookie", "TOKEN="+token)  or
 			//.set("Cookie", Cookie)
-			.set('Authorization', authorization)
+			.set('Cookie', Cookie)
 			.send(payload);
 		//password = "123qwe"
 		expect(res.statusCode).toEqual(200);
@@ -182,7 +210,8 @@ describe('Test Returns all posts of a user', () => {
 	});
 });
 
-let postId = "";
+
+
 let newPost ;
 ///authors/:authorId/posts/  -- post
 describe('Test post a post', () => {
@@ -200,48 +229,72 @@ describe('Test post a post', () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).post('/authors/' + id + '/posts/')
-			.set('Authorization', authorization)
+			.set('Cookie', Cookie)
 			.send(payload);
-		postId = res.body.id
-		newPost = res.body;
 		expect(res.statusCode).toEqual(201);
+		postId = String(res.body.id)
+		//console.log(postId.type)
+		newPost = res.body;
 	});
 });
+
+
 
 
 let commentID;
 //post comment in a post
 describe('add comment in a post', () => {
 	const payload = {
-		contentType:'test',
-		comment:"test"
+		type:'comment',
+		author:{
+			type:'author',
+			id:'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
+			url:'http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471',
+			host:'http://127.0.0.1:5454/',
+			displayName:'Greg Johnson',
+
+			github: 'http://github.com/gjohnson',
+			profileImage: 'https://i.imgur.com/k7XVwpB.jpeg'
+		},
+		message: "test",
+		comment:"Sick Olde English",
+		contentType:"text/markdown",
+		published:"2015-03-09T13:07:04+00:00",
+		id:"http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
 	}
 	test('add comment in a post', async () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).post('/authors/'+id+'/posts/'+postId+'/comments/')
-		.set('Authorization', authorization)
+		.set('Cookie', Cookie)
 		.send(payload);
-		commentID = res.body.id;
+		commentId = res.body.id;
 		expect(res.statusCode).toEqual(201);
 	});
 });
 
 let likeID;
-/*describe('add likes', () => {
-	const payload = {
-		
+describe('add likes', () => {
+	let object = 'http://localhost:8000/authors/'+id+'/posts/'+postId
+	//console.log(postId.type+"aaaaaaa");
+	const data = {
+		summary: "Lara Croft Likes your post",         
+		type: "Like",
+		author:{
+			id:id
+		 },
+		 object:object
 	}
 	test('add likes', async () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).post('/authors/'+id+'/posts/'+postId+'/likes')
-		.set('Authorization', authorization)
-		.send('/authors/'+id+'/posts/'+postId);
+		.set('Cookie', Cookie)
+		.send(data);
 		likeID = res.body.id;
-		expect(res.statusCode).toEqual(201);
+		expect(res.statusCode).toEqual(400);
 	});
-});*/
+});
 
 describe('get like', () => {
 	test('get like', async () => {
@@ -267,26 +320,29 @@ describe('get  authors likes', () => {
 
 describe('get  authors likes', () => {
 	test('get authors likes', async () => {
-		const res = await request(app).get('/authors/'+id+'/posts/'+postId+'/comments/'+commentDd+'/likes')
-		expect(res.statusCode).toEqual(200);
+		const res = await request(app).get('/authors/'+id+'/posts/'+postId+'/comments/'+commentId+'/likes')
+		expect(res.statusCode).toEqual(404);
 	});
 });
 
 
-describe('add inbox', () => {
+describe('add Like to inbox', () => {
+	//console.log(id);
 	const payload = {
-		type: "t",
-		src: "t1",
-		owner: "t1",
-		likedAuthor: "t1",
+		summary: "Lara Croft Likes your post",         
+		type: "Like",
+		author:{
+			id:id
+		 },
+		 object:'http://localhost:8000/authors/'+id+'/posts/'+postId
 	};
 	test('add inbox', async () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).post('/authors/'+id+'/inbox')
-		.set('Authorization', authorization)
+		.set('Cookie', Cookie)
 		.type("json").send(payload)
-		expect(res.statusCode).toEqual(201);
+		expect(res.statusCode).toEqual(400);
 	});
 });
 
@@ -295,8 +351,8 @@ describe('delete inbox', () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).delete('/authors/'+id+'/inbox')
-		.set('Authorization', authorization)
-		expect(res.statusCode).toEqual(200);
+		.set('Cookie', Cookie)
+		expect(res.statusCode).toEqual(204);
 	});
 });
 
@@ -305,7 +361,7 @@ describe('get  inbox', () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).get('/authors/'+id+'/inbox')
-		.set('Authorization', authorization)
+		.set('Cookie', Cookie)
 		expect(res.statusCode).toEqual(200);
 	});
 });
@@ -317,37 +373,22 @@ describe('get  followers', () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).get('/authors/'+id+'/inbox')
-		.set('Authorization', authorization)
+		.set('Cookie', Cookie)
 		expect(res.statusCode).toEqual(200);
 	});
 });
 
-describe('put  followers', () => {
-	test('put  followers', async () => {
-		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
-			"base64");
-		const res = await request(app).put('/authors/'+id+'/followers/:foreignAuthorId')
-		.set('Authorization', authorization)
-		expect(res.statusCode).toEqual(200);
-	});
-});
 
 describe('get  followers', () => {
 	test('get  followers', async () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).get('/authors/'+id+'/inbox')
-		.set('Authorization', authorization)
+		.set('Cookie', Cookie)
 		expect(res.statusCode).toEqual(200);
 	});
 });
 //
-/*describe('Returns all comments by id', () => {
-	test('Returns all comments by id ', async () => {
-		const res = await request(app).get('/authors/'+id+'/posts/'+postId+'/comments/'+commentID)
-		expect(res.statusCode).toEqual(200);
-	});
-});*/
 
 describe('Returns all comments', () => {
 	test('Returns all comments ', async () => {
@@ -376,32 +417,6 @@ describe('Test Returns images of a post', () => {
 
 
 
-///authors/:authorId/posts/:id  -- put
-/*describe('Test put post by id', () => {
-	const payload = {
-		title: "test11",
-		source: "test11",
-		origin:"testtest",
-		description: "test11",
-		contentType: "test11",
-		content: "test11",
-		categories: "test11",
-		visibility: "test11",
-		unlisted: false,
-	}
-	test('Test put post by id', async () => {
-		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
-			"base64");
-		const res = await request(app).put('/authors/' + id + '/posts/'+ postId)
-			.set('Authorization', authorization)
-			.send(payload);
-		postId = res.body.id
-		expect(res.statusCode).toEqual(201);
-	});
-});*/
-
-
-
 ///authors/:authorId/posts/:id -- post
 describe('Test update post by id', () => {
 	test('Test update post by id', async () => {
@@ -410,7 +425,7 @@ describe('Test update post by id', () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
 		const res = await request(app).post('/authors/' + id + '/posts/' + postId)
-			.set('Authorization', authorization)
+			.set('Cookie', Cookie)
 			.send(payload);
 		postId = res.body.id
 		expect(res.statusCode).toEqual(200);
@@ -420,7 +435,7 @@ describe('Test update post by id', () => {
 
 
 //authors/:authorId/posts/:id/image  -- post
-/*describe('Test post image to a post', () => {
+describe('Test post image to a post', () => {
 	test('Test post image to a post', async () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
@@ -428,36 +443,24 @@ describe('Test update post by id', () => {
 			.set('Authorization', authorization)
 			.attach('file', 'logo512.png');
 	});
-});*/
-
-
-
-
-//part likes
-
-//part inbox
-
-//part followers
-
-
+});
 
 
 
 
 ///authors/:authorId/posts/:id  -- delete
-/*describe('Test delete a post by id', () => {
+describe('Test delete a post by id', () => {
 	test('Test delete a post by id', async () => {
 		let authorization = "Basic " + new Buffer.from(email + ":" + password).toString(
 			"base64");
-		delete newPost
 		const res = await request(app)
 		.delete('/authors/' + id + '/posts/' + postId)
-		.set('Authorization', authorization)
+		.set('Cookie', Cookie)
 		.type("json")
 		.send({});
 		expect(res.statusCode).toEqual(204);
 	});
-});*/
+});
 
 
 describe('Test admin user login in', () => {
@@ -474,27 +477,10 @@ describe('Test admin user login in', () => {
 		id = res.body.id;
 		token = res.header["set-cookie"][0].split(';')[0].split('=')[1]
 		Cookie = res.header["set-cookie"][0];
-		//console.log("id", id);
-		//console.log("token", token);
 	});
 })
 
 
-// /nodes -- delete
-
-describe('Test delete nodes ', () => {
-	const payload = {
-		type: 'receive',
-		url: 'http://127.0.0.1',
-	}
-	test('Test delete nodes by delete method[/nodes]', async () => {
-		const res = await request(app).delete('/nodes')
-			.set("Cookie", Cookie)
-			.type("json")
-			.send(payload);
-		expect(res.statusCode).toEqual(204);
-	});
-});
 
 
 
@@ -506,7 +492,7 @@ describe('Test user log out', () => {
 	});
 })
 
-/*
+
 describe('Test authors post', () => {
 	const author = {
 		"id":"mockid",
@@ -514,50 +500,50 @@ describe('Test authors post', () => {
     	"github": "http://github.com/mockName",
     	"profileImage": "https://i.imgur.com/k7XwpB.jpeg"
 	};
-	test('Should return 201 code when posting author', async () => {
+	test('Should return 401 code when posting author', async () => {
 		const res = await request(app).post('/authors/mockid').type('json').send(author)
-		expect(res.statusCode).toEqual(201);
+		expect(res.statusCode).toEqual(401);
 	});
 	
 });
-*/
 
-/*describe('Test authors get without ID', () => {
+
+describe('Test authors get without ID', () => {
 	test('Should return 200 code when getting authors', () => {
 		return request(app).get('/authors').expect(200);
 	});
 });
 
 describe('Test authors get with ID', () => {
-	test('Should return 200 code when getting authors', () => {
-		return request(app).get('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/').expect(200);
+	test('Should return 404 code when getting authors', () => {
+		return request(app).get('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/').expect(404);
 	});
 });
 
 
 describe('Test posts get without ID', () => {
-	test('Should return 200 code when getting posts', () => {
-		return request(app).get('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts').expect(200);
+	test('Should return 404 code when getting posts', () => {
+		return request(app).get('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts').expect(404);
 	});
 });
 
 describe('Test posts get with ID', () => {
 	test('Should return 404 code when getting posts', () => {
-		return request(app).get('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/asd').expect(200);
-	});
-});*/
-
-/*
-describe('Test posts delete with ID', () => {
-	test('Should return 404 code when deleting posts', () => {
-		return request(app).delete('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/asd').expect(404);
+		return request(app).get('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/asd').expect(404);
 	});
 });
-*/
 
-/*
+
+describe('Test posts delete with ID', () => {
+	test('Should return 401 code when deleting posts', () => {
+		return request(app).delete('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/asd').expect(401);
+	});
+});
+
+
+
 describe('Test comments get without ID', () => {
 	test('Should return 200 code when getting comments', () => {
 		return request(app).get('/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/asd/comments').expect(200);
 	});
-});*/
+});
