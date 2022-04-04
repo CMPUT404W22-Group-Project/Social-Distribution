@@ -52,18 +52,18 @@ export async function getFollowersJSON(options) {
 }
 
 export async function deleteFollower(req, res) {
+	const node = req.body.node ? req.body.node : null;
+	const isFollower = await followersService.checkIsFollower({
+		authorId: req.params.foreignAuthorId,
+		followingId: req.params.authorId,
+	});
+	if (!isFollower) {
+		return res.status(404).json({ error: 'Follower does not exist' });
+	}
 	await followersService.deleteFollower({
 		authorId: req.params.foreignAuthorId,
 		followingId: req.params.authorId,
 	});
-	return res.sendStatus(204);
-}
-
-export async function addFollower(req, res) {
-	const node = req.body.node ? req.body.node : null;
-	if (req.user.id !== req.params.authorId) {
-		return res.sendStatus(401);
-	}
 
 	const authorId = node
 		? `${node}/authors/${req.params.foreignAuthorId}/`
@@ -73,13 +73,24 @@ export async function addFollower(req, res) {
 		followingId: req.params.authorId,
 	});
 	if (requestExist) {
-		const changeAccept = await followersService.acceptFollowRequest({
+		const deleted = await followersService.deleteFollowRequest({
 			authorId: authorId,
 			friendReqId: req.params.authorId,
 		});
-		if (!changeAccept) {
-			return res.status(400).json({ error: 'Fail to update follow request' });
+		if (!deleted) {
+			return res
+				.status(400)
+				.json({ error: 'Fail to update existing follow request' });
 		}
+	}
+
+	return res.sendStatus(204);
+}
+
+export async function addFollower(req, res) {
+	const node = req.body.node ? req.body.node : null;
+	if (req.user.id !== req.params.authorId) {
+		return res.sendStatus(401);
 	}
 
 	const isFollower = await followersService.checkIsFollower({
@@ -99,6 +110,25 @@ export async function addFollower(req, res) {
 	if (!result) {
 		return res.status(400).json({ error: 'failed to add follower' });
 	}
+	const authorId = node
+		? `${node}/authors/${req.params.foreignAuthorId}/`
+		: req.params.foreignAuthorId;
+	const requestExist = checkFollowRequestExist({
+		authorId: authorId,
+		followingId: req.params.authorId,
+	});
+	if (requestExist) {
+		const changeAccept = await followersService.acceptFollowRequest({
+			authorId: authorId,
+			friendReqId: req.params.authorId,
+		});
+		if (!changeAccept) {
+			return res
+				.status(400)
+				.json({ error: 'Fail to update existing follow request' });
+		}
+	}
+
 	// TODO: Add follower to inbox
 
 	return res.sendStatus(201);
