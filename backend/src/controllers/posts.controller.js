@@ -398,7 +398,8 @@ export async function newPost(req, res) {
 			postToInbox({
 				type: 'post',
 				src: post.id,
-				owner: `${host}/authors/${req.user.id}`,
+				owner: follower.id.split('/authors/')[1],
+				message: post.title,
 			});
 		} else {
 			// TODO: Use basic auth
