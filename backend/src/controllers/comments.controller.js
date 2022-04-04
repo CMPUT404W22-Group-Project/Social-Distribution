@@ -172,6 +172,7 @@ export async function newComment(req, res) {
 		type: 'comment',
 		src: newComment.id,
 		owner: post.authorId,
+		message: "A new comment"
 	});
 
 	return res.status(201).json(newComment);

@@ -65,7 +65,7 @@ const PostEdit = () => {
         ) {
             setPost({ ...post, content: '' });
         }
-    }, [post, post.contentType]);
+    }, [post.contentType]);
 
     const getBase64 = async (file, callback) => {
         let reader = new FileReader();

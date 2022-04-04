@@ -1,5 +1,7 @@
 # Social-Distribution
 CMPUT 404 Group Project - Social Distribution
+* Website: http://www.socialdisturbutionnetworks.ca/#/public/posts
+* Demo Video: https://youtu.be/Laq707XgbMY
 
 # Members:
 

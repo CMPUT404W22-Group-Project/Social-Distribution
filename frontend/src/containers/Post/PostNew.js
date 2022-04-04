@@ -13,11 +13,10 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 const PostNew = () => {
-
     useEffect(() => {
-      document.title = "New Post";
+        document.title = 'New Post';
     }, []);
-    
+
     let navigate = useNavigate();
     let { authorId } = useParams();
     // PostForm.propTypes = {
@@ -59,7 +58,7 @@ const PostNew = () => {
         ) {
             setPost({ ...post, content: '' });
         }
-    }, [post, post.contentType]);
+    }, [post.contentType]);
 
     const getBase64 = async (file, callback) => {
         let reader = new FileReader();

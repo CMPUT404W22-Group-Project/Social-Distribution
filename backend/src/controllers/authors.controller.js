@@ -227,6 +227,7 @@ export async function newAuthor(req, res) {
 	// Create new JWT token and set it as a cookie
 	// const token = await newAccessToken(user.email, user.id);
 	// res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
+
 	return res.status(201).json({ type: 'author', ...newUser });
 }
 
@@ -258,7 +259,7 @@ export async function login(req, res) {
 	userExists.host = `${host}/`;
 	// Create new JWT token and set it as a cookie
 	const token = await newAccessToken(user.email, user.id);
-	res.cookie('TOKEN', token, { maxAge: 604800, sameSite: 'strict' }); // 7 days
+	res.cookie('TOKEN', token, { maxAge: 604800000, sameSite: 'strict' }); // 7 days
 	return res.status(200).json({ ...userExists });
 }
 
