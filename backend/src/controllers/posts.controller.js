@@ -57,7 +57,20 @@ async function httpGetPostsByAuthor({ url, id }) {
 			post.author = author;
 		}
 		return posts;
+	} else if (
+		node.url === 'http://socialdistribution-t13.herokuapp.com/api/v1'
+	) {
+		const responseT13 = await axios.get(`${node.url}/authors/${id}/posts`, {
+			auth: { username: node.username, password: node.password },
+		});
+		const posts = responseT13.data.items;
+		for (const post of posts) {
+			post.id = post.source;
+			post.author.id = post.author.url;
+		}
+		return posts;
 	}
+
 	const response = await axios.get(`${node.url}/authors/${id}/posts/`, {
 		auth: { username: node.username, password: node.password },
 	});
@@ -393,12 +406,16 @@ export async function newPost(req, res) {
 		host: req.get('host'),
 	});
 
-	followers.items.forEach((follower) => {
-		if (follower.host.startsWith(host)) {
-			postToInbox({
+	for (const follower of followers) {
+		const receiverId = follower.id.includes('/')
+			? follower.id.split('/authors/')[1].split('/')[0]
+			: follower.id;
+		if (follower.id.startsWith(host) || follower.id.startsWith('c')) {
+			await postToInbox({
 				type: 'post',
 				src: post.id,
-				owner: `${host}/authors/${req.user.id}`,
+				owner: receiverId,
+				message: `You got a new post`,
 			});
 		} else {
 			// TODO: Use basic auth
@@ -407,12 +424,13 @@ export async function newPost(req, res) {
 					type: 'post',
 					owner: `${host}/authors/${req.user.id}`,
 					src: `${post.origin}/${post.id}`,
+					message: `you got a new post`,
 				})
 				.catch((err) => {
 					console.error(`${err.message} on ${follower.url}/inbox`);
 				});
 		}
-	});
+	}
 
 	return res.status(201).json(newPost);
 }

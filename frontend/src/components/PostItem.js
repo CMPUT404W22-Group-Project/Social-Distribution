@@ -29,7 +29,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
 import ProfilePictureCard from './ProfilePictureCard';
 import Comments from './Comments';
 
@@ -62,7 +61,7 @@ const PostItem = ({ props }) => {
     const postId = props.id ? props.id.split('/posts/')[1].split('/')[0] : null;
 
     //for post menu
-    const [dialog, setDialog] = useState(false);
+    const [deleteDialog, setDeleteDialog] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -72,7 +71,7 @@ const PostItem = ({ props }) => {
         setAnchorEl(null);
     };
     const handleDeleteButtonClick = () => {
-        setDialog(true);
+        setDeleteDialog(true);
     };
     const deletePost = async () => {
         const response = await axios.delete(
@@ -84,10 +83,10 @@ const PostItem = ({ props }) => {
         response.status === 204
             ? navigate(`/authors/${props.authorId}/posts/${postId}`)
             : alert('Delete failed');
-        handleDialogClose();
+        handleDeleteDialogClose();
     };
-    const handleDialogClose = () => {
-        setDialog(false);
+    const handleDeleteDialogClose = () => {
+        setDeleteDialog(false);
     };
     const publishedDate = moment(props.published).format(
         'MMMM Do YYYY, h:mm:ss a'
@@ -202,6 +201,104 @@ const PostItem = ({ props }) => {
     // useEffect(() => {
     //     getAuthorLiked(postId);
     // }, [getAuthorLiked, postId]);
+
+    //sharing post with followers
+    // const [checked, setChecked] = React.useState([1]);
+
+    // const handleToggle = (value) => () => {
+    //     const currentIndex = checked.indexOf(value);
+    //     const newChecked = [...checked];
+
+    //     if (currentIndex === -1) {
+    //         newChecked.push(value);
+    //     } else {
+    //         newChecked.splice(currentIndex, 1);
+    //     }
+
+    //     setChecked(newChecked);
+    // };
+
+    // const [sharePostDialog, setSharePostDialog] = useState(false);
+    // const [followers, setFollowers] = useState([]);
+    // const handleShareDialogOpen = async (authorId) => {
+    //     try {
+    //         const response = await axios.get(`/authors/${authorId}/followers`);
+    //         if (response.status === 200) {
+    //             setFollowers(response.data.items);
+    //             setSharePostDialog(true);
+    //             console.log('opne');
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // };
+
+    // const handleShareDialogClose = () => {
+    //     setSharePostDialog(false);
+    // };
+    // const renderSharePostDialog = () => {
+    //     <Dialog
+    //         onClose={() => {
+    //             handleShareDialogClose();
+    //         }}
+    //         open={sharePostDialog}
+    //     >
+    //         <DialogTitle>Share Post to Friends</DialogTitle>
+    //         <List
+    //             dense
+    //             sx={{
+    //                 width: '100%',
+    //                 maxWidth: 360,
+    //                 bgcolor: 'background.paper',
+    //             }}
+    //         >
+    //             {followers?.map((follower, index) => {
+    //                 const labelId = `follower-list-secondary-label-${index}`;
+    //                 return (
+    //                     <ListItem
+    //                         key={index}
+    //                         secondaryAction={
+    //                             <Checkbox
+    //                                 edge="end"
+    //                                 onChange={handleToggle(index)}
+    //                                 checked={checked.indexOf(index) !== -1}
+    //                                 inputProps={{ 'aria-labelledby': labelId }}
+    //                             />
+    //                         }
+    //                         disablePadding
+    //                     >
+    //                         <ListItemButton>
+    //                             <ListItemAvatar>
+    //                                 <RemoteProfile props={follower} />
+    //                             </ListItemAvatar>
+    //                             <ListItemText
+    //                                 id={labelId}
+    //                                 primary={`${follower.displayName}`}
+    //                             />
+    //                         </ListItemButton>
+    //                     </ListItem>
+    //                 );
+    //             })}
+    //         </List>
+    //         <DialogActions>
+    //             <Button
+    //                 onClick={() => {
+    //                     handleShareDialogClose();
+    //                 }}
+    //             >
+    //                 Cancel
+    //             </Button>
+    //             <Button
+    //                 onClick={() => {
+    //                     handleShareDialogClose();
+    //                 }}
+    //                 autoFocus
+    //             >
+    //                 Agree
+    //             </Button>
+    //         </DialogActions>
+    //     </Dialog>;
+    // };
     return (
         <>
             <Card>
@@ -334,6 +431,7 @@ const PostItem = ({ props }) => {
                     <IconButton aria-label="share">
                         <ShareIcon />
                     </IconButton>
+
                     <Button
                         sx={{ marginLeft: 'auto' }}
                         variant="contained"
@@ -346,9 +444,9 @@ const PostItem = ({ props }) => {
                     </Button>
                 </CardActions>
                 <Dialog
-                    open={dialog}
+                    open={deleteDialog}
                     onClose={() => {
-                        handleDialogClose();
+                        handleDeleteDialogClose();
                     }}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
@@ -364,14 +462,14 @@ const PostItem = ({ props }) => {
                     <DialogActions>
                         <Button
                             onClick={() => {
-                                handleDialogClose();
+                                handleDeleteDialogClose();
                             }}
                         >
                             No
                         </Button>
                         <Button
                             onClick={() => {
-                                handleDialogClose();
+                                handleDeleteDialogClose();
                                 deletePost();
                                 window.location.reload();
                             }}
@@ -381,6 +479,7 @@ const PostItem = ({ props }) => {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <CardContent>
                         <Comments

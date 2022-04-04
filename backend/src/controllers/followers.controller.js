@@ -33,7 +33,7 @@ export async function getFollowersJSON(options) {
 
 			followerList.push(
 				(
-					await axios.get(`${node.url}/authors/follower.authorId`, {
+					await axios.get(`${node.url}/authors/${follower.authorId}`, {
 						auth: { username: node.username, password: node.password },
 					})
 				).data
